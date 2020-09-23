@@ -6,25 +6,36 @@
 
 class Tag {
     public:
-        Tag(std::string name, std::string text);
+        //Tag(std::string name, std::string text, std::string src);
+        //Tag();
         std::string name;
         std::string content;
+        std::string src;
+        std::string href;
         std::string toString();
 };
 
-Tag::Tag(std::string name, std::string content) {
+/*Tag::Tag(std::string name, std::string content, std::string src) {
     Tag::name = name;
     Tag::content = content;
-}
+    Tag::src = src;
+}*/
 
 std::string Tag::toString() {
-    return "Name : " + Tag::name + " => Text : " + Tag::content;
+    std::string result;
+
+    !Tag::name.empty() ? result.append("'Name' : " + Tag::name + " ") : result.append(" ");
+    !Tag::content.empty() ? result.append("'Content' : " + Tag::content + " ") : result.append(" ");
+    !Tag::src.empty() ? result.append("'Src' : " + Tag::src + " ") : result.append(" ");
+    !Tag::href.empty() ? result.append("'Href' : " + Tag::href + " ") : result.append(" ");
+
+    return result;
 }
  
 void parse(GumboNode* node);
 std::string getHtmlFromFile(std::string fileName);
 
-std::vector<Tag> tagList;
+std::vector<Tag*> tagList;
 
 int main() {    
     std::string contents = getHtmlFromFile("test.html");
@@ -37,8 +48,8 @@ int main() {
 
     parse(output->root); 
 
-    for (Tag tag: tagList){
-        std::cout << tag.toString() << std::endl;
+    for (Tag* tag: tagList){
+        std::cout << tag->toString() << std::endl;
     }
 
     gumbo_destroy_output(&kGumboDefaultOptions, output);
@@ -50,12 +61,49 @@ void parse(GumboNode* node) {
         std::string name = gumbo_normalized_tagname(node->parent->v.element.tag);
         std::string content = node->v.text.text;
 
-        Tag currentTag(name, content);
-        //currentTag.tag = tag;
-        //currentTag.text = content;
+         Tag* currentTag = new Tag();
+        
+        // A Href
+        if(node->parent->v.element.tag == GUMBO_TAG_A) {
+            //std::string href;
+            GumboAttribute* gumboAttributeHref;
+            if((gumboAttributeHref = gumbo_get_attribute(&node->parent->v.element.attributes, "href"))) {
+                //href = gumboAttributeHref->value;
+                currentTag->href = gumboAttributeHref->value;
+            }
+        }
+
+        currentTag->name = name;
+        currentTag->content = content;
+        
 
         //std::cout << "Tag : " << tag << " => Text : " << content << std::endl;
         //std::cout << currentTag.toString() << std::endl;
+
+        tagList.push_back(currentTag);
+
+        //delete(currentTag);
+    }
+
+    // META tag
+
+    // Link tag
+
+    // IMG tag
+    if (node->type == GUMBO_NODE_ELEMENT && node->v.element.tag == GUMBO_TAG_IMG) {
+        std::string name = gumbo_normalized_tagname(node->v.element.tag);
+        std::string src;
+        
+        GumboAttribute* gumboAttributeSrc;
+        if((gumboAttributeSrc = gumbo_get_attribute(&node->v.element.attributes, "src"))) {
+            src = gumboAttributeSrc->value;
+        }
+
+        //std::cout << "Tag : " << name << " => src : " << src << std::endl;
+
+        Tag* currentTag = new Tag();
+        currentTag->name = gumbo_normalized_tagname(node->v.element.tag);
+        currentTag->src = src;
 
         tagList.push_back(currentTag);
     }
