@@ -15,3 +15,7 @@ cmake --install ./ --prefix app
 
 ## test
 ctest
+
+## Package
+cpack
+make package
