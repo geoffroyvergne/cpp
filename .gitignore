@@ -1,7 +1,9 @@
 /.idea
 .vscode/*
+**/.vscode/
 **/.DS_Store
 **/bin/
+**/build/
 **/.vagrant
 **/*.log
 *.0

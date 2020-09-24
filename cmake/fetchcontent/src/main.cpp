@@ -7,10 +7,7 @@
 
 int sum_of_first_ten_squared(const std::vector<int> &v) {
     auto square = [](int i) -> int { return i * i; };
-    int sum = ranges::accumulate(v
-                                 | ranges::views::transform(square)
-                                 | ranges::views::take(10),
-                                 0);
+    int sum = ranges::accumulate(v | ranges::views::transform(square) | ranges::views::take(10), 0);
     return sum;
 }
 
