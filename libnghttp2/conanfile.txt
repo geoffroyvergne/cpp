@@ -1,0 +1,6 @@
+[requires]
+boost/1.74.0
+libnghttp2/1.40.0
+
+[generators]
+cmake

@@ -1,0 +1,5 @@
+[requires]
+gumbo-parser/0.10.1
+
+[generators]
+cmake

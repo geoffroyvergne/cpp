@@ -7,3 +7,9 @@ cd build
 cmake ..
 cmake --build .
 ./fetchContent_example
+
+
+cd <project/root>
+
+cmake -S . -B build/
+cmake --build build/

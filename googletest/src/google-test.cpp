@@ -1,6 +1,6 @@
-/*#include <iostream>
+#include <iostream>
 
-int main() {
+/*int main() {
     std::cout << "Google Test" << std::endl;
 }*/
 
@@ -10,4 +10,10 @@ int main() {
 TEST(testMath, myCubeTest)
 {
     EXPECT_EQ(1000, cubic(10));	
+}
+
+int main(int argc, char **argv) {
+  std::cout << "Google Test" << std::endl;
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

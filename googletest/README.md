@@ -10,3 +10,4 @@ cmake --build build/
 
 cmake -DCMAKE_C_COMPILER=/usr/bin/gcc --build build/
 cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++ --build build/
+cmake -DCMAKE_CXX_COMPILER=clang++ --build build/

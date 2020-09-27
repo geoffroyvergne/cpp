@@ -16,7 +16,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(gumbo)
 
-#add_executable(gumboparser src/gumboparser.cpp)
-add_executable(gumboparser src/test-gumbo.cpp)
+add_executable(gumboparser src/gumboparser.cpp)
+#add_executable(gumboparser src/test-gumbo.cpp)
 
 target_link_libraries(gumboparser gumbo)

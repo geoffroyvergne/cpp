@@ -13,6 +13,12 @@ make install
 cmake install ./
 cmake --install ./ --prefix app
 
+cd <project/root>
+
+mkdir build
+cmake . -B build/
+cmake --build build/
+
 ## test
 ctest
 
