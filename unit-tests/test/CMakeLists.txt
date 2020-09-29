@@ -24,7 +24,7 @@ add_test(NAME ${BINARY} COMMAND ${BINARY})
 
 target_link_libraries(${BINARY} PUBLIC ${CMAKE_PROJECT_NAME}_lib gtest)
 
-#install(TARGETS ${BINARY}_test DESTINATION bin)
+install(TARGETS ${BINARY} DESTINATION bin)
 
 add_custom_command(TARGET ${BINARY} 
                    POST_BUILD

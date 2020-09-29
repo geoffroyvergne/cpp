@@ -6,4 +6,4 @@ cd <project/root>
 cmake -S . -B build/
 cmake --build build/
 
-cmake --install ./build --prefix app
+cmake --install ./build --prefix build/app

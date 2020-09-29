@@ -8,7 +8,7 @@ add_executable(${BINARY} ${SOURCES})
 #add_executable(${PROJECT_NAME} src/main.cpp)
 add_library(${LIB} STATIC ${SOURCES})
 
-#install(TARGETS ${BINARY}_src DESTINATION bin/${BINARY}_bin)
+install(TARGETS ${BINARY} DESTINATION bin)
 
 add_custom_command(TARGET ${BINARY} 
                    POST_BUILD
