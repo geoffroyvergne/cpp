@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Formula.h"
+#include "formula.hpp"
 
 int main() {
     std::cout << "Bla: " << Formula::bla(2) << std::endl;

@@ -1,6 +1,6 @@
-set(BINARY ${CMAKE_PROJECT_NAME}_test)
+set(BINARY ${CMAKE_PROJECT_NAME}_test_bin)
 
-file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)
+file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.hpp *.cpp)
 set(SOURCES ${TEST_SOURCES})
 
 include(FetchContent)
@@ -23,3 +23,9 @@ add_test(NAME ${BINARY} COMMAND ${BINARY})
 #target_link_libraries(${BINARY} PUBLIC gtest)
 
 target_link_libraries(${BINARY} PUBLIC ${CMAKE_PROJECT_NAME}_lib gtest)
+
+#install(TARGETS ${BINARY}_test DESTINATION bin)
+
+add_custom_command(TARGET ${BINARY} 
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BINARY}> ../bin/${BINARY})
