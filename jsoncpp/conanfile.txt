@@ -1,5 +1,4 @@
 [requires]
-restinio/0.6.10
 jsoncpp/1.9.4
 
 [generators]
