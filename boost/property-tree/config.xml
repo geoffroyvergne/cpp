@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <animals>
+        <cat>grey</cat>
+        <dog>brown</dog>
+        <rabbit>white</rabbit>
+    </animals>
+    <fruits>
+        <element>apple</element>
+        <element>raspberry</element>
+        <element>orange</element>
+    </fruits>
+    <height>320</height>
+    <matrix>
+        <element>
+            <element>1</element>
+            <element>2</element>
+            <element>3</element>
+        </element>
+        <element>
+            <element>4</element>
+            <element>5</element>
+            <element>6</element>
+        </element>
+        <element>
+            <element>7</element>
+            <element>8</element>
+            <element>9</element>
+        </element>
+    </matrix>
+    <some>
+        <complex>
+            <path>hello</path>
+        </complex>
+    </some>
+</root>

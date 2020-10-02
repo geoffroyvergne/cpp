@@ -6,12 +6,14 @@ int main() {
     const std::string filename = "config.xml";
 
     // Create an empty property tree object
-    using boost::property_tree::ptree;
-    ptree pt;
+    //using boost::property_tree::ptree;
+    //ptree pt;
+    namespace pt = boost::property_tree;
+    pt::ptree root;
 
-    read_xml(filename, pt);
+    read_xml(filename, root);
 
-    for(const ptree::value_type &v : pt)
+    for(const ptree::value_type &v : root)
     {
         std::cout << v.first << std::endl;
     }

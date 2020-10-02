@@ -1,0 +1,9 @@
+--- 
+  animals: 
+    cat: grey
+    dog: brown
+    rabbit: white
+  height: 320
+  some: 
+    complex: 
+      path: hello

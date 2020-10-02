@@ -7,7 +7,7 @@ https://github.com/boostorg/program_options/blob/develop/example/first.cpp
 g++ -Wall -std=c++11 
 g++ -o bin/simple-example simple-example.cpp -lboost_program_options
 
-cd <project/root>
-
-cmake -S . -B build/
+mkdir build
+conan install . -if build/
+cmake . -B build/
 cmake --build build/
