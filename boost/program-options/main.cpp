@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
             ("help,h", "produce help message ")
             ("version,v", "get version")
             ("compression,c", po::value<double>(), "set compression level")
-            //("status,s", po::value<bool>()->default_value(false), "set status true/false")
+            ("status,s", po::value<bool>()->default_value(false), "set status true/false")
         ;
 
         po::variables_map vm;        
