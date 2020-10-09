@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(gumboparser)
 
+add_compile_options("-fPIC")
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -12,7 +14,6 @@ FetchContent_Declare(
         GIT_TAG "v0.11.0-cmake"
         #GIT_BRANCH "master"
 )
-
 
 FetchContent_MakeAvailable(gumbo)
 
