@@ -15,3 +15,7 @@ cmake . -B build/
 cmake --build build/
 
 ./build/bin/md5
+
+
+
+ conan install . -if build/ --build=missing -s compiler=clang
