@@ -10,8 +10,8 @@ namespace pt = boost::property_tree;
 void readYaml() {
     std::cout << "readYaml" << std::endl;
 
-    pt::ptree root;
-    pt::read_json("config.yaml", root);
+    //pt::ptree root;
+    //pt::read_json("config.yaml", root);
 
     /*int height = root.get<int>("height", 0);
     std::string msg = root.get<std::string>("some.complex.path");
@@ -20,7 +20,7 @@ void readYaml() {
     std::cout << "Property some.complex.path : " << msg << std::endl;*/
 }
 
-void readJson() {
+/*void readJson() {
     std::cout << "readJson" << std::endl;
 
     pt::ptree root;
@@ -31,7 +31,7 @@ void readJson() {
 
     std::cout << "Property height : " << height << std::endl;
     std::cout << "Property some.complex.path : " << msg << std::endl;
-}
+}*/
 
 void readXml() {
     std::cout << "readXml" << std::endl;
@@ -49,7 +49,7 @@ void readXml() {
 int main() {
     std::cout << "Property tree test" << std::endl;
 
-    readJson();
+    //readJson();
     readXml();
-    readYaml();
+    //readYaml();
 }

@@ -9,3 +9,5 @@ cd <project/root>
 cmake -S . -B build/
 
 cmake --build build/
+
+cmake . -DCMAKE_CXX_COMPILER=/usr/bin/clang -B build/

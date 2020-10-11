@@ -1,13 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
+
+# set the project name and version
 project(program-options VERSION 1.0)
 
-set(CMAKE_CXX_STANDARD 17)
+# specify the C++ standard
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden)
+find_package( Boost 1.68.0 REQUIRED program_options )
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+if(Boost_FOUND)
+    add_executable( ${PROJECT_NAME} main.cpp )
+    target_link_libraries( ${PROJECT_NAME} Boost::program_options )
+endif()
 
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
