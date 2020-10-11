@@ -26,5 +26,10 @@ add_definitions("-std=c++11")
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
+#include(${CMAKE_BINARY_DIR}/conan.cmake)
+#conan_cmake_run(CONANFILE conanfile.txt
+#                BASIC_SETUP
+#                BUILD missing)
+
 add_executable(${PROJECT_NAME} md5.cpp)
 target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})

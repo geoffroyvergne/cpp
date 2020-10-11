@@ -15,7 +15,6 @@ FetchContent_Declare(
         #GIT_BRANCH "master"
 )
 
-
 FetchContent_MakeAvailable(gumbo)
 
 add_executable(gumboparser src/gumboparser.cpp)
