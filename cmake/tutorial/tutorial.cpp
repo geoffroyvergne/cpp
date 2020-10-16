@@ -6,7 +6,7 @@
 #include "tutorialConfig.h"
 
 #ifdef USE_MYMATH
-#  include "MathFunctions.h"
+#  include "mysqrt.h"
 #endif
 
 int main(int argc, char* argv[])

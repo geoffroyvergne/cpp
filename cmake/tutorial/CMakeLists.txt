@@ -13,20 +13,20 @@ option(USE_MYMATH "Use tutorial provided math implementation" ON)
 # to the source code
 configure_file(tutorialConfig.h.in tutorialConfig.h)
 
-# add the MathFunctions library
-#add_subdirectory(MathFunctions)
+# add the mysqrt library
+#add_subdirectory(mysqrt)
 
 if(USE_MYMATH)
-  add_subdirectory(MathFunctions)
-  #list(APPEND EXTRA_LIBS MathFunctions)
-  #list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/MathFunctions")
-  list(APPEND EXTRA_LIBS MathFunctions)
+  add_subdirectory(mysqrt)
+  #list(APPEND EXTRA_LIBS mysqrt)
+  #list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/mysqrt")
+  list(APPEND EXTRA_LIBS mysqrt)
 endif()
 
 # add the executable
 add_executable(tutorial tutorial.cpp)
 
-target_link_libraries(tutorial PUBLIC MathFunctions)
+target_link_libraries(tutorial PUBLIC mysqrt)
 
 # add the binary tree to the search path for include files
 # so that we will find TutorialConfig.h
@@ -34,7 +34,7 @@ target_link_libraries(tutorial PUBLIC MathFunctions)
 
 target_include_directories(tutorial PUBLIC
                           "${PROJECT_BINARY_DIR}"
-                          #"${PROJECT_SOURCE_DIR}/MathFunctions"
+                          #"${PROJECT_SOURCE_DIR}/mysqrt"
                           #${EXTRA_INCLUDES}
                           )
 

@@ -7,7 +7,8 @@ cmake --find-package -DNAME=Boost -DCOMPILER_ID=GNU -DLANGUAGE=C -DMODE=EXIST
 
 cd <project/root>
 cmake -S . -B build/
-
 cmake --build build/
+
+
 
 cmake . -DCMAKE_CXX_COMPILER=/usr/bin/clang -B build/
