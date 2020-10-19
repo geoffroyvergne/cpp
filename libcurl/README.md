@@ -8,7 +8,9 @@ https://github.com/curl/curl/blob/master/docs/examples/simple.c
 https://github.com/curl/curl/blob/master/docs/examples/parseurl.c
 
 
-g++ url-get-test.cpp -o bin/url-get-test `curl-config --cflags --libs` && bin/url-get-test
+g++ main.cpp -o bin/url-get-test `curl-config --cflags --libs` && bin/url-get-test
+
+g++ main.cpp -o main `curl-config --static-libs` -pthread -static
 
 cd <project/root>
 cmake -S . -B build/

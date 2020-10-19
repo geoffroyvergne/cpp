@@ -29,8 +29,13 @@ set(CMAKE_CXX_STANDARD 11)
 find_package( CURL )
 
 if(CURL_FOUND)
+    #add_executable( ${PROJECT_NAME} main.cpp )
+    #target_link_libraries( ${PROJECT_NAME} CURL )
+
     add_executable( ${PROJECT_NAME} main.cpp )
-    target_link_libraries( ${PROJECT_NAME} CURL )
+    include_directories(${CURL_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_NAME} ${CURL_LIBRARIES})
+
 endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

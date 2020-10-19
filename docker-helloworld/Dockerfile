@@ -6,8 +6,8 @@ FROM conanio/clang9-x86 as build
 COPY src/ .
 #WORKDIR /usr/src/app
 
-#RUN clang++ -static -o helloworld hello-world.cpp
-RUN clang++ -o helloworld hello-world.cpp
+RUN clang++ -static -o helloworld hello-world.cpp
+#RUN clang++ -o helloworld hello-world.cpp
 
 RUN ./helloworld
 
@@ -21,7 +21,7 @@ FROM alpine
 
 #RUN apt-get update && apt-get install -y libstdc++6
 #RUN apk update && apk add --no-cache libstdc++
-RUN apk update && apk add --no-cache libstdc++ musl-dev
+#RUN apk update && apk add --no-cache libstdc++ musl-dev
 
 COPY --from=build /home/conan/helloworld /usr/local/bin/helloworld
 CMD ["helloworld"]

@@ -62,7 +62,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, std::string *s);
 
 int main() {
     //std::cout << "url get test " << std::endl;
-    std::string url = "https://www.google.fr";
+    std::string url = "https://www.google.fr/";
 
     WebUrl* webUrl = parseUrl(url);
     WebPage* webPage = httpGet(url);

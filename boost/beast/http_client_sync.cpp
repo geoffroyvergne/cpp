@@ -19,7 +19,7 @@ int main() {
         auto const host = "www.google.fr";
         auto const port = "80";
         auto const target = "/";
-        int version = 5;
+        int version = 10;
 
         // The io_context is required for all I/O
         net::io_context ioc;
