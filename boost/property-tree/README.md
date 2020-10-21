@@ -1,3 +1,6 @@
+
+g++ -Wall -std=c++11 -o bin/propertytreetest main.cpp
+
 cd <project/root>
 
 mkdir build

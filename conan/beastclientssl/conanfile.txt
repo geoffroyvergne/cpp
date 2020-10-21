@@ -1,0 +1,6 @@
+[requires]
+openssl/1.0.2s
+boost/1.74.0
+
+[generators]
+cmake
