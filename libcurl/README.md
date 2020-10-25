@@ -12,6 +12,8 @@ g++ main.cpp -o bin/url-get-test `curl-config --cflags --libs` && bin/url-get-te
 
 g++ main.cpp -o main `curl-config --static-libs` -pthread -static
 
+g++  -pthread -static main.cpp -o main `pkg-config --static --cflags libcurl` `pkg-config --static --libs libcurl`
+
 cd <project/root>
 cmake -S . -B build/
 cmake --build build/

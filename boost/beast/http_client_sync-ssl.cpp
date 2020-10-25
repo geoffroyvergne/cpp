@@ -1,3 +1,5 @@
+#include "root_certificates.hpp"
+
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/ssl.hpp>
@@ -32,7 +34,7 @@ int main() {
         ssl::context ctx(ssl::context::tlsv12_client);
 
         // This holds the root certificate used for verification
-        //load_root_certificates(ctx);
+        load_root_certificates(ctx);
 
         // Verify the remote server's certificate
         ctx.set_verify_mode(ssl::verify_peer);
