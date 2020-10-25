@@ -11,6 +11,12 @@ https://www.boost.org/doc/libs/1_74_0/libs/beast/example/common/root_certificate
 
 g++ -Wall -std=c++11 -o bin/http_client_sync-ssl http_client_sync-ssl.cpp -lssl -lcrypto
 
+clang++ -o bin/http_client_sync-ssl -Os -std=c++11 -Wall -pthread http_client_sync-ssl.cpp -lboost_system -lssl -lcrypto
+
+clang++ -std=c++11 -O3 http_client_sync-ssl.cpp -o bin/http_client_sync-ssl \
+          -I/usr/local/opt/openssl/include/ \
+          -L/usr/local/opt/openssl/lib/ -lssl -lcrypto
+
 ln -s /usr/local/opt/openssl/include/openssl /usr/local/include
 -lssl -lcrypto
 

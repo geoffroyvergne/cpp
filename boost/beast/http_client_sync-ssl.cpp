@@ -9,6 +9,9 @@
 #include <boost/asio/ssl/error.hpp>
 #include <boost/asio/ssl/stream.hpp>
 
+#include <boost/asio.hpp>
+#include <boost/asio/ssl.hpp>
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
