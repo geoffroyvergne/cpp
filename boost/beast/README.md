@@ -16,6 +16,9 @@ clang++ -o bin/http_client_sync-ssl -Os -std=c++11 -Wall -pthread http_client_sy
 clang++ -std=c++11 -O3 http_client_sync-ssl.cpp -o bin/http_client_sync-ssl \
           -I/usr/local/opt/openssl/include/ \
           -L/usr/local/opt/openssl/lib/ -lssl -lcrypto
+# cpp boost bease
+
+https://www.boost.org/doc/libs/1_74_0/libs/beast/doc/html/beast/examples.html
 
 ln -s /usr/local/opt/openssl/include/openssl /usr/local/include
 -lssl -lcrypto

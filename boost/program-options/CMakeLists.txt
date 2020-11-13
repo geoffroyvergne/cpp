@@ -7,11 +7,11 @@ project(program-options VERSION 1.0)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package( Boost 1.68.0 REQUIRED program_options )
+find_package( Boost REQUIRED program_options )
 
 if(Boost_FOUND)
     add_executable( ${PROJECT_NAME} main.cpp )
-    target_link_libraries( ${PROJECT_NAME} Boost::program_options )
+    target_link_libraries( ${PROJECT_NAME} ${Boost_LIBRARIES} )
 endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
