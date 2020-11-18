@@ -30,19 +30,25 @@ int main() {
         auto const target = "/";
         int version = 10;
 
+        //boost::asio::ssl::context context(boost::asio::ssl::context::sslv23);
+        //context.set_default_verify_paths();
+
         // The io_context is required for all I/O
         net::io_context ioc;
 
         // The SSL context is required, and holds certificates
         ssl::context ctx(ssl::context::tlsv12_client);
+        //ssl::context ctx{ssl::context::tlsv11_client};
 
         // This holds the root certificate used for verification
-        load_root_certificates(ctx);
+        //load_root_certificates(ctx);
 
         // Verify the remote server's certificate
         ctx.set_verify_mode(ssl::verify_peer);
+        //ctx.set_verify_mode(ssl::verify_client_once);
+        //ctx.set_verify_mode(ssl::verify_none);
 
-            // These objects perform our I/O
+        // These objects perform our I/O
         tcp::resolver resolver(ioc);
         beast::ssl_stream<beast::tcp_stream> stream(ioc, ctx);
 
@@ -95,17 +101,11 @@ int main() {
             throw beast::system_error{ec};
 
         // If we get here then the connection is closed gracefully
-        
-        /*for (auto& h : res.base()) {
-            std::cout << "name: " << h.name() << ", name_string: " << h.name_string() << ", value: " << h.value() << "\n";
-        }*/
-
-        
-            
-    } catch(std::exception const& e) {
+    }
+    catch(std::exception const& e)
+    {
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }
