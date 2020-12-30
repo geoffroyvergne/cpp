@@ -3,6 +3,7 @@
 ## Client
 https://www.boost.org/doc/libs/1_74_0/libs/beast/example/http/client/sync/http_client_sync.cpp
 https://aticleworld.com/ssl-server-client-using-openssl-in-c/
+https://www.boost.org/doc/libs/develop/doc/html/boost_asio/reference/ssl__host_name_verification.html
 
 g++ -Wall -std=c++11 -o bin/http_client_sync http_client_sync.cpp
 
@@ -42,5 +43,9 @@ curl localhost:3000/html/test.html
 g++ -Wall -std=c++11 -o bin/http_client_sync-ssl http_client_sync-ssl.cpp
 
 clang++ -std=c++11 -O3 http_client_sync-ssl.cpp -o bin/http_client_sync-ssl \
+          -I/usr/local/Cellar/openssl@1.1/1.1.1h/include \
+          -L /usr/local/Cellar/openssl@1.1/1.1.1h/lib -lssl -lcrypto
+
+clang++ -std=c++11 -O3 http_client_ssl.cpp -o bin/http_client_ssl \
           -I/usr/local/Cellar/openssl@1.1/1.1.1h/include \
           -L /usr/local/Cellar/openssl@1.1/1.1.1h/lib -lssl -lcrypto

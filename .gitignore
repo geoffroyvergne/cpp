@@ -10,3 +10,4 @@
 *.0
 *.s
 **/CMakeFiles/
+**/fc_base

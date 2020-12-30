@@ -8,5 +8,5 @@ int main() {
         res.set_content("Hello World!", "text/plain");
     });
 
-    svr.listen("127.0.0.1", 8080);
+    svr.listen("0.0.0.0", 8080);
 }
