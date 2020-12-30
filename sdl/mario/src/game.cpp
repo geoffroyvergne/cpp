@@ -89,6 +89,10 @@ void Game::startLoop() {
 					if (e.key.keysym.sym == SDLK_UP) {
 						textureParams = { width/2, height-100, 16, 16 };
 					}				
+
+					if (e.key.keysym.sym == SDLK_DOWN) {
+						SDL_Log("SDLK_DOWN\n");
+					}
 			}
 
 			Texture *marioTexture = loadTexture(image_mario, textureParams, 0);

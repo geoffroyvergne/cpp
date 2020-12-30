@@ -22,6 +22,12 @@ int main(int argc, char** argv) {
         game->texturesList.push_back(*game->loadTexture(image_cloud, textureParams, 1));
     }
 
+    //Hills
+    for(int i=0; i<5; i++) {
+        textureParams = { i* (rand() % 100 + 210), height-32-16, 80, 35 };
+        game->texturesList.push_back(*game->loadTexture(image_hill, textureParams, 1));
+    }
+
     //Bush
     for(int i=0; i<10; i++) {
         textureParams = { i* (rand() % 100 + 110), height-32, 32, 16 };
@@ -33,6 +39,10 @@ int main(int argc, char** argv) {
         textureParams = { i* (rand() % 100 + 210), height-32-16, 32, 32 };
         game->texturesList.push_back(*game->loadTexture(image_pipe, textureParams, 1));
     }
+
+    //Questions mark
+    textureParams = { 200, 100, 16, 16 };
+    game->texturesList.push_back(*game->loadTexture(image_question_mark, textureParams, 1));
 
     //Ground
     for(int i=0; i<100; i++) {
