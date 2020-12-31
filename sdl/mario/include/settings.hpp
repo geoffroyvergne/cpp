@@ -13,4 +13,6 @@ static const std::string image_question_mark = "../assets/mario-level-question-m
 static const int width = 256;
 static const int height = 240;
 
+static const int LOOP_DELAY = 100;
+
 #endif
