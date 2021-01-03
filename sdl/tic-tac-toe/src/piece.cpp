@@ -7,6 +7,14 @@ Piece::Piece(SDL_Renderer *render, PieceType pieceype) {
     this->render = render;
     textureParams = { 30, 30,  90, 90 };
 
+    this->togglePlayer(pieceype);    
+}
+
+Piece::~Piece() { 
+    SDL_DestroyTexture(sdl_texture);
+}
+
+void Piece::togglePlayer(PieceType pieceype) {
     switch(pieceype) {
         case black_circle : 
             imagePath = "../assets/black-circle.png"; 
@@ -28,7 +36,13 @@ Piece::Piece(SDL_Renderer *render, PieceType pieceype) {
             player = cross;
             break;
     }
+
+    if(sdl_texture != NULL) SDL_DestroyTexture(sdl_texture);
     sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
+}
+
+void Piece::toggleColor() {
+    //TODO Implement
 }
 
 void Piece::getCaseNumberByTextureParams() {

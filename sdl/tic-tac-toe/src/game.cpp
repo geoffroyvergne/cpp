@@ -7,6 +7,10 @@
 #include <piece.hpp>
 #include <message.hpp>
 
+Game::~Game() { 
+    cleanup();
+}
+
 void Game::init() {
     //SDL_Log("Init game");
 
@@ -28,10 +32,7 @@ void Game::init() {
 
     SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
     SDL_RenderClear(render);
-	SDL_RenderPresent(render);
-    
-    //Message
-    TTF_Init();    
+	SDL_RenderPresent(render); 
 }
 
 void Game::startLoop() {
@@ -73,7 +74,7 @@ void Game::startLoop() {
         } 
         
 		while (SDL_PollEvent(&e)) {	
-			if (e.type == SDL_QUIT) {
+			if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
 				active = 0;
 				SDL_Log("Quit\n");
 			}
@@ -91,9 +92,9 @@ void Game::startLoop() {
             SDL_RenderPresent(render);
 
             switch( e.type ) {
-                case SDL_KEYDOWN:
+                case SDL_KEYDOWN:                    
                     //Enter key
-                    if (e.key.keysym.sym == SDLK_RETURN) {
+                    if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {
                         //SDL_Log("SDLK_KP_ENTER\n");
                         
                         // Check if there is a winner                        
@@ -152,6 +153,7 @@ void Game::startLoop() {
 	}
 
     delete(plateau);
+    delete(currentPiece);
 }
 
 void Game::newGame() {
@@ -194,17 +196,17 @@ void Game::togglePlayer() {
 
 void Game::destroyTextures() {
 
-    for (size_t i = 0; i < this->plateau->pieceList.size(); ++i) {
+    /*for (size_t i = 0; i < this->plateau->pieceList.size(); ++i) {
 		SDL_DestroyTexture(this->plateau->pieceList[i]->sdl_texture);
-	}
+	}*/
 }
 
 void Game::cleanup() {
-    TTF_Quit();
+    //TTF_Quit();
     //TTF_CloseFont(font);
 
     message->cleanUp();
-    TTF_CloseFont(message->font);
+    //TTF_CloseFont(message->font);
     destroyTextures();    
 	SDL_DestroyWindow(window);
 	SDL_Quit();

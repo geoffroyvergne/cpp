@@ -5,15 +5,20 @@
 #include <message.hpp>
 
 Message::Message(SDL_Renderer *render) {
-    this->render = render;
     
-    //TTF_Init();
-    //SDL_Surface * surface = TTF_RenderText_Solid(font, message.c_str(), color);
+    this->render = render;
 
+    TTF_Init();
     font = TTF_OpenFont(fontPath.c_str(), fontSize);
-        
+
+    //sdlSurface = TTF_RenderText_Solid(font, message.c_str(), color);
+
     //sdlSurface = TTF_RenderText_Blended(font, message.c_str(), color);
     //sdlTexture = SDL_CreateTextureFromSurface(render, sdlSurface);
+}
+
+Message::~Message() { 
+    cleanUp();
 }
 
 void Message::displayMessage() { 
@@ -24,12 +29,14 @@ void Message::displayMessage() {
     sdlTexture = SDL_CreateTextureFromSurface(render, sdlSurface);
     SDL_RenderCopy(render, sdlTexture, NULL, &textureParams);  
 
-    cleanUp();
-}
-
-void Message::cleanUp() {
-    //TTF_Quit();
-    //TTF_CloseFont(font);
     SDL_DestroyTexture(sdlTexture);
     SDL_FreeSurface(sdlSurface);
+}
+
+void Message::cleanUp() {    
+    TTF_CloseFont(font);
+    //if(sdlTexture != NULL) SDL_DestroyTexture(sdlTexture);
+    //if(sdlSurface != NULL) SDL_FreeSurface(sdlSurface);
+
+    TTF_Quit();
 }

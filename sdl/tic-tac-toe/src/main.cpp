@@ -9,8 +9,8 @@ int main(int argc, char** argv) {
 
     game->init();
     game->startLoop();
-    game->cleanup();
+    //game->cleanup();
 
-    delete(game);
+    delete game;
     return EXIT_SUCCESS;
 }

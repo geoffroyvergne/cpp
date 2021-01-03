@@ -16,7 +16,7 @@ top -pid $(pgrep -f vector-test)
 - [ ] refactor getCaseNumberByTextureParams
 - [ X ] add messages winner and score
 - [ X ] add message class
-- [ ] fix memory leak
-- [ ] space == enter, esc quit
-- [ ] use destructor to help clean sdl objects
+- [ X ] fix memory leak
+- [ X ] space == enter, esc quit
+- [ X ] use destructor to help clean sdl objects
 - [ ] 

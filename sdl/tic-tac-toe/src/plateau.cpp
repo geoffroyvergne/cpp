@@ -34,11 +34,18 @@ Piece *Plateau::addCurrentPiece(Piece *lastCurrentPiece, Player player) {
     if(player == cross) pieceType = red_cross;
     else if(player == circle) pieceType = red_circle;
 
-    Piece *piece = new Piece(render, pieceType);
-    piece->textureParams.x = lastCurrentPiece->textureParams.x;
-    piece->textureParams.y = lastCurrentPiece->textureParams.y;
+    //SDL_DestroyTexture(lastCurrentPiece->sdl_texture);
+    lastCurrentPiece->togglePlayer(pieceType);
 
-    return piece;
+    //Piece *piece = new Piece(render, pieceType);
+    //piece->textureParams.x = lastCurrentPiece->textureParams.x;
+    //piece->textureParams.y = lastCurrentPiece->textureParams.y;
+
+    //lastCurrentPiece->type = pieceType;
+
+    //delete piece;
+
+    return lastCurrentPiece;
 }
 
 Player Plateau::addNewPiece(Piece *currentPiece, Player player) {

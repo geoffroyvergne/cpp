@@ -13,6 +13,7 @@
 
 class Game {
     public:
+        ~Game();
         std::string name = "tic-tac-toe";
         int width = 512;
         int height = 512;
