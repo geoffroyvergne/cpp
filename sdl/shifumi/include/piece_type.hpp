@@ -2,8 +2,8 @@
 #define PIECE_TYPE
 
 enum PieceType {
-    stone,
-    leaf,
+    rock,
+    paper,
     sissors, 
     none
 };
