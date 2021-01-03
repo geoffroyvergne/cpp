@@ -19,4 +19,6 @@ top -pid $(pgrep -f vector-test)
 - [ X ] fix memory leak
 - [ X ] space == enter, esc quit
 - [ X ] use destructor to help clean sdl objects
+- [ ] add player object
+- [ ] use more mario like sprites
 - [ ] 

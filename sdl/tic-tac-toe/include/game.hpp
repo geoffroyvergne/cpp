@@ -22,7 +22,7 @@ class Game {
         int crossScore = 0;
         
         SDL_Window *window;
-        SDL_Renderer *render;       
+        SDL_Renderer *render;
         
         Player currentPlayer = circle;
         Piece *currentPiece;
