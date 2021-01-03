@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <plateau.hpp>
 
 Plateau::Plateau(SDL_Renderer *render) {
@@ -14,7 +15,7 @@ void Plateau::display() {
 
 int Plateau::caseAlreadyUsed(Piece *piece) {
      for (size_t i = 0; i < this->pieceList.size(); ++i) {
-         if(piece->textureParams.x == this->pieceList[i].textureParams.x && piece->textureParams.y == this->pieceList[i].textureParams.y) {
+         if(piece->textureParams.x == this->pieceList[i]->textureParams.x && piece->textureParams.y == this->pieceList[i]->textureParams.y) {
              return true;
          }
      }
@@ -24,7 +25,7 @@ int Plateau::caseAlreadyUsed(Piece *piece) {
 
 void Plateau::displayPieces() {
     for (size_t i = 0; i < this->pieceList.size(); ++i) {
-        this->pieceList[i].display();
+        this->pieceList[i]->display();
 	}
 }
 
@@ -52,14 +53,14 @@ Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
     piece->getCaseNumberByTextureParams();
     SDL_Log("Case Number %d", piece->caseNumber);
 
-    pieceList.push_back(*piece);
+    pieceList.push_back(piece);
 
     return this->lineDone();
 }
 
 int Plateau::vectorContains(int caseNumber, Player player) {
     for (size_t i = 0; i < pieceList.size(); ++i) {
-        if(pieceList[i].caseNumber == caseNumber && pieceList[i].player == player) {
+        if(pieceList[i]->caseNumber == caseNumber && pieceList[i]->player == player) {
             return true;
         }
     }

@@ -14,9 +14,10 @@ class Piece {
         SDL_Renderer *render;
         std::string imagePath;
         SDL_Texture *sdl_texture;
-        SDL_Rect textureParams = { 30, 30,  90, 90 };
+        //SDL_Rect textureParams = { 30, 30,  90, 90 };
+        SDL_Rect textureParams;
         int caseNumber = 0;
-        
+
         void getCaseNumberByTextureParams();
         void display();
         void moveUp();

@@ -5,6 +5,7 @@
 
 Piece::Piece(SDL_Renderer *render, PieceType pieceype) {
     this->render = render;
+    textureParams = { 30, 30,  90, 90 };
 
     switch(pieceype) {
         case black_circle : 

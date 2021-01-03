@@ -16,7 +16,7 @@ class Plateau {
         SDL_Texture *sdl_texture;
         SDL_Rect textureParams = { 0, 0,  512, 512 };
         int casesUsed = 0;
-        std::vector<Piece> pieceList;
+        std::vector<Piece*> pieceList;
 
         void display(); 
         void addCases();

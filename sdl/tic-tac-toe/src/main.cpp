@@ -11,6 +11,6 @@ int main(int argc, char** argv) {
     game->startLoop();
     game->cleanup();
 
-    free(game);
+    delete(game);
     return EXIT_SUCCESS;
 }

@@ -1,8 +1,11 @@
 #include <iostream>
 #include <SDL.h>
+#include <SDL_ttf.h>
+
 #include <game.hpp>
 #include <plateau.hpp>
 #include <piece.hpp>
+#include <message.hpp>
 
 void Game::init() {
     //SDL_Log("Init game");
@@ -26,12 +29,18 @@ void Game::init() {
     SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
     SDL_RenderClear(render);
 	SDL_RenderPresent(render);
+    
+    //Message
+    TTF_Init();    
 }
 
 void Game::startLoop() {
     Plateau *plateau = new Plateau(render);
     this->plateau = plateau;
     
+    // Message
+    message = new Message(render);
+
     // Init lastCurrentPiece
     currentPiece = new Piece(render, red_circle);
     currentPiece->textureParams.x = 210;
@@ -41,9 +50,10 @@ void Game::startLoop() {
     
     int active = 1;
     SDL_Event e;
-    while (active) {        
+    while (active) { 
         // if winner is known, start a new game
         if(winner != none) {
+            lastWinner = winner;
             // Increase score to the right player
             increaseScore(winner);
             SDL_Log("Winner is %s score : %s", getPlayer(winner).c_str(), getScore().c_str());
@@ -71,8 +81,12 @@ void Game::startLoop() {
             SDL_RenderClear(render);
 
             plateau->display();
-            plateau->displayPieces(); 
-            currentPiece->display();                    
+            plateau->displayPieces();
+            currentPiece->display();
+           
+            std::string message = "TIC TAC TOE " + getScore() + " winner : " + getPlayer(lastWinner);
+            this->message->message = message;
+            this->message->displayMessage();
 
             SDL_RenderPresent(render);
 
@@ -92,6 +106,7 @@ void Game::startLoop() {
                                 this->plateau->casesUsed ++;                                                            
                             } else {                            
                                 SDL_Log("Case already used");
+                                //newGame();
                             }
                         }
                         
@@ -135,13 +150,19 @@ void Game::startLoop() {
 		}
 		SDL_Delay(this->loopDelay);        
 	}
+
+    delete(plateau);
 }
 
 void Game::newGame() {
-    this->plateau->pieceList.clear();
-    this->plateau->casesUsed = 0;
-
     destroyTextures();
+    
+    for (auto piece : this->plateau->pieceList) {
+        delete piece;
+    } 
+    this->plateau->pieceList.clear();
+
+    this->plateau->casesUsed = 0;
 }
 
 void Game::increaseScore(Player player) {
@@ -153,7 +174,7 @@ void Game::increaseScore(Player player) {
 }
 
 std::string Game::getScore() {
-    return std::to_string(circleScore) + " " + std::to_string(crossScore);
+    return std::to_string(circleScore) + " / " + std::to_string(crossScore);
 }
 
 std::string Game::getPlayer(Player player) {
@@ -172,13 +193,19 @@ void Game::togglePlayer() {
 }
 
 void Game::destroyTextures() {
+
     for (size_t i = 0; i < this->plateau->pieceList.size(); ++i) {
-		SDL_DestroyTexture(this->plateau->pieceList[i].sdl_texture);
+		SDL_DestroyTexture(this->plateau->pieceList[i]->sdl_texture);
 	}
 }
 
 void Game::cleanup() {
-    destroyTextures();
+    TTF_Quit();
+    //TTF_CloseFont(font);
+
+    message->cleanUp();
+    TTF_CloseFont(message->font);
+    destroyTextures();    
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
