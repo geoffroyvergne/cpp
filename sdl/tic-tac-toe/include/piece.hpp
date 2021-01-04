@@ -27,6 +27,7 @@ class Piece {
         void moveDown();
         void moveRight();
         void moveLeft();
+        void cleanup();
 };
 
 #endif

@@ -7,11 +7,11 @@ Piece::Piece(SDL_Renderer *render, PieceType pieceype) {
     this->render = render;
     textureParams = { 30, 30,  90, 90 };
 
-    this->togglePlayer(pieceype);    
+    this->togglePlayer(pieceype);
 }
 
 Piece::~Piece() { 
-    SDL_DestroyTexture(sdl_texture);
+    cleanup();
 }
 
 void Piece::togglePlayer(PieceType pieceype) {
@@ -104,4 +104,8 @@ void Piece::moveRight() {
 
 void Piece::moveLeft() {
     if(textureParams.x >30) textureParams.x -= 180;
+}
+
+void Piece::cleanup() {
+    SDL_DestroyTexture(sdl_texture);
 }

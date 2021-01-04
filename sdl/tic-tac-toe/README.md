@@ -21,4 +21,5 @@ top -pid $(pgrep -f vector-test)
 - [ X ] use destructor to help clean sdl objects
 - [ ] add player object
 - [ ] use more mario like sprites
+- [ ] no cleanup in piece class
 - [ ] 
