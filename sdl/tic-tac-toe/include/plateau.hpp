@@ -18,7 +18,7 @@ class Plateau {
         int casesUsed = 0;
         std::vector<Piece*> pieceList;
 
-        void display(); 
+        void display();
         void addCases();
         int caseAlreadyUsed(Piece *piece);
         void displayPieces();

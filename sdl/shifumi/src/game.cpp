@@ -49,7 +49,8 @@ void Game::startLoop() {
         
         while (SDL_PollEvent(&e)) {	            
 
-            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
+            //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
+            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
 				SDL_Log("Quit\n");
 			}            
@@ -135,7 +136,7 @@ Player* Game::getWinner(PlayerType type) {
 }
 
 std::string Game::getScore() {
-    return "" + player1->name + " " + std::to_string(player1->score) + " " + player2->name + " " + std::to_string(player2->score);
+    return "" + player1->name + " - " + std::to_string(player1->score) + " / " + player2->name + " - " + std::to_string(player2->score);
 }
 
 void Game::newGame() {

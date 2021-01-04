@@ -9,4 +9,6 @@ cmake --build build/
 top -pid $(pgrep -f shifumi)
 
 # TODO
+- [ ] SDLK_ESCAPE bug
+- [ ] refactor Game::result()
 - [ ] 
