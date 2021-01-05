@@ -1,8 +1,11 @@
+#include <iostream>
+#include <SDL.h>
+
 #include <piece_type.hpp>
 #include <player.hpp>
 
-#ifndef CIRCLE
-#define CIRCLE
+#ifndef PIECE
+#define PIECE
 
 struct Position {
     int caseNumber;
@@ -18,7 +21,7 @@ class Piece {
         Player player;
         SDL_Renderer *render;
         std::string imagePath;
-        SDL_Texture *sdl_texture = NULL;
+        SDL_Texture *sdl_texture;
         SDL_Rect textureParams;
         int caseNumber = 0;
         Position position;
