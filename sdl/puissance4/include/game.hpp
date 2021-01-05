@@ -20,12 +20,21 @@ class Game {
         SDL_Window *window;
         SDL_Renderer *render;
 
+        Player currentPlayer = red;
+        //Player winner = player_none;
+        Piece *currentPiece;
         Message *message;
         Plateau *plateau;
+
+        int redScore = 0;
+        int yellowScore = 0;
 
         void init();
         void renderView();
         void startLoop();
+        void togglePlayer();
+        void validateRow();
+        void newGame();
         void cleanup();
 };
 
