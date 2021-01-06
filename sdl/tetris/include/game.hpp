@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL.h>
+#include <plateau.hpp>
 
 #ifndef GAME
 #define GAME
@@ -15,6 +16,7 @@ class Game {
 
         SDL_Window *window;
         SDL_Renderer *render;
+        Plateau *plateau;
 
         void init();
         void renderView();

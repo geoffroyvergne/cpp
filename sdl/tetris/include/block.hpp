@@ -17,7 +17,7 @@ class Block {
         BlockColor color;
 
         SDL_Renderer *render;
-        SDL_Texture *sdl_texture = NULL;
+        SDL_Texture *sdl_texture;
         SDL_Rect textureParams;        
         
         void moveUp();

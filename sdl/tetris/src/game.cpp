@@ -32,7 +32,8 @@ void Game::init() {
 
 void Game::renderView() {
     SDL_RenderClear(render);
-
+        plateau->displayCurrentPiece();
+        plateau->displayPieces();
     SDL_RenderPresent(render);
 }
 
@@ -45,7 +46,7 @@ void Game::startLoop() {
                 //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
                 if (e.type == SDL_QUIT) {
                     active = 0;
-                    SDL_Log("Quit\n");
+                    SDL_Log("Quit");
                     break;
                 }
 
@@ -55,10 +56,50 @@ void Game::startLoop() {
                 case SDL_KEYDOWN:
 
                     //SDL_Log("piece x %d piece y %d", currentPiece->textureParams.x, currentPiece->textureParams.y);
+                    //SDL_Log("piece position x %d position y %d", plateau->currentPiece->positionX, plateau->currentPiece->positionY);
                     
                     if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {
                         //SDL_Log("SDLK_RETURN");
+
+                        plateau->addCurrentPiece();
                         renderView();
+
+                        break;
+                    }
+
+                    if (e.key.keysym.sym == SDLK_r) {
+                        //SDL_Log("SDLK_r");
+                        plateau->rotateCurrentPiece();
+                    }
+
+                    // Right Arrow
+                    if (e.key.keysym.sym == SDLK_RIGHT) {
+                        //SDL_Log("SDLK_RIGHT");
+                        plateau->currentPiece->moveRight();
+
+                        break;
+                    }
+
+                    // Left Arrow
+                    if (e.key.keysym.sym == SDLK_LEFT) {
+                        //SDL_Log("SDLK_LEFT");
+                        plateau->currentPiece->moveLeft();
+
+                        break;
+                    }
+
+                    // Up Arrow
+                    if (e.key.keysym.sym == SDLK_UP) {
+                        //SDL_Log("SDLK_UP\n");
+                        plateau->currentPiece->moveUp();
+
+                        break;
+                    }
+
+                    // Down Arrow
+                    if (e.key.keysym.sym == SDLK_DOWN) {
+                        //SDL_Log("SDLK_DOWN\n");
+                        plateau->currentPiece->moveDown();
 
                         break;
                     }
