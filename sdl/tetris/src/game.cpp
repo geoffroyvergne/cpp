@@ -32,6 +32,7 @@ void Game::init() {
 
 void Game::renderView() {
     SDL_RenderClear(render);
+        plateau->display();
         plateau->displayCurrentPiece();
         plateau->displayPieces();
     SDL_RenderPresent(render);

@@ -508,7 +508,7 @@ void Piece::rotateO(BlockType type) {
 }
 
 void Piece::moveRight() {
-    if(positionX >328) return; 
+    if(positionX >350) return; 
     positionX += 50;
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
@@ -517,7 +517,7 @@ void Piece::moveRight() {
 }
 
 void Piece::moveLeft() {
-    if(positionX <78) return;
+    if(positionX <50) return;
     positionX -= 50;
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
@@ -535,7 +535,7 @@ void Piece::moveUp() {
 }
 
 void Piece::moveDown() {
-    if(positionY >300) return;
+    if(positionY >350) return;
     positionY += 50;
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {

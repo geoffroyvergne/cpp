@@ -10,6 +10,7 @@
 Plateau::Plateau(SDL_Renderer *render) {
     this->render = render;   
     this->currentBlockType = base; 
+    this->addWall();
 }
 
 Plateau::~Plateau() {
@@ -20,6 +21,32 @@ void Plateau::displayPieces() {
     for (size_t i = 0; i < this->pieceList.size(); ++i) {        
         this->pieceList[i]->display();
 	}
+}
+
+void Plateau::addWall() {
+    for(int i=0; i<9; i++) {
+        Block *block = new Block(render, base);
+        block->textureParams.x = 0;
+        block->textureParams.y = (i+1) * 50;
+
+        wallList.push_back(block);
+    }
+
+    for(int i=0; i<9; i++) {
+        Block *block = new Block(render, base);
+        block->textureParams.x = 450;
+        block->textureParams.y = (i+1) * 50;
+
+        wallList.push_back(block);
+    }
+
+    for(int i=0; i<8; i++) {
+        Block *block = new Block(render, base);
+        block->textureParams.x = (i+1) * 50;
+        block->textureParams.y = 450;
+
+        wallList.push_back(block);
+    }
 }
 
 void Plateau::toggleBlockType() {
@@ -112,9 +139,13 @@ void Plateau::rotateCurrentPiece() {
 }
 
 void Plateau::display() {
-
+    for (size_t i = 0; i < this->wallList.size(); ++i) {
+        this->wallList[i]->display();
+    }
 }
 
 void Plateau::cleanup() {
-
+    for (size_t i = 0; i < this->wallList.size(); ++i) {
+        this->wallList[i]->cleanup();
+    }
 }

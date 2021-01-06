@@ -42,7 +42,7 @@ Block::Block(SDL_Renderer *render, BlockType type) {
             break;
     }
 
-    textureParams = { 228, 50,  50, 50 };
+    textureParams = { 200, 50,  50, 50 };
 
     //if(sdl_texture != NULL) SDL_DestroyTexture(sdl_texture);
     sdl_texture = IMG_LoadTexture(render, imagePath.c_str());

@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <vector>
+#include <block.hpp>
 #include <piece.hpp>
 
 #ifndef PLATEAU
@@ -11,6 +12,7 @@ class Plateau {
     public:
         Plateau(SDL_Renderer *render);
         ~Plateau();
+        std::vector<Block*> wallList;
         std::vector<Piece*> pieceList;
         Piece *currentPiece;
         BlockType currentBlockType;
@@ -19,6 +21,7 @@ class Plateau {
         void displayPieces();
         void toggleBlockType();
         void addPiece();
+        void addWall();
         void displayCurrentPiece();
         void addCurrentPiece();
         void rotateCurrentPiece();

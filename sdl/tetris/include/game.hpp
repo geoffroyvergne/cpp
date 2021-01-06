@@ -10,8 +10,8 @@ class Game {
         //Game();
         ~Game();
         std::string name = "tetris";
-        int width = 512;
-        int height = 512;
+        int width = 500;
+        int height = 500;
         int loopDelay = 10;
 
         SDL_Window *window;

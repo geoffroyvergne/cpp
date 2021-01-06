@@ -17,7 +17,7 @@ class Piece {
         BlockType type;
         int position = 0;
 
-        int positionX = 228;
+        int positionX = 200;
         int positionY = 50;
 
         void addBlock(Block *block);
