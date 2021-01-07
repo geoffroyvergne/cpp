@@ -34,81 +34,117 @@ void Game::renderView() {
     SDL_RenderClear(render);
         plateau->display();
         plateau->displayCurrentPiece();
-        plateau->displayPieces();
+        //plateau->displayPieces();
     SDL_RenderPresent(render);
 }
 
 void Game::startLoop() {
 
     int active = 1;
-        SDL_Event e;
-        while (active) {        
-            while (SDL_PollEvent(&e)) {	            
-                //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
-                if (e.type == SDL_QUIT) {
-                    active = 0;
-                    SDL_Log("Quit");
-                    break;
-                }
+    SDL_Event e;
+    while (active) {
+        while (SDL_PollEvent(&e)) {          
+            //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
+            if (e.type == SDL_QUIT) {
+                active = 0;
+                SDL_Log("Quit");
+                break;
+            }
 
-                renderView();
+            renderView();
 
             switch( e.type ) {
                 case SDL_KEYDOWN:
-
+                    
                     //SDL_Log("piece x %d piece y %d", currentPiece->textureParams.x, currentPiece->textureParams.y);
                     //SDL_Log("piece position x %d position y %d", plateau->currentPiece->positionX, plateau->currentPiece->positionY);
-                    
-                    if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {
+
+                    if (e.key.keysym.sym == SDLK_RETURN) {
                         //SDL_Log("SDLK_RETURN");
 
                         plateau->addCurrentPiece();
                         renderView();
 
-                        break;
+                        //break;
+                    }
+
+                    if (e.key.keysym.sym == SDLK_c) {
+                        plateau->resetWall();
                     }
 
                     if (e.key.keysym.sym == SDLK_r) {
                         //SDL_Log("SDLK_r");
                         plateau->rotateCurrentPiece();
+                        if(plateau->detectCollision()) {
+                            plateau->rotateCurrentPieceToPreviousPosition();
+                        }
                     }
 
                     // Right Arrow
                     if (e.key.keysym.sym == SDLK_RIGHT) {
                         //SDL_Log("SDLK_RIGHT");
                         plateau->currentPiece->moveRight();
-
-                        break;
+                        if(plateau->detectCollision()) {
+                            plateau->currentPiece->moveLeft();
+                        }
+                        //break;
                     }
 
                     // Left Arrow
                     if (e.key.keysym.sym == SDLK_LEFT) {
                         //SDL_Log("SDLK_LEFT");
                         plateau->currentPiece->moveLeft();
+                        if(plateau->detectCollision()) {
+                            plateau->currentPiece->moveRight();
+                        }
 
-                        break;
+                        //break;
                     }
 
                     // Up Arrow
                     if (e.key.keysym.sym == SDLK_UP) {
-                        //SDL_Log("SDLK_UP\n");
+                        //SDL_Log("SDLK_UP");
                         plateau->currentPiece->moveUp();
 
-                        break;
+                        //break;
                     }
 
                     // Down Arrow
                     if (e.key.keysym.sym == SDLK_DOWN) {
-                        //SDL_Log("SDLK_DOWN\n");
-                        plateau->currentPiece->moveDown();
-
-                        break;
+                        //SDL_Log("SDLK_DOWN");
+                        this->moveDown();
+                        //break;
                     }
-
+                    
+                    //this->plateau->detectCollision();
                     break;
-            }            
+                    
+            }
+        
         }
         SDL_Delay(this->loopDelay);
+    }
+}
+
+void Game::moveDown() {
+    plateau->currentPiece->moveDown();
+    if(plateau->detectCollision()) {
+        plateau->currentPiece->moveUp();
+        //SDL_Log("Reached bottom");
+        
+        for (size_t i = 0; i < this->plateau->currentPiece->blockList.size(); ++i) {
+            this->plateau->wallList.push_back(this->plateau->currentPiece->blockList[i]);            
+        }
+
+        int lineDone = plateau->detectLineDone();
+        if(lineDone > 0) {
+            //SDL_Log("Line Done");
+            plateau->removeLine(lineDone);
+            plateau->moveDownLine(lineDone);
+        }
+
+        plateau->addCurrentPiece();
+        renderView();
     }
 }
 

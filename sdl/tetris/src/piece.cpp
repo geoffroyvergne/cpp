@@ -2,8 +2,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <piece.hpp>
-#include <block.hpp>
+//#include <block.hpp>
 #include <block-type.hpp>
+//#include <plateau.hpp>
 
 Piece::Piece(SDL_Renderer *render, BlockType type) {
     this->render = render;
@@ -58,6 +59,23 @@ void Piece::nextPosition() {
             break;
         case 3 : 
             position = 0;
+            break;
+    }
+}
+
+void Piece::previousPosition() {
+    switch(position) {
+        case 1 : 
+            position = 0;
+            break;
+        case 2 : 
+            position = 1;
+            break;
+        case 3 : 
+            position = 2;
+            break;
+        case 0 : 
+            position = 3;
             break;
     }
 }
@@ -508,7 +526,7 @@ void Piece::rotateO(BlockType type) {
 }
 
 void Piece::moveRight() {
-    if(positionX >350) return; 
+    //if(positionX >400) return; 
     positionX += 50;
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
@@ -517,16 +535,22 @@ void Piece::moveRight() {
 }
 
 void Piece::moveLeft() {
-    if(positionX <50) return;
+    //if(positionX <50) return;
     positionX -= 50;
+    //SDL_Log("moveLeft");
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
         this->blockList[i]->textureParams.x -= 50;
     }
+
+    /*if (plateau->detectCollision()) {
+        SDL_Log("Collision");
+        moveRight();
+    }*/
 }
 
 void Piece::moveUp() {
-    if(positionY <100) return;
+    //if(positionY <100) return;
     positionY -= 50;
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
@@ -535,11 +559,12 @@ void Piece::moveUp() {
 }
 
 void Piece::moveDown() {
-    if(positionY >350) return;
+    //if(positionY >650) return;
     positionY += 50;
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
         this->blockList[i]->textureParams.y += 50;
+        //std::cout << this->blockList[i]->textureParams.y << std::endl;
     }
 }
 

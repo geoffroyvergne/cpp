@@ -93,7 +93,7 @@ void Game::startLoop() {
 
                     // Up Arrow
                     /*if (e.key.keysym.sym == SDLK_UP) {
-                        //SDL_Log("SDLK_UP\n");
+                        //SDL_Log("SDLK_UP");
                         currentPiece->moveUp();
 
                         break;
@@ -101,7 +101,7 @@ void Game::startLoop() {
 
                     // Down Arrow
                     /*if (e.key.keysym.sym == SDLK_DOWN) {
-                        //SDL_Log("SDLK_DOWN\n");
+                        //SDL_Log("SDLK_DOWN");
                         currentPiece->moveDown();
 
                         break;

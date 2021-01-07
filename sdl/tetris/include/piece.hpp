@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include <block.hpp>
+//#include <plateau.hpp>
 
 #ifndef PIECE
 #define PIECE
@@ -16,12 +17,14 @@ class Piece {
         SDL_Renderer *render;
         BlockType type;
         int position = 0;
+        //int collision;
 
         int positionX = 200;
         int positionY = 50;
 
         void addBlock(Block *block);
         void nextPosition();
+        void previousPosition();
 
         void addBase(BlockType type);
 
