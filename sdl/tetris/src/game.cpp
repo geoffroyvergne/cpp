@@ -68,6 +68,11 @@ void Game::startLoop() {
                         //break;
                     }
 
+                    if (e.key.keysym.sym == SDLK_p) {
+                        if(pause) pause = 0;
+                        else pause = 1;
+                    }
+
                     if (e.key.keysym.sym == SDLK_c) {
                         plateau->resetWall();
                     }
@@ -123,6 +128,13 @@ void Game::startLoop() {
         
         }
         SDL_Delay(this->loopDelay);
+
+        // Automate piece move down
+        if(iterations % 100 == 0 && !pause) {
+            moveDown(); 
+            renderView();           
+        }
+        iterations++;
     }
 }
 
@@ -136,15 +148,20 @@ void Game::moveDown() {
             this->plateau->wallList.push_back(this->plateau->currentPiece->blockList[i]);            
         }
 
-        int lineDone = plateau->detectLineDone();
-        if(lineDone > 0) {
+        int lineDone = 0;
+        while((lineDone = plateau->detectLineDone()) > 0) {
             //SDL_Log("Line Done");
             plateau->removeLine(lineDone);
             plateau->moveDownLine(lineDone);
         }
 
         plateau->addCurrentPiece();
-        renderView();
+
+        if(plateau->gameOver()) {
+            plateau->resetWall();
+        }
+
+        //renderView();
     }
 }
 

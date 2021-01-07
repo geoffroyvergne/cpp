@@ -22,6 +22,7 @@ class Plateau {
         int detectCollision();
         //void displayPieces();
         void toggleBlockType();
+        void randomBlockType();
         void addPiece();
         void addWall();
         void displayCurrentPiece();
@@ -32,6 +33,7 @@ class Plateau {
         int detectLineDone();
         void removeLine(int lineDone);
         void moveDownLine(int lineDone);
+        int gameOver();
         void display();
         void cleanup();        
 };
