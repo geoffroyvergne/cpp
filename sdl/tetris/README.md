@@ -16,7 +16,9 @@ top -pid $(pgrep -f tetris)
 - [ X ] add random new piece
 - [ X ] add gameOver params
 - [ X ] add pause function
-- [ ] Right pause message
-- [ ] remove blocks instead of move them
+- [ ] Wright pause message
+- [ X ] remove blocks instead of move them
 - [ ] Add score and score message
-- [ ] bug when rotate piece extrem left
+- [ X ] bug when rotate piece extrem left
+- [ ] improve all for loops with 4 (dirty bug fix)
+

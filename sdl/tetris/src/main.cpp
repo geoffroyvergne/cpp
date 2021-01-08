@@ -12,6 +12,10 @@ int main(int argc, char** argv) {
     //game->plateau->addPiece(O);
     game->plateau->addCurrentPiece();
 
+    for(int i=0; i<4; i++) {
+        game->plateau->rotateCurrentPiece();
+    }
+
     game->startLoop();
     
     delete game;

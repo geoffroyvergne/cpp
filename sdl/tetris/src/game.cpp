@@ -83,6 +83,7 @@ void Game::startLoop() {
                         if(plateau->detectCollision()) {
                             plateau->rotateCurrentPieceToPreviousPosition();
                         }
+                        //break;
                     }
 
                     // Right Arrow
@@ -107,12 +108,12 @@ void Game::startLoop() {
                     }
 
                     // Up Arrow
-                    if (e.key.keysym.sym == SDLK_UP) {
+                    /*if (e.key.keysym.sym == SDLK_UP) {
                         //SDL_Log("SDLK_UP");
                         plateau->currentPiece->moveUp();
 
                         //break;
-                    }
+                    }*/
 
                     // Down Arrow
                     if (e.key.keysym.sym == SDLK_DOWN) {
@@ -142,7 +143,7 @@ void Game::moveDown() {
     plateau->currentPiece->moveDown();
     if(plateau->detectCollision()) {
         plateau->currentPiece->moveUp();
-        //SDL_Log("Reached bottom");
+        SDL_Log("Reached bottom");
         
         for (size_t i = 0; i < this->plateau->currentPiece->blockList.size(); ++i) {
             this->plateau->wallList.push_back(this->plateau->currentPiece->blockList[i]);            
@@ -157,7 +158,13 @@ void Game::moveDown() {
 
         plateau->addCurrentPiece();
 
+        // TODO fixe it
+        for(int i=0; i<4; i++) {
+            plateau->rotateCurrentPiece();
+        }
+
         if(plateau->gameOver()) {
+            plateau->resetWall();
             plateau->resetWall();
         }
 

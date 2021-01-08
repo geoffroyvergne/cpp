@@ -248,7 +248,7 @@ void Plateau::resetWall() {
     this->addWall();*/
     int erased = 0;
 
-    //TODO improve it
+    //TODO fixe it
     for(int i=0; i<4; i++) {
         for (size_t i = 0; i < this->wallList.size(); ++i) {
             if(this->wallList[i]->type != base) {
@@ -301,16 +301,16 @@ int Plateau::detectLineDone() {
 
 //delete this->wallList[i];
 
-// TODO remove properly blocks instead of move them
+// TODO remove properly blocks instead of moving them
 void Plateau::removeLine(int lineDone) {
-    //TODO improve it
+    //TODO fixe it
     for(int i=0; i<4; i++) {
         for (size_t i = 0; i < this->wallList.size(); ++i) {
             if(this->wallList[i]->textureParams.y == lineDone && this->wallList[i]->type != base) {
                 // move up this line
                 this->wallList[i]->cleanup();
                 this->wallList[i]->textureParams.y = 2000;            
-                //this->wallList.erase(this->wallList.begin() + i);
+                this->wallList.erase(this->wallList.begin() + i);
             }
         }
     }
