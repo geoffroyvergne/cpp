@@ -89,6 +89,8 @@ void Player::moveUp() {
     position();
     destTextureParams.y -= 10;
     playerFlip = SDL_FLIP_NONE;
+
+    //if(destTextureParams.y < -10) destTextureParams.y = 500;
 }
 
 void Player::moveDown() {
@@ -96,6 +98,8 @@ void Player::moveDown() {
     position();
     destTextureParams.y += 10;
     playerFlip = SDL_FLIP_NONE;
+
+    //if(destTextureParams.y > 500) destTextureParams.y = -10;
 }
 
 void Player::moveRight() {    
@@ -103,6 +107,8 @@ void Player::moveRight() {
     position();
     destTextureParams.x += 10;
     playerFlip = SDL_FLIP_NONE;
+
+    //if(destTextureParams.x > 522) destTextureParams.x = -10;
 }
 
 void Player::moveLeft() {
@@ -110,6 +116,8 @@ void Player::moveLeft() {
     position();
     destTextureParams.x -= 10;
     playerFlip = SDL_FLIP_HORIZONTAL;
+
+    //if(destTextureParams.x < -10) destTextureParams.x = 522;
 }
 
 void Player::attack() {

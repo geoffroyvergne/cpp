@@ -12,11 +12,10 @@ int main(int argc, char** argv) {
     game->player = new Player(game->render);
     game->player->sdl_texture = IMG_LoadTexture(game->render, "../assets/link.png");
 
-    game->currentLevel = new Level(game->render);
-    SDL_Texture *sdl_texture = IMG_LoadTexture(game->render, "../assets/overworld-tileset.png");
-    game->currentLevel->sdl_texture = sdl_texture;
+    SDL_Texture *sdl_texture_overworld = IMG_LoadTexture(game->render, "../assets/overworld-tileset.png");
+    game->sdl_texture_overworld = sdl_texture_overworld;
 
-    game->addSpritesLevel();
+    game->createLevels();
 
     game->startLoop();
     

@@ -9,6 +9,8 @@ cmake --build build/
 top -pid $(pgrep -f tetris)
 
 # TODO
-- [ ] Make infinit walk if extrem right goto extrem left
+- [ X ] Make infinit walk if extrem right goto extrem left
 - [ ] Add blocks and sprites in levels
+- [ ] Add more levels around first one
+- [ ] Add enemys
 - [ ] 

@@ -8,6 +8,7 @@
 //#include <player-action.hpp>
 #include <level.hpp>
 #include <sprite-type.hpp>
+#include <levels.hpp>
 
 #ifndef GAME
 #define GAME
@@ -23,6 +24,8 @@ class Game {
 
         SDL_Window *window;
         SDL_Renderer *render;
+        SDL_Texture *sdl_texture;
+        SDL_Texture *sdl_texture_overworld;
         Player *player;
         //std::map<int, *Level> levels;
         Level *currentLevel;
@@ -30,9 +33,9 @@ class Game {
         void init();
         void renderView();
         void startLoop();
-        //Sprite *addSprite(int x, int y, SpriteType type)
         Sprite *getSprite(SpriteType type, int x, int y);
-        void addSpritesLevel();
+        void createLevels();
+        void addSprites(Levels number);
         void cleanup();
 };
 
