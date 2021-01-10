@@ -18,7 +18,7 @@ class Block {
 
         SDL_Renderer *render;
         SDL_Texture *sdl_texture;
-        SDL_Rect textureParams;        
+        SDL_Rect textureParams;
         
         void moveUp();
         void moveDown();
