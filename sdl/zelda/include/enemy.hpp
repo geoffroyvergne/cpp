@@ -2,29 +2,24 @@
 #include <SDL.h>
 #include <player-action.hpp>
 #include <player-direction.hpp>
+#include <enemy-type.hpp>
 
-#ifndef PLAYER
-#define PLAYER
+#ifndef ENEMY
+#define ENEMY
 
-class Player {
+class Enemy {
     public:
-        Player(SDL_Renderer *render);
-        ~Player();
-        std::string name = "Link";
-        //std::string imagePath = "../assets/link.png";
+        Enemy(SDL_Renderer *render, SDL_Texture *sdl_texture);
+        ~Enemy();
+        EnemyType type;
 
         SDL_Renderer *render;
         SDL_Texture *sdl_texture;
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams = { 250, 250,  50, 50 }; // Texture seen in game
-        SDL_RendererFlip playerFlip = SDL_FLIP_NONE;
+        SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-        PlayerAction playerAction = base;
-        PlayerDirection playerDirection = down;
-
-        int lives = 3;
-
-        bool isAttack();
+        bool collide = true;
 
         void position();
 
@@ -32,7 +27,6 @@ class Player {
         void moveDown();
         void moveRight();
         void moveLeft();
-        void attack();
 
         void display();
         void cleanup();

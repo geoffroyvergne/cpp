@@ -10,7 +10,9 @@ top -pid $(pgrep -f tetris)
 
 # TODO
 - [ X ] Make infinit walk if extrem right goto extrem left
-- [ ] Add blocks and sprites in levels
-- [ ] Add more levels around first one
-- [ ] Add enemys
-- [ ] 
+- [ X ] Add blocks and sprites in levels
+- [ x ] Add more levels around first one
+- [ X ] Add enemys
+- [ ] Make enemies move
+- [ X ] Kill enemy
+- [ ] Display lives

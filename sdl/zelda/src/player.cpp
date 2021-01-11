@@ -22,6 +22,32 @@ Player::~Player() {
     cleanup();
 }
 
+/*
+base,
+    front1,
+    front2,
+    swordFront1,    
+    left1,
+    left2,
+    swordLeft1,
+    right1,
+    right2,
+    swordRight1,
+    back1,
+    back2,
+    swordBack1,
+*/
+
+bool Player::isAttack() {
+    switch(playerAction) {
+        case swordFront1: case swordLeft1: case swordRight1: case swordBack1: 
+            return true;
+            break;
+    }
+
+    return false;
+}
+
 void Player::position() {
     destTextureParams.h = 50;
     destTextureParams.w = 50;

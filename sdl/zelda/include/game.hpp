@@ -18,24 +18,23 @@ class Game {
         //Game();
         ~Game();
         std::string name = "Zelda";
-        int width = 512;
-        int height = 480;
+        int width = 500;
+        int height = 500;
         int loopDelay = 10;
 
         SDL_Window *window;
         SDL_Renderer *render;
-        SDL_Texture *sdl_texture;
-        SDL_Texture *sdl_texture_overworld;
+        //SDL_Texture *sdl_texture;
+        SDL_Texture *sdl_texture_items;
         Player *player;
-        //std::map<int, *Level> levels;
         Level *currentLevel;
         
         void init();
+        void addLevel(Levels level);
+        void displayDashboard();
         void renderView();
         void startLoop();
-        Sprite *getSprite(SpriteType type, int x, int y);
-        void createLevels();
-        void addSprites(Levels number);
+        
         void cleanup();
 };
 
