@@ -8,13 +8,15 @@
 
 class Piece {
     public:
-        Piece(SDL_Renderer *render, PieceType type);
+        Piece(SDL_Renderer *render, PieceType type, SDL_Texture *sdl_texture);
         ~Piece();
         std::string name;
         std::string imagePath;
         PieceType pieceype = none;
-        SDL_Texture *sdl_texture = NULL;
-        SDL_Rect textureParams;
+        SDL_Texture *sdl_texture;
+        //SDL_Rect textureParams;
+        SDL_Rect srcTextureParams; // Real texture size and placement
+        SDL_Rect destTextureParams; // Texture seen in game
         SDL_Renderer *render;
         
         void togglePieceType(PieceType pieceType);

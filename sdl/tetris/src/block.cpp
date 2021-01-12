@@ -4,48 +4,61 @@
 #include <block.hpp>
 #include <block-type.hpp>
 
-Block::Block(SDL_Renderer *render, BlockType type) {
+Block::Block(SDL_Renderer *render, BlockType type, SDL_Texture *sdl_texture) {
     this->render = render;
     this->type = type;
+    this->sdl_texture = sdl_texture;
+    
+    srcTextureParams = { 0, 0,  50, 50 };
 
     switch(type) {
         case base : 
-            imagePath = "../assets/tetris-brick-base-grey.jpg"; 
+            srcTextureParams.x = 0;
+            srcTextureParams.y = 0;
             break;
 
         case I : 
-            imagePath = "../assets/tetris-brick-blue-I.jpg"; 
+            srcTextureParams.x = 50;
+            srcTextureParams.y = 0;
             break;
 
         case Z : 
-            imagePath = "../assets/tetris-brick-green-Z.jpg"; 
+            srcTextureParams.x = 0;
+            srcTextureParams.y = 50;
             break;
 
         case L : 
-            imagePath = "../assets/tetris-brick-orange-L.jpg"; 
+            srcTextureParams.x = 50;
+            srcTextureParams.y = 50;
             break;
 
         case J : 
-            imagePath = "../assets/tetris-brick-pink-J.jpg"; 
+            srcTextureParams.x = 0;
+            srcTextureParams.y = 100;
             break;
 
         case T : 
-            imagePath = "../assets/tetris-brick-purple-T.jpg"; 
+            srcTextureParams.x = 50;
+            srcTextureParams.y = 100;
             break;
 
         case S : 
-            imagePath = "../assets/tetris-brick-red-S.jpg"; 
+            srcTextureParams.x = 0;
+            srcTextureParams.y = 150;
             break;
 
         case O : 
-            imagePath = "../assets/tetris-brick-yellow-O.jpg"; 
+            srcTextureParams.x = 50;
+            srcTextureParams.y = 150;
             break;
     }
-
-    textureParams = { 250, 50,  50, 50 };
+    
+    destTextureParams = { 250, 50,  50, 50 };
 
     //if(sdl_texture != NULL) SDL_DestroyTexture(sdl_texture);
-    sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
+
+    //imagePath = "../assets/image-set.png"; 
+    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
 }
 
 Block::~Block() { 
@@ -53,7 +66,7 @@ Block::~Block() {
 }
 
 void Block::display() {
-    SDL_RenderCopy(render, sdl_texture, NULL, &textureParams);
+    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
 }
 
 void Block::cleanup() {

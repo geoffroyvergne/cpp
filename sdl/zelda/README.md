@@ -6,7 +6,7 @@ cmake . -B build/
 cmake --build build/
 
 # check memory footprint
-top -pid $(pgrep -f tetris)
+top -pid $(pgrep -f zelda)
 
 # TODO
 - [ X ] Make infinit walk if extrem right goto extrem left

@@ -10,13 +10,14 @@
 
 class Plateau {
     public:
-        Plateau(SDL_Renderer *render);
+        Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture);
         ~Plateau();
         std::vector<Block*> wallList;
         //std::vector<Piece*> pieceList;
         Piece *currentPiece;
         BlockType currentBlockType;
         SDL_Renderer *render;
+        SDL_Texture *sdl_texture;
         //int collision = 0;
 
         int detectCollision();

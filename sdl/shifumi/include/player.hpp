@@ -14,6 +14,7 @@ class Player {
     public:
         Player(std::string name, PlayerType type);
         ~Player();
+        //SDL_Texture *sdl_texture;
         PlayerType type;
         std::string name;
         int score;

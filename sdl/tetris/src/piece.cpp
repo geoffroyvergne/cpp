@@ -6,8 +6,9 @@
 #include <block-type.hpp>
 //#include <plateau.hpp>
 
-Piece::Piece(SDL_Renderer *render, BlockType type) {
+Piece::Piece(SDL_Renderer *render, BlockType type, SDL_Texture *sdl_texture) {
     this->render = render;
+    this->sdl_texture = sdl_texture;
 
     switch(type) {
         case base : 
@@ -36,6 +37,10 @@ Piece::Piece(SDL_Renderer *render, BlockType type) {
             addO(type);
             break;
     }
+
+    //std::string imagePath = "../assets/image-set.png"; 
+    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
+   
 }
 
 Piece::~Piece() { 
@@ -82,17 +87,17 @@ void Piece::previousPosition() {
 
 // Block Base
 void Piece::addBase(BlockType type) {
-    Block *block = new Block(render, type);
+    Block *block = new Block(render, type, sdl_texture);
     addBlock(block);
 }
 
 // Block I
 void Piece::addI(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type);
-        if(i==1) block->textureParams.y += 50;
-        if(i==2) block->textureParams.y += 100;
-        if(i==3) block->textureParams.y += 150;
+        Block *block = new Block(render, type, sdl_texture);
+        if(i==1) block->destTextureParams.y += 50;
+        if(i==2) block->destTextureParams.y += 100;
+        if(i==3) block->destTextureParams.y += 150;
         addBlock(block);
     }
 }
@@ -102,24 +107,24 @@ void Piece::rotateI(BlockType type) {
         case 0 : case 2 :
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.y += 50;
-                    if(i==2) blockList[i]->textureParams.y += 100;
-                    if(i==3) blockList[i]->textureParams.y += 150;
+                    if(i==1) blockList[i]->destTextureParams.y += 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 100;
+                    if(i==3) blockList[i]->destTextureParams.y += 150;
                 }
                 break;
             }
         case 1 : case 3 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.x -= 50;
-                    if(i==2) blockList[i]->textureParams.x += 50;
-                    if(i==3) blockList[i]->textureParams.x -= 100;                    
+                    if(i==1) blockList[i]->destTextureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.x += 50;
+                    if(i==3) blockList[i]->destTextureParams.x -= 100;                    
                 }
                 break;
             }
@@ -129,12 +134,12 @@ void Piece::rotateI(BlockType type) {
 // Block Z
 void Piece::addZ(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type);        
-        if(i==1) block->textureParams.x -= 50;
-        if(i==2) block->textureParams.y += 50;
+        Block *block = new Block(render, type, sdl_texture);        
+        if(i==1) block->destTextureParams.x -= 50;
+        if(i==2) block->destTextureParams.y += 50;
         if(i==3) {
-            block->textureParams.x += 50;
-            block->textureParams.y += 50;
+            block->destTextureParams.x += 50;
+            block->destTextureParams.y += 50;
         }
         addBlock(block);
     }    
@@ -145,14 +150,14 @@ void Piece::rotateZ(BlockType type) {
         case 0 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.x -= 50;
-                    if(i==2) blockList[i]->textureParams.y += 50;
+                    if(i==1) blockList[i]->destTextureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x += 50;
-                        blockList[i]->textureParams.y += 50;
+                        blockList[i]->destTextureParams.x += 50;
+                        blockList[i]->destTextureParams.y += 50;
                     }
                 }
                 break;
@@ -160,14 +165,14 @@ void Piece::rotateZ(BlockType type) {
         case 1 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.x -= 50;                                        
-                    if(i==2) blockList[i]->textureParams.y -= 50;
+                    if(i==1) blockList[i]->destTextureParams.x -= 50;                                        
+                    if(i==2) blockList[i]->destTextureParams.y -= 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x -= 50;
-                        blockList[i]->textureParams.y += 50;
+                        blockList[i]->destTextureParams.x -= 50;
+                        blockList[i]->destTextureParams.y += 50;
                     }
                 }
                 break;
@@ -175,14 +180,14 @@ void Piece::rotateZ(BlockType type) {
         case 2 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.x += 50;
-                    if(i==2) blockList[i]->textureParams.y -= 50;
+                    if(i==1) blockList[i]->destTextureParams.x += 50;
+                    if(i==2) blockList[i]->destTextureParams.y -= 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x -= 50;
-                        blockList[i]->textureParams.y -= 50;
+                        blockList[i]->destTextureParams.x -= 50;
+                        blockList[i]->destTextureParams.y -= 50;
                     }
                 }
                 break;
@@ -190,14 +195,14 @@ void Piece::rotateZ(BlockType type) {
         case 3 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.x -= 50;
-                    if(i==2) blockList[i]->textureParams.y += 50;
+                    if(i==1) blockList[i]->destTextureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x -= 50;
-                        blockList[i]->textureParams.y -= 50;
+                        blockList[i]->destTextureParams.x -= 50;
+                        blockList[i]->destTextureParams.y -= 50;
                     }
                 }
                 break;
@@ -208,13 +213,13 @@ void Piece::rotateZ(BlockType type) {
 // Block L
 void Piece::addL(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type);
-        //block->textureParams.y += ((i+1)*50);
-        if(i==1) block->textureParams.y += 50;
-        if(i==2) block->textureParams.y += 100;
+        Block *block = new Block(render, type, sdl_texture);
+        //block->destTextureParams.y += ((i+1)*50);
+        if(i==1) block->destTextureParams.y += 50;
+        if(i==2) block->destTextureParams.y += 100;
         if(i==3) {
-            block->textureParams.x += 50;
-            block->textureParams.y += 100;
+            block->destTextureParams.x += 50;
+            block->destTextureParams.y += 100;
         }
         addBlock(block);
     }
@@ -225,14 +230,14 @@ void Piece::rotateL(BlockType type) {
         case 0 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.y += 50;
-                    if(i==2) blockList[i]->textureParams.y += 100;
+                    if(i==1) blockList[i]->destTextureParams.y += 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 100;
                     if(i==3) {
-                        blockList[i]->textureParams.x += 50;
-                        blockList[i]->textureParams.y += 100;
+                        blockList[i]->destTextureParams.x += 50;
+                        blockList[i]->destTextureParams.y += 100;
                     }
                 }
                 break;
@@ -240,15 +245,15 @@ void Piece::rotateL(BlockType type) {
         case 1 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY+50;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY+50;
 
-                    if(i==1) blockList[i]->textureParams.x += 50;
+                    if(i==1) blockList[i]->destTextureParams.x += 50;
 
-                    if(i==2) blockList[i]->textureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.x -= 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x -= 50;
-                        blockList[i]->textureParams.y += 50;
+                        blockList[i]->destTextureParams.x -= 50;
+                        blockList[i]->destTextureParams.y += 50;
                     }
                 }
                 break;
@@ -256,27 +261,27 @@ void Piece::rotateL(BlockType type) {
         case 2 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.y += 50;
-                    if(i==2) blockList[i]->textureParams.y += 100;
-                    if(i==3) blockList[i]->textureParams.x -= 50;
+                    if(i==1) blockList[i]->destTextureParams.y += 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 100;
+                    if(i==3) blockList[i]->destTextureParams.x -= 50;
                 }
                 break;
             }
         case 3 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY+50;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY+50;
 
-                    if(i==1) blockList[i]->textureParams.x += 50;
+                    if(i==1) blockList[i]->destTextureParams.x += 50;
 
-                    if(i==2) blockList[i]->textureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.x -= 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x += 50;
-                        blockList[i]->textureParams.y -= 50;
+                        blockList[i]->destTextureParams.x += 50;
+                        blockList[i]->destTextureParams.y -= 50;
                     }
                 }
                 break;
@@ -287,13 +292,13 @@ void Piece::rotateL(BlockType type) {
 // Block J
 void Piece::addJ(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type);
-        //block->textureParams.y += ((i+1)*50);
-        if(i==1) block->textureParams.y += 50;
-        if(i==2) block->textureParams.y += 100;
+        Block *block = new Block(render, type, sdl_texture);
+        //block->destTextureParams.y += ((i+1)*50);
+        if(i==1) block->destTextureParams.y += 50;
+        if(i==2) block->destTextureParams.y += 100;
         if(i==3) {
-            block->textureParams.x -= 50;
-            block->textureParams.y += 100;
+            block->destTextureParams.x -= 50;
+            block->destTextureParams.y += 100;
         }
         addBlock(block);
     }
@@ -304,14 +309,14 @@ void Piece::rotateJ(BlockType type) {
         case 0 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.y += 50;
-                    if(i==2) blockList[i]->textureParams.y += 100;
+                    if(i==1) blockList[i]->destTextureParams.y += 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 100;
                     if(i==3) {
-                        blockList[i]->textureParams.x -= 50;
-                        blockList[i]->textureParams.y += 100;
+                        blockList[i]->destTextureParams.x -= 50;
+                        blockList[i]->destTextureParams.y += 100;
                     }
                 }
                 break;
@@ -319,15 +324,15 @@ void Piece::rotateJ(BlockType type) {
         case 1 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY+50;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY+50;
 
-                    if(i==1) blockList[i]->textureParams.x += 50;
+                    if(i==1) blockList[i]->destTextureParams.x += 50;
 
-                    if(i==2) blockList[i]->textureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.x -= 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x += 50;
-                        blockList[i]->textureParams.y += 50;
+                        blockList[i]->destTextureParams.x += 50;
+                        blockList[i]->destTextureParams.y += 50;
                     }
                 }
                 break;
@@ -335,27 +340,27 @@ void Piece::rotateJ(BlockType type) {
         case 2 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.y += 50;
-                    if(i==2) blockList[i]->textureParams.y += 100;
-                    if(i==3) blockList[i]->textureParams.x += 50;
+                    if(i==1) blockList[i]->destTextureParams.y += 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 100;
+                    if(i==3) blockList[i]->destTextureParams.x += 50;
                 }
                 break;
             }
         case 3 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY+50;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY+50;
 
-                    if(i==1) blockList[i]->textureParams.x += 50;
+                    if(i==1) blockList[i]->destTextureParams.x += 50;
 
-                    if(i==2) blockList[i]->textureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.x -= 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x -= 50;
-                        blockList[i]->textureParams.y -= 50;
+                        blockList[i]->destTextureParams.x -= 50;
+                        blockList[i]->destTextureParams.y -= 50;
                     }
                 }
                 break;
@@ -366,10 +371,10 @@ void Piece::rotateJ(BlockType type) {
 // Block T
 void Piece::addT(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type);
-        if(i==0) block->textureParams.x -= 50;
-        if(i==2) block->textureParams.x += 50;
-        if(i==3) block->textureParams.y += 50;
+        Block *block = new Block(render, type, sdl_texture);
+        if(i==0) block->destTextureParams.x -= 50;
+        if(i==2) block->destTextureParams.x += 50;
+        if(i==3) block->destTextureParams.y += 50;
         addBlock(block);
     }
 }
@@ -379,48 +384,48 @@ void Piece::rotateT(BlockType type) {
         case 0 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==0) blockList[i]->textureParams.x -= 50;
-                    if(i==2) blockList[i]->textureParams.x += 50;
-                    if(i==3) blockList[i]->textureParams.y += 50;
+                    if(i==0) blockList[i]->destTextureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.x += 50;
+                    if(i==3) blockList[i]->destTextureParams.y += 50;
                 }
                 break;
             }
         case 1 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==0) blockList[i]->textureParams.y -= 50;
-                    if(i==2) blockList[i]->textureParams.y += 50;
-                    if(i==3) blockList[i]->textureParams.x -= 50;
+                    if(i==0) blockList[i]->destTextureParams.y -= 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 50;
+                    if(i==3) blockList[i]->destTextureParams.x -= 50;
                 }
                 break;
             }
         case 2 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==0) blockList[i]->textureParams.x -= 50;
-                    if(i==2) blockList[i]->textureParams.x += 50;
-                    if(i==3) blockList[i]->textureParams.y -= 50;
+                    if(i==0) blockList[i]->destTextureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.x += 50;
+                    if(i==3) blockList[i]->destTextureParams.y -= 50;
                 }
                 break;
             }
         case 3 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==0) blockList[i]->textureParams.y -= 50;
-                    if(i==2) blockList[i]->textureParams.y += 50;
-                    if(i==3) blockList[i]->textureParams.x += 50;
+                    if(i==0) blockList[i]->destTextureParams.y -= 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 50;
+                    if(i==3) blockList[i]->destTextureParams.x += 50;
                 }
                 break;
             }
@@ -430,12 +435,12 @@ void Piece::rotateT(BlockType type) {
 // Block S
 void Piece::addS(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type);        
-        if(i==1) block->textureParams.x += 50;
-        if(i==2) block->textureParams.y += 50;
+        Block *block = new Block(render, type, sdl_texture);        
+        if(i==1) block->destTextureParams.x += 50;
+        if(i==2) block->destTextureParams.y += 50;
         if(i==3) {
-            block->textureParams.x -= 50;
-            block->textureParams.y += 50;
+            block->destTextureParams.x -= 50;
+            block->destTextureParams.y += 50;
         }
         addBlock(block);
     }
@@ -447,14 +452,14 @@ void Piece::rotateS(BlockType type) {
         case 0 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.x += 50;
-                    if(i==2) blockList[i]->textureParams.y += 50;
+                    if(i==1) blockList[i]->destTextureParams.x += 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x -= 50;
-                        blockList[i]->textureParams.y += 50;
+                        blockList[i]->destTextureParams.x -= 50;
+                        blockList[i]->destTextureParams.y += 50;
                     }
                 }
                 break;
@@ -462,14 +467,14 @@ void Piece::rotateS(BlockType type) {
         case 1 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.x -= 50;
-                    if(i==2) blockList[i]->textureParams.y += 50;
+                    if(i==1) blockList[i]->destTextureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x -= 50;
-                        blockList[i]->textureParams.y -= 50;
+                        blockList[i]->destTextureParams.x -= 50;
+                        blockList[i]->destTextureParams.y -= 50;
                     }
                 }
                 break;
@@ -477,14 +482,14 @@ void Piece::rotateS(BlockType type) {
         case 2 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.x -= 50;
-                    if(i==2) blockList[i]->textureParams.y -= 50;
+                    if(i==1) blockList[i]->destTextureParams.x -= 50;
+                    if(i==2) blockList[i]->destTextureParams.y -= 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x += 50;
-                        blockList[i]->textureParams.y -= 50;
+                        blockList[i]->destTextureParams.x += 50;
+                        blockList[i]->destTextureParams.y -= 50;
                     }
                 }
                 break;
@@ -492,14 +497,14 @@ void Piece::rotateS(BlockType type) {
         case 3 : 
             {
                 for (size_t i = 0; i < this->blockList.size(); ++i) {
-                    blockList[i]->textureParams.x = positionX;
-                    blockList[i]->textureParams.y = positionY;
+                    blockList[i]->destTextureParams.x = positionX;
+                    blockList[i]->destTextureParams.y = positionY;
 
-                    if(i==1) blockList[i]->textureParams.x += 50;
-                    if(i==2) blockList[i]->textureParams.y += 50;
+                    if(i==1) blockList[i]->destTextureParams.x += 50;
+                    if(i==2) blockList[i]->destTextureParams.y += 50;
                     if(i==3) {
-                        blockList[i]->textureParams.x += 50;
-                        blockList[i]->textureParams.y -= 50;
+                        blockList[i]->destTextureParams.x += 50;
+                        blockList[i]->destTextureParams.y -= 50;
                     }
                 }
                 break;
@@ -510,12 +515,12 @@ void Piece::rotateS(BlockType type) {
 // Block O
 void Piece::addO(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type);
-        if(i==1) block->textureParams.y += 50;
-        if(i==2) block->textureParams.x += 50;
+        Block *block = new Block(render, type, sdl_texture);
+        if(i==1) block->destTextureParams.y += 50;
+        if(i==2) block->destTextureParams.x += 50;
         if(i==3) {
-            block->textureParams.y += 50;
-            block->textureParams.x += 50;
+            block->destTextureParams.y += 50;
+            block->destTextureParams.x += 50;
         }
         addBlock(block);
     }
@@ -530,7 +535,7 @@ void Piece::moveRight() {
     positionX += 50;
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
-        this->blockList[i]->textureParams.x += 50;
+        this->blockList[i]->destTextureParams.x += 50;
     }
 }
 
@@ -540,7 +545,7 @@ void Piece::moveLeft() {
     //SDL_Log("moveLeft");
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
-        this->blockList[i]->textureParams.x -= 50;
+        this->blockList[i]->destTextureParams.x -= 50;
     }
 
     /*if (plateau->detectCollision()) {
@@ -554,7 +559,7 @@ void Piece::moveUp() {
     positionY -= 50;
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
-        this->blockList[i]->textureParams.y -= 50;
+        this->blockList[i]->destTextureParams.y -= 50;
     }
 }
 
@@ -563,8 +568,8 @@ void Piece::moveDown() {
     positionY += 50;
 
     for (size_t i = 0; i < this->blockList.size(); ++i) {
-        this->blockList[i]->textureParams.y += 50;
-        //std::cout << this->blockList[i]->textureParams.y << std::endl;
+        this->blockList[i]->destTextureParams.y += 50;
+        //std::cout << this->blockList[i]->destTextureParams.y << std::endl;
     }
 }
 

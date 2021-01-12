@@ -10,11 +10,12 @@
 
 class Piece {
     public:
-        Piece(SDL_Renderer *render, BlockType type);
+        Piece(SDL_Renderer *render, BlockType type, SDL_Texture *sdl_texture);
         ~Piece();
 
         std::vector<Block*> blockList;
         SDL_Renderer *render;
+        SDL_Texture *sdl_texture;
         BlockType type;
         int position = 0;
         //int collision;

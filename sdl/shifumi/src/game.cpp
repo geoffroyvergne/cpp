@@ -4,7 +4,10 @@
 #include <game.hpp>
 #include <player.hpp>
 
-//Game::Game() {}
+Game::Game() {
+    /*std::string imagePath = "../assets/images-set.png";
+    this->sdl_texture = IMG_LoadTexture(render, imagePath.c_str());*/
+}
 
 Game::~Game() { 
     cleanup();
@@ -28,8 +31,8 @@ void Game::init() {
 	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
 
     SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-    SDL_RenderClear(render);
-	SDL_RenderPresent(render); 
+    //SDL_RenderClear(render);
+	//SDL_RenderPresent(render); 
 }
 
 void Game::renderView() {

@@ -1,11 +1,16 @@
 #include <iostream>
 #include <piece.hpp>
 
-Piece::Piece(SDL_Renderer *render, PieceType pieceype) {
+Piece::Piece(SDL_Renderer *render, PieceType pieceype, SDL_Texture *sdl_texture) {
     this->render = render;
-    textureParams = { 120, 120,  90, 90 };
+    this->sdl_texture = sdl_texture;
+
+    //textureParams = { 120, 120,  90, 90 };
+    srcTextureParams = { 0, 0,  90, 90 };
 
     this->togglePieceType(pieceype);
+
+    destTextureParams = { 120, 120,  90, 90 };
 }
 
 Piece::~Piece() {
@@ -15,32 +20,42 @@ Piece::~Piece() {
 void Piece::togglePieceType(PieceType pieceype) {
     switch(pieceype) {
         case none : 
-            imagePath = "../assets/question-mark.png";
+            //imagePath = "../assets/question-mark.png";
+            srcTextureParams.x = 120;
+            srcTextureParams.y = 90;
             this->pieceype = pieceype;
             this->name = "none";
             break;
 
         case rock : 
-            imagePath = "../assets/rock.png";             
+            //imagePath = "../assets/rock.png";
+            srcTextureParams.x = 0;
+            srcTextureParams.y = 97;
             this->pieceype = pieceype;
             this->name = "rock";
             break;
 
         case paper : 
-            imagePath = "../assets/paper.png";
+            //imagePath = "../assets/paper.png";
+            srcTextureParams.x = 100;
+            srcTextureParams.y = 0;
             this->pieceype = pieceype;
             this->name = "paper";
             break;
 
         case sissors : 
-            imagePath = "../assets/sissors.png";
+            //imagePath = "../assets/sissors.png";
+            srcTextureParams.x = 0;
+            srcTextureParams.y = 100;
             this->pieceype = pieceype;
             this->name = "sissors";
             break;
     }
 
-    if(sdl_texture != NULL) SDL_DestroyTexture(sdl_texture);
-    sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
+    //std::string imagePath = "../assets/images-set.png";
+
+    //if(sdl_texture != NULL) SDL_DestroyTexture(sdl_texture);
+    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
 }
 
 void Piece::nextPiece() {
@@ -82,9 +97,9 @@ void Piece::randomPiece() {
 }
 
 void Piece::display() {
-    SDL_RenderCopy(render, sdl_texture, NULL, &textureParams);
+    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
 }
 
 void Piece::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(sdl_texture);
 }

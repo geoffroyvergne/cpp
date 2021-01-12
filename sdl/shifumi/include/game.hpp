@@ -9,7 +9,7 @@
 
 class Game {
     public:
-        //Game();
+        Game();
         ~Game();
         std::string name = "shifumi";
         int width = 512;
@@ -19,6 +19,7 @@ class Game {
 
         SDL_Window *window;
         SDL_Renderer *render;
+        //SDL_Texture *sdl_texture;
 
         Message *message;
         Player *player1;

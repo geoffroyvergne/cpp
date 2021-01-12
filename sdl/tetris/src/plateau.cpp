@@ -10,9 +10,16 @@
 #include <map>
 #include <iterator>
 
-Plateau::Plateau(SDL_Renderer *render) {
+Plateau::Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture) {
     this->render = render;   
     this->currentBlockType = base; 
+    this->sdl_texture = sdl_texture;
+    
+    /*if (sdl_texture == NULL){
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "sdl_texture Error: %s\n", IMG_GetError());
+		//return NULL;
+	}*/
+
     this->addWall();
 }
 
@@ -30,10 +37,10 @@ int Plateau::detectCollision() {
     //this->currentPiece->collision = 0;
 
     for (size_t i = 0; i < this->currentPiece->blockList.size(); ++i) {      
-        pieceBloc = this->currentPiece->blockList[i]->textureParams;
+        pieceBloc = this->currentPiece->blockList[i]->destTextureParams;
 
         for (size_t j = 0; j < this->wallList.size(); ++j) {    
-            wallBloc = this->wallList[j]->textureParams;
+            wallBloc = this->wallList[j]->destTextureParams;
             collision = SDL_HasIntersection(&pieceBloc, &wallBloc);
             if (collision) {
                 //this->collision = 1;
@@ -58,25 +65,25 @@ int Plateau::detectCollision() {
 
 void Plateau::addWall() {
     for(int i=0; i<15; i++) {
-        Block *block = new Block(render, base);
-        block->textureParams.x = 0;
-        block->textureParams.y = (i+1) * 50;
+        Block *block = new Block(render, base, sdl_texture);
+        block->destTextureParams.x = 0;
+        block->destTextureParams.y = (i+1) * 50;
 
         wallList.push_back(block);
     }
 
     for(int i=0; i<15; i++) {
-        Block *block = new Block(render, base);
-        block->textureParams.x = 500;
-        block->textureParams.y = (i+1) * 50;
+        Block *block = new Block(render, base, sdl_texture);
+        block->destTextureParams.x = 500;
+        block->destTextureParams.y = (i+1) * 50;
 
         wallList.push_back(block);
     }
 
     for(int i=0; i<9; i++) {
-        Block *block = new Block(render, base);
-        block->textureParams.x = (i+1) * 50;
-        block->textureParams.y = 750;
+        Block *block = new Block(render, base, sdl_texture);
+        block->destTextureParams.x = (i+1) * 50;
+        block->destTextureParams.y = 750;
 
         wallList.push_back(block);
     }
@@ -159,7 +166,7 @@ void Plateau::randomBlockType() {
 }
 
 void Plateau::addPiece() {
-    Piece *piece = new Piece(this->render, this->currentBlockType);
+    Piece *piece = new Piece(this->render, this->currentBlockType, this->sdl_texture);
     piece->blockList = this->currentPiece->blockList;
     piece->type = this->currentPiece->type;
 
@@ -174,7 +181,7 @@ void Plateau::addCurrentPiece() {
     //toggleBlockType();
     randomBlockType();
     if(currentPiece == NULL) delete currentPiece;
-    currentPiece = new Piece(this->render, this->currentBlockType);
+    currentPiece = new Piece(this->render, this->currentBlockType, this->sdl_texture);
     //SDL_Log("this->currentBlockType : %d", this->currentBlockType);
 }
 
@@ -252,7 +259,7 @@ void Plateau::resetWall() {
     for(int i=0; i<4; i++) {
         for (size_t i = 0; i < this->wallList.size(); ++i) {
             if(this->wallList[i]->type != base) {
-                this->wallList[i]->cleanup();
+                //this->wallList[i]->cleanup();
                 this->wallList.erase(this->wallList.begin() + i);
             }
         }
@@ -266,8 +273,8 @@ int Plateau::detectLineDone() {
 
     for (size_t i = 0; i < this->wallList.size(); ++i) {
         //Do not count wall base blocks
-        if(this->wallList[i]->type != base && this->wallList[i]->textureParams.y < 2000) {
-            int y = this->wallList[i]->textureParams.y;
+        if(this->wallList[i]->type != base && this->wallList[i]->destTextureParams.y < 2000) {
+            int y = this->wallList[i]->destTextureParams.y;
             
             //SDL_Log("blockCount");
             if (blockCount.count(y) > 0) {
@@ -306,17 +313,17 @@ void Plateau::removeLine(int lineDone) {
     //TODO fixe it
     for(int i=0; i<4; i++) {
         for (size_t i = 0; i < this->wallList.size(); ++i) {
-            if(this->wallList[i]->textureParams.y == lineDone && this->wallList[i]->type != base) {
+            if(this->wallList[i]->destTextureParams.y == lineDone && this->wallList[i]->type != base) {
                 // move up this line
-                this->wallList[i]->cleanup();
-                this->wallList[i]->textureParams.y = 2000;            
+                //this->wallList[i]->cleanup();
+                this->wallList[i]->destTextureParams.y = 2000;            
                 this->wallList.erase(this->wallList.begin() + i);
             }
         }
     }
 
     /*for (auto wall : this->wallList) {
-        if(wall->textureParams.y == lineDone && wall->type != base) {
+        if(wall->destTextureParams.y == lineDone && wall->type != base) {
             delete wall;
         }
     }*/
@@ -325,8 +332,8 @@ void Plateau::removeLine(int lineDone) {
 void Plateau::moveDownLine(int lineDone) {
     for (size_t i = 0; i < this->wallList.size(); ++i) {
         if(this->wallList[i]->type != base) {
-            if(this->wallList[i]->textureParams.y <= lineDone && this->wallList[i]->textureParams.y <800) {
-                this->wallList[i]->textureParams.y += 50;
+            if(this->wallList[i]->destTextureParams.y <= lineDone && this->wallList[i]->destTextureParams.y <800) {
+                this->wallList[i]->destTextureParams.y += 50;
             }
         }
     }
@@ -334,7 +341,7 @@ void Plateau::moveDownLine(int lineDone) {
 
 int Plateau::gameOver() {
     for (size_t i = 0; i < this->wallList.size(); ++i) {
-        if(this->wallList[i]->textureParams.y <200 && this->wallList[i]->type != base) {
+        if(this->wallList[i]->destTextureParams.y <200 && this->wallList[i]->type != base) {
             return 1;
         }
     }
