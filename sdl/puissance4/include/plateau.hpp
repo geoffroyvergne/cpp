@@ -9,12 +9,14 @@
 
 class Plateau {
     public:
-        Plateau(SDL_Renderer *render);
+        Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture);
         ~Plateau();
         SDL_Renderer *render;
-        std::string imagePath = "../assets/puisance4-plateau.png";
+        //std::string imagePath = "../assets/puisance4-plateau.png";
         SDL_Texture *sdl_texture;
-        SDL_Rect textureParams = { 0, 50,  512, 460 };
+        //SDL_Rect textureParams = { 0, 50,  512, 460 };
+        SDL_Rect srcTextureParams; // Real texture size and placement
+        SDL_Rect destTextureParams; // Texture seen in game
         int casesUsed = 0;
         std::vector<Piece*> pieceList;
 

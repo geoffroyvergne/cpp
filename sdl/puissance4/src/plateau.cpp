@@ -4,9 +4,13 @@
 
 #include <plateau.hpp>
 
-Plateau::Plateau(SDL_Renderer *render) {
+Plateau::Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture) {
     this->render = render;
-    sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
+    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
+    this->sdl_texture = sdl_texture;
+
+    srcTextureParams = { 70, 139,  512, 460 };
+    destTextureParams = { 11, 85,  512, 460 };
 }
 
 Plateau::~Plateau() {
@@ -20,16 +24,16 @@ void Plateau::displayPieces() {
 }
 
 int Plateau::addNewPiece(Piece *currentPiece) {    
-    Piece *piece = new Piece(render, currentPiece->type);
-    piece->textureParams.x = currentPiece->textureParams.x;
-    piece->textureParams.y = 429;
+    Piece *piece = new Piece(render, currentPiece->type, sdl_texture);
+    piece->destTextureParams.x = currentPiece->destTextureParams.x;
+    piece->destTextureParams.y = 429;
 
     getCaseNumberByTextureParams(piece);
 
     //first row : 69
     //lastRow : 430
     //SDL_Log("Case Number %d", piece->caseNumber);
-    //SDL_Log("piece->textureParams.y %d", piece->textureParams.y);
+    //SDL_Log("piece->destTextureParams.y %d", piece->destTextureParams.y);
 
     int rowFull = false;
     
@@ -47,7 +51,7 @@ int Plateau::addNewPiece(Piece *currentPiece) {
 
 int Plateau::caseAlreadyUsed(Piece *piece) {
      for (size_t i = 0; i < this->pieceList.size(); ++i) {
-         if(piece->textureParams.x == this->pieceList[i]->textureParams.x && piece->textureParams.y == this->pieceList[i]->textureParams.y) {
+         if(piece->destTextureParams.x == this->pieceList[i]->destTextureParams.x && piece->destTextureParams.y == this->pieceList[i]->destTextureParams.y) {
              return true;
          }
      }
@@ -93,7 +97,7 @@ lines   26   93   160  227  294  361  428
         for(int line=0; line<7; line++) {
             //SDL_Log("lineArray[line] %d rowArray[row] %d ", lineArray[line], rowArray[row]);
             
-            if(piece->textureParams.x == lineArray[line] && piece->textureParams.y == rowArray[row]) {
+            if(piece->destTextureParams.x == lineArray[line] && piece->destTextureParams.y == rowArray[row]) {
                 piece->position = {caseNumber,rowArray[row],lineArray[line]};
                 piece->caseNumber = caseNumber;
 
@@ -103,7 +107,7 @@ lines   26   93   160  227  294  361  428
         }
     }
 
-    //SDL_Log("textureParams.x %d textureParams.y %d", piece->textureParams.x, piece->textureParams.y);
+    //SDL_Log("destTextureParams.x %d destTextureParams.y %d", piece->destTextureParams.x, piece->destTextureParams.y);
     //SDL_Log("Case Number %d", piece->caseNumber);
 }
 
@@ -125,10 +129,11 @@ Player Plateau::lineDone() {
 }
 
 void Plateau::display() {
-    SDL_RenderCopy(render, sdl_texture, NULL, &textureParams);
+    //SDL_RenderCopy(render, sdl_texture, NULL, &textureParams);
+    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
 }
 
 void Plateau::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(sdl_texture);
 }
 

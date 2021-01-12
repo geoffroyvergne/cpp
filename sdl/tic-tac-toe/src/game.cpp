@@ -36,18 +36,6 @@ void Game::init() {
 }
 
 void Game::startLoop() {
-    Plateau *plateau = new Plateau(render);
-    this->plateau = plateau;
-    
-    // Message
-    message = new Message(render);
-
-    // Init lastCurrentPiece
-    currentPiece = new Piece(render, red_circle);
-    currentPiece->textureParams.x = 210;
-    currentPiece->textureParams.y = 210;
-
-    currentPiece = plateau->addCurrentPiece(currentPiece, currentPlayer);
     
     int active = 1;
     SDL_Event e;
@@ -74,7 +62,8 @@ void Game::startLoop() {
         } 
         
 		while (SDL_PollEvent(&e)) {	
-			if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
+			//if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
+            if (e.type == SDL_QUIT) {
 				active = 0;
 				SDL_Log("Quit\n");
 			}

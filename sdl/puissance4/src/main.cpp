@@ -7,9 +7,13 @@ int main(int argc, char** argv) {
     SDL_Log("%s", game->name.c_str());
 
     game->init(); 
-    game->plateau = new Plateau(game->render);
+
+    std::string imagePath = "../assets/images-set.png"; 
+    SDL_Texture *sdl_texture = IMG_LoadTexture(game->render, imagePath.c_str());
+
+    game->plateau = new Plateau(game->render, sdl_texture);
     game->message = new Message(game->render);
-    game->currentPiece = new Piece(game->render, red_circle);
+    game->currentPiece = new Piece(game->render, red_circle, sdl_texture);
     game->startLoop();
     
     game->newGame();

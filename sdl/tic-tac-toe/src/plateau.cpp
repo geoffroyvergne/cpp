@@ -4,18 +4,23 @@
 #include <SDL_ttf.h>
 #include <plateau.hpp>
 
-Plateau::Plateau(SDL_Renderer *render) {
+Plateau::Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture) {
     this->render = render;
-    sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
+    this->sdl_texture = sdl_texture;
+    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
+
+    srcTextureParams = { 87, 187,  512, 512 };
+    destTextureParams = { 0, 0,  512, 512 };
 }
 
 void Plateau::display() {
-    SDL_RenderCopy(render, sdl_texture, NULL, &textureParams);
+    //SDL_RenderCopy(render, sdl_texture, NULL, &textureParams);
+    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
 }
 
 int Plateau::caseAlreadyUsed(Piece *piece) {
      for (size_t i = 0; i < this->pieceList.size(); ++i) {
-         if(piece->textureParams.x == this->pieceList[i]->textureParams.x && piece->textureParams.y == this->pieceList[i]->textureParams.y) {
+         if(piece->destTextureParams.x == this->pieceList[i]->destTextureParams.x && piece->destTextureParams.y == this->pieceList[i]->destTextureParams.y) {
              return true;
          }
      }
@@ -53,9 +58,9 @@ Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
     if(player == cross) pieceType = black_cross;
     else if(player == circle) pieceType = black_circle;
 
-    Piece *piece = new Piece(render, pieceType);
-    piece->textureParams.x = currentPiece->textureParams.x;
-    piece->textureParams.y = currentPiece->textureParams.y;
+    Piece *piece = new Piece(render, pieceType, sdl_texture);
+    piece->destTextureParams.x = currentPiece->destTextureParams.x;
+    piece->destTextureParams.y = currentPiece->destTextureParams.y;
 
     piece->getCaseNumberByTextureParams();
     SDL_Log("Case Number %d", piece->caseNumber);
