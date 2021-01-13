@@ -98,7 +98,7 @@ lines   26   93   160  227  294  361  428
             //SDL_Log("lineArray[line] %d rowArray[row] %d ", lineArray[line], rowArray[row]);
             
             if(piece->destTextureParams.x == lineArray[line] && piece->destTextureParams.y == rowArray[row]) {
-                piece->position = {caseNumber,rowArray[row],lineArray[line]};
+                piece->position = { caseNumber, rowArray[row], lineArray[line] };
                 piece->caseNumber = caseNumber;
 
                 break;                

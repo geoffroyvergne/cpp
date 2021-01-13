@@ -55,7 +55,7 @@ void Game::startLoop() {
             //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
             if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
-				SDL_Log("Quit\n");
+				SDL_Log("Quit");
 			}            
 
             renderView();

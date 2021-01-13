@@ -16,7 +16,7 @@ class Piece {
         SDL_Texture *sdl_texture;
         //SDL_Rect textureParams;
         SDL_Rect srcTextureParams; // Real texture size and placement
-        SDL_Rect destTextureParams; // Texture seen in game
+        SDL_Rect destTextureParams = { 120, 120,  90, 90 }; // Texture seen in game
         SDL_Renderer *render;
         
         void togglePieceType(PieceType pieceType);

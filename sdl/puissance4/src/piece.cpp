@@ -53,7 +53,7 @@ void Piece::display() {
 }
 
 void Piece::moveRight() {
-    if(destTextureParams.x <428) destTextureParams.x += 67;
+    if(destTextureParams.x <360) destTextureParams.x += 67;
 }
 
 
@@ -63,7 +63,7 @@ void Piece::moveLeft() {
 
 int Piece::moveUp() {
     if(destTextureParams.y >69) {
-        destTextureParams.y -= 72;
+        destTextureParams.y -= 68;
         return false;
     }
 

@@ -21,29 +21,29 @@ void Piece::togglePlayer(PieceType pieceype) {
     switch(pieceype) {
         case black_circle : 
             //imagePath = "../assets/black-circle.png"; 
-            srcTextureParams.x = 32;
-            srcTextureParams.y = 26;
+            srcTextureParams.x = 30;
+            srcTextureParams.y = 22;
             player = circle;
             break;
 
         case black_cross : 
             //imagePath = "../assets/black-cross.png"; 
-            srcTextureParams.x = 135;
+            srcTextureParams.x = 140;
             srcTextureParams.y = 20;
             player = cross;
             break;
 
         case red_circle : 
             //imagePath = "../assets/red-circle.png"; 
-            srcTextureParams.x = 259;
-            srcTextureParams.y = 22;
+            srcTextureParams.x = 268;
+            srcTextureParams.y = 19;
             player = circle;
             break;
 
         case red_cross : 
             //imagePath = "../assets/red-cross.png"; 
-            srcTextureParams.x = 393;
-            srcTextureParams.y = 23;
+            srcTextureParams.x = 395;
+            srcTextureParams.y = 20;
             player = cross;
             break;
     }

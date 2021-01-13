@@ -6,7 +6,7 @@ Piece::Piece(SDL_Renderer *render, PieceType pieceype, SDL_Texture *sdl_texture)
     this->sdl_texture = sdl_texture;
 
     //textureParams = { 120, 120,  90, 90 };
-    srcTextureParams = { 0, 0,  90, 90 };
+    //srcTextureParams = { 0, 0,  90, 90 };
 
     this->togglePieceType(pieceype);
 
@@ -20,33 +20,41 @@ Piece::~Piece() {
 void Piece::togglePieceType(PieceType pieceype) {
     switch(pieceype) {
         case none : 
-            //imagePath = "../assets/question-mark.png";
             srcTextureParams.x = 120;
-            srcTextureParams.y = 90;
+            srcTextureParams.y = 89;
+            srcTextureParams.w = 90;
+            srcTextureParams.h = 90;
+
             this->pieceype = pieceype;
             this->name = "none";
             break;
 
         case rock : 
-            //imagePath = "../assets/rock.png";
             srcTextureParams.x = 0;
             srcTextureParams.y = 97;
+            srcTextureParams.w = 120;
+            srcTextureParams.h = 120;
+
             this->pieceype = pieceype;
             this->name = "rock";
             break;
 
         case paper : 
-            //imagePath = "../assets/paper.png";
-            srcTextureParams.x = 100;
+            srcTextureParams.x = 0;
             srcTextureParams.y = 0;
+            srcTextureParams.w = 100;
+            srcTextureParams.h = 90;
+
             this->pieceype = pieceype;
             this->name = "paper";
             break;
 
         case sissors : 
-            //imagePath = "../assets/sissors.png";
-            srcTextureParams.x = 0;
-            srcTextureParams.y = 100;
+            srcTextureParams.x = 100;
+            srcTextureParams.y = 0;
+            srcTextureParams.w = 120;
+            srcTextureParams.h = 80;
+
             this->pieceype = pieceype;
             this->name = "sissors";
             break;
