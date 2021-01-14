@@ -1,24 +1,18 @@
 #include <iostream>
-#include <vector>
-
 #include <SDL.h>
-
-#include <settings.hpp>
+#include <SDL_image.h>
 #include <game.hpp>
 
 int main(int argc, char** argv) {
-    SDL_Log("Mario!");
-
     Game *game = new Game();
+    SDL_Log("%s", game->name.c_str());
 
-    game->init("Mario", width, height);
-
-    game->loadLevel(1);
+    game->init();
+    game->intro = new Message(game->render, "../assets/Pretendo.ttf");    
 
     game->startLoop();
-
-    game->cleanup();
-    free(game);
+    
+    delete game;
 
     return EXIT_SUCCESS;
 }

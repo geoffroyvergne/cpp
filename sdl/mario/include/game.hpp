@@ -1,26 +1,30 @@
 #include <iostream>
-#include <vector>
 #include <SDL.h>
-#include <settings.hpp>
-#include <texture.hpp>
+#include <message.hpp>
 
 #ifndef GAME
 #define GAME
 
 class Game {
     public:
+        //Game();
+        ~Game();
+        std::string name = "Mario";
+        int width = 500;
+        int height = 500;
+        int loopDelay = 10;
+
         SDL_Window *window;
         SDL_Renderer *render;
-        SDL_bool collision;
-        std::vector<Texture> texturesList;
-        Texture *marioTexture;
-        void init(std::string windowTitle, int screenWidth, int screenHeight);
+        Message *intro;
+
+        void init();
+        void renderView();
         void startLoop();
+        void displayIntro();
+        void displayGame();
+        
         void cleanup();
-        Texture* loadTexture(std::string file, std::string name, SDL_Rect textureParams, int move, int colide);
-        void loadLevel(int level);
-        void loadLevelSprites(SDL_Event *e);
-        void loadMarioSprite(SDL_Event *e, SDL_RendererFlip *marioFlip);
 };
 
 #endif
