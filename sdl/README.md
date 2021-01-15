@@ -8,4 +8,4 @@
 - [ ] snake
 - [ ] pong
 - [ ] brick breaker
-- [ ] 
+- [ ] SDL_DisplayFormat
