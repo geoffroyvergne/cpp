@@ -7,8 +7,7 @@ int main(int argc, char** argv) {
     Game *game = new Game();
     SDL_Log("%s", game->name.c_str());
 
-    game->init();
-    game->intro = new Message(game->render, "../assets/Pretendo.ttf");    
+    game->intro = new Message(game->render, "../assets/Pretendo.ttf");
 
     game->startLoop();
     

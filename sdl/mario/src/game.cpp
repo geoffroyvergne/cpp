@@ -3,6 +3,15 @@
 #include <game.hpp>
 #include <message.hpp>
 
+Game::Game() { 
+    init();
+    
+    this->sdl_texture_levels = IMG_LoadTexture(render, "../assets/levels.png");
+    this->sdl_texture_enemies = IMG_LoadTexture(render, "../assets/enemies.png");
+
+    newLevel(w11);
+}
+
 Game::~Game() { 
     cleanup();
 }
@@ -30,7 +39,7 @@ void Game::init() {
 
 void Game::renderView() {
     SDL_RenderClear(render);        
-        displayIntro();
+        //displayIntro();
         displayGame();
     SDL_RenderPresent(render);
 }
@@ -48,9 +57,17 @@ void Game::displayIntro() {
 }
 
 void Game::displayGame() {
-    if(SDL_GetTicks() > 3000) {        
+    //if(SDL_GetTicks() > 3000) {        
         SDL_SetRenderDrawColor(render, 4, 156, 216, 255);
-    }
+        
+        this->currentLevel->display();
+    //}
+}
+
+void Game::newLevel(World world) {
+    if(this->currentLevel != nullptr) delete this->currentLevel;
+
+    currentLevel = new Level(world, render, sdl_texture_levels, sdl_texture_enemies);
 }
 
 void Game::startLoop() {

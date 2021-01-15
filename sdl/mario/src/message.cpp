@@ -21,12 +21,17 @@ Message::~Message() {
     cleanUp();
 }
 
-void Message::displayMessage() { 
-    //this->message = message;      
-    //message = "TIC TAC TOE " + getScore() + " winner : " + getPlayer(lastWinner);
+void Message::displayMessage() {     
+    //sdlSurface = TTF_RenderText_Blended_Wrapped(font, message.c_str(), color);
     
     sdlSurface = TTF_RenderText_Blended(font, message.c_str(), color);
     sdlTexture = SDL_CreateTextureFromSurface(render, sdlSurface);
+    SDL_RenderCopy(render, sdlTexture, NULL, &textureParams);  
+
+    /*sdlSurface = TTF_RenderText_Blended(font, "Mario", color);
+    sdlTexture = SDL_CreateTextureFromSurface(render, sdlSurface);
+    textureParams.y += 50;*/
+    
     SDL_RenderCopy(render, sdlTexture, NULL, &textureParams);  
 
     SDL_DestroyTexture(sdlTexture);
