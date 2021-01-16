@@ -135,7 +135,7 @@ void Game::startLoop() {
                             this->player->destTextureParams.x -= 20;
                         } 
                 
-                        if(this->player->destTextureParams.x > 522) {
+                        if(this->player->destTextureParams.x > 600) {
                             if(currentLevel->rightNumber != none) {
                                 addLevel(currentLevel->rightNumber);
                                 this->player->destTextureParams.x = -10;                            

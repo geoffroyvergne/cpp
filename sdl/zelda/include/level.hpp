@@ -19,6 +19,7 @@ class Level {
         std::vector<Enemy*> enemyList;
         Levels number;
         std::string name = "none";
+        int spriteSize = 50;
 
         SDL_Renderer *render;
         SDL_Texture *sdl_texture_overworld;
@@ -38,7 +39,7 @@ class Level {
         Sprite *getSprite(SpriteType type, int x, int y);
         void addEnemies(Levels number);
         void addSprites(Levels number);
-
+        void pushLevel(std::array<std::array<int, 12>, 10> *levelDef);
         void display();
         void cleanup();
 };

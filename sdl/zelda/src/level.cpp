@@ -1,6 +1,8 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <array>
+
 #include <level.hpp>
 #include <levels.hpp>
 
@@ -54,6 +56,7 @@ void Level::move(Levels levels) {
             name = "h09";
             leftNumber = h08;
             rightNumber = h10;
+            upNumber = g09;
             break;
 
         case h10 : 
@@ -64,6 +67,13 @@ void Level::move(Levels levels) {
         case g08 : 
             name = "g08";
             downNumber = h08;
+            rightNumber = g09;
+            break;
+
+        case g09 : 
+            name = "g08";
+            leftNumber = g08;
+            downNumber = h09;
             break;
     }
 }
@@ -121,7 +131,7 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
             {
                 Sprite *sprite = new Sprite(render, sdl_texture_overworld);
                 sprite->srcTextureParams = { 362, 164,  4, 4 };
-                sprite->destTextureParams = { x, y,  50, 50 };
+                sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
                 sprite->collide = false;
 
                 return sprite;
@@ -131,7 +141,7 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
             {
                 Sprite *sprite = new Sprite(render, sdl_texture_overworld);
                 sprite->srcTextureParams = { 290, 107,  15, 16 };
-                sprite->destTextureParams = { x, y,  50, 50 };
+                sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
 
                 return sprite;
             }
@@ -140,7 +150,7 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
             {
                 Sprite *sprite = new Sprite(render, sdl_texture_overworld);
                 sprite->srcTextureParams = { 355, 107,  15, 16 };
-                sprite->destTextureParams = { x, y,  50, 50 };
+                sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
 
                 return sprite;
             }
@@ -149,7 +159,7 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
             {
                 Sprite *sprite = new Sprite(render, sdl_texture_overworld);
                 sprite->srcTextureParams = { 371, 107,  15, 16 };
-                sprite->destTextureParams = { x, y,  50, 50 };
+                sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
                 sprite->collide = false;
 
                 return sprite;
@@ -159,7 +169,7 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
             {
                 Sprite *sprite = new Sprite(render, sdl_texture_overworld);
                 sprite->srcTextureParams = { 314, 107,  15, 16 };
-                sprite->destTextureParams = { x, y,  50, 50 };
+                sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
 
                 return sprite;
             }
@@ -168,7 +178,7 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
             {
                 Sprite *sprite = new Sprite(render, sdl_texture_overworld);
                 sprite->srcTextureParams = { 275, 107,  15, 16 };
-                sprite->destTextureParams = { x, y,  50, 50 };
+                sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
 
                 return sprite;
             }
@@ -177,7 +187,7 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
             {
                 Sprite *sprite = new Sprite(render, sdl_texture_overworld);
                 sprite->srcTextureParams = { 419, 107,  15, 16 };
-                sprite->destTextureParams = { x, y,  50, 50 };
+                sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
 
                 return sprite;
             }
@@ -186,7 +196,7 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
             {
                 Sprite *sprite = new Sprite(render, sdl_texture_overworld);
                 sprite->srcTextureParams = { 478, 107,  15, 16 };
-                sprite->destTextureParams = { x, y,  50, 50 };
+                sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
 
                 return sprite;
             }
@@ -198,11 +208,7 @@ void Level::addEnemies(Levels number) {
     int spriteSize = 50;
 
     switch(number) {
-        case g08 : 
-            /*for(int i = 0; i<4; i++) {
-                enemyList.push_back(getEnemy(red_octorok, 500/(i+1), 500/(i+1)));
-            }*/
-
+        case g08 :             
             enemyList.push_back(getEnemy(red_octorok, 50, 50));
             enemyList.push_back(getEnemy(red_octorok, 50, 300));
             enemyList.push_back(getEnemy(red_octorok, 300, 50));
@@ -211,113 +217,155 @@ void Level::addEnemies(Levels number) {
 }
 
 void Level::addSprites(Levels number) {
-    int spriteSize = 50;
+    std::array<std::array<int, 12>, 10> levelDef;
 
     switch(number) {
         case h07 : 
-            // green_rock
-            for(int i = 0; i<10; i++) {
-                if(i >4 && i<8) continue;
-                spriteList.push_back(getSprite(green_rock, 450, i * spriteSize));
-            }
-
-            spriteList.push_back(getSprite(green_rock_standalone, 200, 200));
-
-            break;
-
-        case h08 : 
-            // green_rock
-            for(int i = 0; i<5; i++) {
-                if(i==0) {
-                    for(int j=0; j<7; j++) {
-                        spriteList.push_back(getSprite(green_rock, (j) * spriteSize, i * spriteSize));
+            {                
+                levelDef = {
+                    {
+                        {00, 00, 00, 00, 00, 00, 00, 00, 00, green_rock, 00, 00 },
+                        {00, 00, 00, 00, 00, 00, 00, 00, 00, green_rock, 00, 00 },
+                        {00, 00, 00, 00, 00, 00, 00, 00, 00, green_rock, 00, 00 },
+                        {00, 00, 00, brown_rock_standalone, 00, 00, 00, 00, 00, green_rock, 00, 00 },
+                        {00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        {00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        {00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        {00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        {00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        {00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
                     }
-                }
-                if(i==1) {
-                    for(int j=0; j<6; j++) {
-                        if(j==4) continue;
-                        spriteList.push_back(getSprite(green_rock, j * spriteSize, i * spriteSize));
-                    }
-                }
-                if(i==2) {
-                    for(int j=0; j<3; j++) {
-                        spriteList.push_back(getSprite(green_rock, j * spriteSize, i * spriteSize));
-                    }
-                }
-                if(i==3) {
-                    for(int j=0; j<2; j++) {
-                        spriteList.push_back(getSprite(green_rock, j * spriteSize, i * spriteSize));
-                    }
-                }
-                if(i==4) {
-                    for(int j=0; j<1; j++) {
-                        spriteList.push_back(getSprite(green_rock, j * spriteSize, i * spriteSize));
-                    }
-                }
-            }
+                };    
 
-            // green_rock_corner_low_right
-            for(int i = 0; i<5; i++) {
-                if(i==1) {            
-                    spriteList.push_back(getSprite(green_rock_corner_low_right, 300, i * spriteSize));
-                }
-                if(i==2) {            
-                    spriteList.push_back(getSprite(green_rock_corner_low_right, 150, i * spriteSize));
-                }
-                if(i==3) {            
-                    spriteList.push_back(getSprite(green_rock_corner_low_right, 100, i * spriteSize));
-                }
-                if(i==4) {            
-                    spriteList.push_back(getSprite(green_rock_corner_low_right, 50, i * spriteSize));
-                }
-            }
+                /*for (int i = 0; i < levelDef.size(); ++i) {
+                    for (int j = 0; j < levelDef[i].size(); ++j) {
+                        if(static_cast<SpriteType>(levelDef[i][j]) == empty) continue;                        
+                        spriteList.push_back(getSprite(static_cast<SpriteType>(levelDef[i][j]), j*spriteSize, i*spriteSize));
+                    }
+                }*/
 
-            // door
-            spriteList.push_back(getSprite(door, 200, 50));
-
-            //green_bush
-            for(int i = 0; i<10; i++) {
-                if(i>1) {
-                    spriteList.push_back(getSprite(green_bush, i * spriteSize, 400));
-                } else {
-                    spriteList.push_back(getSprite(green_rock, i * spriteSize, 400));
-                }
-                spriteList.push_back(getSprite(green_rock, i * spriteSize, 450));
+                pushLevel(&levelDef);            
             }
 
             break;
 
-        case h09 : 
-            for(int i = 0; i<10; i++) {
-                if(i<8) continue;
-                spriteList.push_back(getSprite(green_rock, 0, i * spriteSize));
-            }
+        case h08 :             
+            {
+                levelDef = {
+                    {
+                        { green_rock, green_rock, green_rock, green_rock, green_rock, green_rock, green_rock, 00, 00, 00, 00, 00 },
+                        { green_rock, green_rock, green_rock, green_rock, door, green_rock, green_rock_corner_low_right, 00, 00, 00, 00, 00 },
+                        { green_rock, green_rock, green_rock, green_rock_corner_low_right, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { green_rock, green_rock, green_rock_corner_low_right, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { green_rock, green_rock_corner_low_right, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, },
+                        { green_rock, green_bush, green_bush, green_bush, green_bush, green_bush, green_bush, green_bush, green_bush, green_bush, green_bush, green_bush },
+                        { green_rock, green_rock, green_rock, green_rock, green_rock, green_rock, green_rock, green_rock, green_rock, green_rock, green_bush, green_bush },
+                    }
+                };    
 
-            spriteList.push_back(getSprite(green_tree, 450, 0));
-            spriteList.push_back(getSprite(green_tree, 450, 50));
-            spriteList.push_back(getSprite(green_tree, 200, 200));
-            spriteList.push_back(getSprite(green_tree, 450, 450));
-            break;
-
-        case h10 :
-            for(int i = 0; i<10; i++) {
-                for(int j = 0; j<10; j++) {
-                    if(j>0 && j<9) continue;
-                    spriteList.push_back(getSprite(brown_rock, i * spriteSize, j * spriteSize));
-                }
-            }
-
-            spriteList.push_back(getSprite(brown_rock_standalone, 200, 200));
+                pushLevel(&levelDef); 
+            }    
 
             break;
-        case g08 : 
-            for(int i = 0; i<7; i++) {
-                spriteList.push_back(getSprite(green_rock, i * spriteSize, 450));
-            }
 
-            spriteList.push_back(getSprite(green_rock_standalone, 200, 200));
+        case h09 :             
+            {
+                levelDef = {
+                    {
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, green_tree, green_tree, green_tree },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, green_tree, green_tree, green_tree },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, green_tree, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { green_rock, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { green_rock, 00, 00, 00, 00, 00, 00, 00, 00, green_tree, green_tree, green_tree },
+                    }
+                };    
+
+                pushLevel(&levelDef); 
+            }    
+            break;
+
+        case h10 : 
+            {
+                levelDef = {
+                    {
+                        { brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock},
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00},
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, brown_rock_standalone, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock, brown_rock },
+                    }
+                };    
+
+                pushLevel(&levelDef); 
+            }    
 
             break;
+        case g08 :             
+            {
+                levelDef = {
+                    {
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, green_rock_standalone, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { green_rock, green_rock, green_rock, green_rock, green_rock, green_rock, green_rock, 00, 00, 00, 00, 00 },
+                    }
+                };    
+
+                pushLevel(&levelDef); 
+            }    
+
+            break;
+        
+        case g09 :             
+            {
+                levelDef = {
+                    {
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, green_tree, 00, 00, 00, green_tree, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, green_tree, 00, 00, 00, green_tree, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                        { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+                    }
+                };    
+
+                pushLevel(&levelDef); 
+            }    
+
+            break;
+    }    
+}
+
+void Level::pushLevel(std::array<std::array<int, 12>, 10> *levelDefPtr) {  
+    std::array<std::array<int, 12>, 10> levelDef = *levelDefPtr;
+    for (int i = 0; i < levelDef.size(); ++i) {
+        for (int j = 0; j < levelDef[i].size(); ++j) {
+            if(static_cast<SpriteType>(levelDef[i][j]) == empty) continue;                        
+            spriteList.push_back(getSprite(static_cast<SpriteType>(levelDef[i][j]), j*spriteSize, i*spriteSize));
+        }
     }
 }
 

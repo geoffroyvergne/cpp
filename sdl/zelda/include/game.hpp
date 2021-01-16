@@ -18,8 +18,8 @@ class Game {
         //Game();
         ~Game();
         std::string name = "Zelda";
-        int width = 500;
         int height = 500;
+        int width = 600;
         int loopDelay = 10;
 
         SDL_Window *window;
