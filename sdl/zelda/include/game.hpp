@@ -20,7 +20,7 @@ class Game {
         std::string name = "Zelda";
         int height = 500;
         int width = 600;
-        int loopDelay = 10;
+        int loopDelay = 100;
 
         SDL_Window *window;
         SDL_Renderer *render;
@@ -34,6 +34,12 @@ class Game {
         void displayDashboard();
         void renderView();
         void startLoop();
+
+        void up();
+        void down();
+        void right();
+        void left();
+        void attack();
         
         void cleanup();
 };

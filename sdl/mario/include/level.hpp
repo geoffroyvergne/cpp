@@ -4,6 +4,7 @@
 #include <vector>
 #include <tile.hpp>
 #include <world.hpp>
+#include <player.hpp>
 
 #ifndef LEVEL
 #define LEVEL
@@ -20,6 +21,10 @@ class Level {
         int tileSize = 30;
 
         void setIntro();
+        bool detectCollision(Player *player);
+        bool detectCollisionFall(Player *player);
+        void moveRight();
+        void moveLeft();
         void setLevel(World world);
         void setLevel00();
         void setLevel11();

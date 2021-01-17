@@ -38,18 +38,72 @@ void Level::setIntro() {
    
 }
 
+bool Level::detectCollision(Player *player) {
+    SDL_bool collision;
+
+    for (size_t i = 0; i < tileList.size(); ++i) {
+        if(this->tileList[i]->collide) {  
+            /*if(player->playerDirection == left) this->tileList[i]->destTextureParams.x--;
+            if(player->playerDirection == right) this->tileList[i]->destTextureParams.x++;
+
+            collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);    
+
+            if(player->playerDirection == left) this->tileList[i]->destTextureParams.x++;
+            if(player->playerDirection == right) this->tileList[i]->destTextureParams.x--;     
+
+            if(collision) return true;*/
+
+            //if(this->tileList[i]->destTextureParams.x == player->destTextureParams.x) return true;
+        }
+    }
+
+   return false;
+}
+
+bool Level::detectCollisionFall(Player *player) {
+    SDL_bool collision;
+
+    for (size_t i = 0; i < tileList.size(); ++i) {
+        if(this->tileList[i]->collide) {
+            this->tileList[i]->destTextureParams.y--;           
+            collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);
+            this->tileList[i]->destTextureParams.y++;
+            if(collision) return true;
+
+            //if(this->tileList[i]->destTextureParams.y == player->destTextureParams.y) return true;
+        }
+    }
+
+   return false;
+}
+
+void Level::moveRight() {
+    for(auto tile : this->tileList) {
+        tile->destTextureParams.x -= tileSize/2;
+    }
+}
+
+void Level::moveLeft() {
+    for(auto tile : this->tileList) {
+        tile->destTextureParams.x += tileSize/2;
+    }
+}
+
 void Level::setLevel00() {
     
 }
 
 void Level::setLevel11() {
 
-    std::array<std::array<int, 17>, 14> levelDef = {
+    std::array<std::array<int, 17>, 17> levelDef = {
         {
             { 00,       00,     00,         00,                     00,         00,         00,             cloud_ul,       cloud_uc,       cloud_uc,   cloud_ur,   00,         00, 00, 00, 00, 00, },
             { 00,       00,     00,         cloud_ul,               cloud_uc,   cloud_ur,   00,             cloud_ll,       cloud_lc,       cloud_lc,   cloud_lr,   00,         00, 00, 00, 00, 00, },
             { 00,       00,     00,         cloud_ll,               cloud_lc,   cloud_lr,   00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
+            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, cloud_ul, cloud_uc, cloud_ur, 00, },
+            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, cloud_ll, cloud_lc, cloud_lr, 00, },
             { 00,       00,     00,         00,                     00,         00,         00,             question_mark,  00,             00,         00,         00,         00, 00, 00, 00, 00, },
+            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
             { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
             { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
             { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },            

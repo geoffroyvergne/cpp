@@ -9,6 +9,9 @@ int main(int argc, char** argv) {
 
     game->intro = new Message(game->render, "../assets/Pretendo.ttf");
 
+    game->player = new Player(game->render);
+    game->player->sdl_texture = IMG_LoadTexture(game->render, "../assets/player.png");
+
     game->startLoop();
     
     delete game;
