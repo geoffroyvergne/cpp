@@ -43,15 +43,15 @@ bool Level::detectCollision(Player *player) {
 
     for (size_t i = 0; i < tileList.size(); ++i) {
         if(this->tileList[i]->collide) {  
-            /*if(player->playerDirection == left) this->tileList[i]->destTextureParams.x--;
-            if(player->playerDirection == right) this->tileList[i]->destTextureParams.x++;
+            //if(player->playerDirection == left) this->tileList[i]->destTextureParams.x--;
+            //if(player->playerDirection == right) this->tileList[i]->destTextureParams.x++;
 
             collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);    
 
-            if(player->playerDirection == left) this->tileList[i]->destTextureParams.x++;
-            if(player->playerDirection == right) this->tileList[i]->destTextureParams.x--;     
+            //if(player->playerDirection == left) this->tileList[i]->destTextureParams.x++;
+            //if(player->playerDirection == right) this->tileList[i]->destTextureParams.x--;     
 
-            if(collision) return true;*/
+            if(collision) return true;
 
             //if(this->tileList[i]->destTextureParams.x == player->destTextureParams.x) return true;
         }

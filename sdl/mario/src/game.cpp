@@ -105,17 +105,17 @@ void Game::startLoop() {
                     /*if (e.key.keysym.sym == SDLK_q) {
                         this->jump();
                         //break;
-                    }
+                    }*/
 
-                    if (e.key.keysym.sym == SDLK_LEFT) {
-                        this->left();
+                    /*if (e.key.keysym.sym == SDLK_LEFT) {
+                        this->left(state);
                         break;
                     }
 
                     if (e.key.keysym.sym == SDLK_RIGHT) {
-                        this->right();
+                        this->right(state);
                         break;
-                    } */            
+                    }*/           
             }
         }
 
@@ -150,42 +150,34 @@ void Game::jump(const Uint8 *state) {
             SDL_Delay(25);
         }*/
 
-        if(! currentLevel->detectCollision(this->player)) {
+        //if(! currentLevel->detectCollision(this->player)) {
             player->moveUp(30);
             renderView();
             SDL_Delay(25);
-        }
+        //}
     }
     fall(state);
     //renderView();
 }
 
-void Game::left(const Uint8 *state) {
-    /*if (state[SDL_SCANCODE_UP]) {
-        this->jump(state);            
-    }*/
-
-    if(! currentLevel->detectCollision(this->player)) {
+void Game::left(const Uint8 *state) {    
+    
+    if(player->playerDirection == PlayerDirection::right || !currentLevel->detectCollision(this->player)) {
         currentLevel->moveLeft();
         player->moveLeft();
-        renderView();
-    } else {
-       // currentLevel->moveRight();
-    }
+    } 
+    
+    renderView();
 }
 
 void Game:: right(const Uint8 *state) {
-    /*if (state[SDL_SCANCODE_UP]) {
-        this->jump(state);            
-    }*/
-
-    if(! currentLevel->detectCollision(this->player)) {
+    
+    if(player->playerDirection == PlayerDirection::left || !currentLevel->detectCollision(this->player)) {
         currentLevel->moveRight();
         player->moveRight();
-        renderView();
-    } else {
-       // currentLevel->moveLeft();
-    }
+    } 
+    
+    renderView();
 }
 
 void Game::fall(const Uint8 *state) {
