@@ -43,56 +43,51 @@ bool Level::detectCollision(Player *player) {
 
     for (size_t i = 0; i < tileList.size(); ++i) {
         if(this->tileList[i]->collide) {  
-            //if(player->playerDirection == left) this->tileList[i]->destTextureParams.x--;
-            //if(player->playerDirection == right) this->tileList[i]->destTextureParams.x++;
+            //if(SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams)) return true;
 
-            collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);    
+            if(player->playerDirection == up) {
+                this->tileList[i]->destTextureParams.y++;
+                collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);
+                this->tileList[i]->destTextureParams.y--;
 
-            //if(player->playerDirection == left) this->tileList[i]->destTextureParams.x++;
-            //if(player->playerDirection == right) this->tileList[i]->destTextureParams.x--;     
+                if( collision ) return true;
+            } /*else if(player->playerDirection == down) {
+                if(this->tileList[i]->destTextureParams.y + this->tileList[i]->destTextureParams.h == player->destTextureParams.y) return true;
+            }*/ else {
+                collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);
+                if( collision ) return true;
+            }
 
-            if(collision) return true;
+            /*if(player->playerDirection == left) {
+                this->tileList[i]->destTextureParams.x++;
+                collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);
+                this->tileList[i]->destTextureParams.x--;
+                if( collision ) return true;
+            }
 
-            //if(this->tileList[i]->destTextureParams.x == player->destTextureParams.x) return true;
+            if(player->playerDirection == right) {
+                this->tileList[i]->destTextureParams.x--;
+                collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);
+                this->tileList[i]->destTextureParams.x++;
+                if( collision ) return true;
+            }*/
         }
     }
 
    return false;
 }
 
-bool Level::detectCollisionJump(Player *player) {
+/*bool Level::detectCollision(Player *player) {
     SDL_bool collision;
 
     for (size_t i = 0; i < tileList.size(); ++i) {
-        if(this->tileList[i]->collide) {
-            this->tileList[i]->destTextureParams.y++;           
-            collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);
-            this->tileList[i]->destTextureParams.y--;
-            if(collision) return true;
-
-            //if(this->tileList[i]->destTextureParams.y == player->destTextureParams.y) return true;
+        if(this->tileList[i]->collide) {  
+            if(SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams)) return true;
         }
     }
 
    return false;
-}
-
-bool Level::detectCollisionFall(Player *player) {
-    SDL_bool collision;
-
-    for (size_t i = 0; i < tileList.size(); ++i) {
-        if(this->tileList[i]->collide) {
-            this->tileList[i]->destTextureParams.y--;           
-            collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);
-            this->tileList[i]->destTextureParams.y++;
-            if(collision) return true;
-
-            //if(this->tileList[i]->destTextureParams.y == player->destTextureParams.y) return true;
-        }
-    }
-
-   return false;
-}
+}*/
 
 void Level::moveRight() {
     for(auto tile : this->tileList) {
@@ -112,25 +107,25 @@ void Level::setLevel00() {
 
 void Level::setLevel11() {
 
-    std::array<std::array<int, 17>, 17> levelDef = {
+    std::array<std::array<int, 30>, 17> levelDef = {
         {
-            { 00,       00,     00,         00,                     00,         00,         00,             cloud_ul,       cloud_uc,       cloud_uc,   cloud_ur,   00,         00, 00, 00, 00, 00, },
-            { 00,       00,     00,         cloud_ul,               cloud_uc,   cloud_ur,   00,             cloud_ll,       cloud_lc,       cloud_lc,   cloud_lr,   00,         00, 00, 00, 00, 00, },
-            { 00,       00,     00,         cloud_ll,               cloud_lc,   cloud_lr,   00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
-            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, cloud_ul, cloud_uc, cloud_ur, 00, },
-            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, cloud_ll, cloud_lc, cloud_lr, 00, },
-            { 00,       00,     00,         00,                     00,         00,         00,             question_mark,  00,             00,         00,         00,         00, 00, 00, 00, 00, },
-            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
-            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
-            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
-            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },            
-            { 00,       00,     00,         question_mark,          00,         brick,      question_mark,  brick,          question_mark,  brick,      00,         00,         00, 00, 00, 00, 00, },
-            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
-            { 00,       00,     00,         00,                     00,         00,         00,             00,             00,             00,         00,         00,         00, 00, 00, 00, 00, },
-            { 00,       00,     hill_t,     00,                     00,         00,         00,             00,             00,             00,         pipe_ul,    pipe_ur,    00, 00, 00, 00, 00, },
-            { 00,       hill_l, hill_cs,    hill_r,                 00,         00,         bush_l,         bush_c,         bush_r,         00,         pipe_ll,    pipe_lr,    00, 00, 00, 00, 00, },
-            { 01,       01,     01,         01,                     01,         01,         01,             01,             01,             01,         01,         01,         01, 01, 01, 01, 01, },
-            { 01,       01,     01,         01,                     01,         01,         01,             01,             01,             01,         01,         01,         01, 01, 01, 01, 01, },
+            { 00,       00,     00,         00,         00,         00,         00,     cloud_ul,       cloud_uc,       cloud_uc,   cloud_ur,   00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, },
+            { 00,       00,     00,         cloud_ul,   cloud_uc,   cloud_ur,   00,     cloud_ll,       cloud_lc,       cloud_lc,   cloud_lr,   00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, },
+            { 00,       00,     00,         cloud_ll,   cloud_lc,   cloud_lr,   00,     00,             00,             00,         00,         00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, },
+            { 00,       00,     00,         00,         00,         00,         00,     00,             00,             00,         00,         00,         00, cloud_ul,   cloud_uc,   cloud_ur,   00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, },
+            { 00,       00,     00,         00,         00,         00,         00,     00,             00,             00,         00,         00,         00, cloud_ll,   cloud_lc,   cloud_lr,   00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, },
+            { 00,       00,     00,         00,         00,         00,         00,     03,             00,             00,         00,         00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, },
+            { 00,       00,     00,         00,         00,         00,         00,     00,             00,             00,         00,         00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,  },
+            { 00,       00,     00,         00,         00,         00,         00,     00,             00,             00,         00,         00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,  },
+            { 00,       00,     00,         00,         00,         00,         00,     00,             00,             00,         00,         00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,  },
+            { 00,       00,     00,         00,         00,         00,         00,     00,             00,             00,         00,         00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,  },            
+            { 00,       00,     00,         03,         00,         brick,      03,     brick,          03,             brick,      00,         00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,  },
+            { 00,       00,     00,         00,         00,         00,         00,     00,             00,             00,         00,         00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,  },
+            { 00,       00,     00,         00,         00,         00,         00,     00,             00,             00,         00,         00,         00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,  },
+            { 00,       00,     hill_t,     00,         00,         00,         00,     00,             00,             00,         pipe_ul,    pipe_ur,    00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,  },
+            { 00,       hill_l, hill_cs,    hill_r,     00,         00,         bush_l, bush_c,         bush_r,         00,         pipe_ll,    pipe_lr,    00, 00,         00,         00,         00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,  },
+            { 01,       01,     01,         01,         01,         01,         01,     01,             01,             01,         01,         01,         01, 01,         01,         01,         01, 00, 00, 00, 00, 01, 01, 01, 01, 01, 01, 01, 01, 01,  },
+            { 01,       01,     01,         01,         01,         01,         01,     01,             01,             01,         01,         01,         01, 01,         01,         01,         01, 00, 00, 00, 00, 01, 01, 01, 01, 01, 01, 01, 01, 01,  },
         }
     };
 

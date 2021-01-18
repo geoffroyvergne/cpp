@@ -140,14 +140,20 @@ void Game::startLoop() {
 }
 
 void Game::jump(const Uint8 *state) {
-    for(int i=0; i<8; i++) {        
-        if(currentLevel->detectCollisionJump(this->player)) {
-            break;
-        } else {
-            player->moveUp(30);
-            renderView();
-            SDL_Delay(25);
+    for(int i=0; i<8; i++) {    
+        if(currentLevel->detectCollision(this->player)) break;
+        
+        if (state[SDL_SCANCODE_LEFT]) {
+            this->left(state);
         }
+
+        if (state[SDL_SCANCODE_RIGHT]) {
+            this->right(state);            
+        }
+        
+        player->moveUp(30);
+        renderView();
+        SDL_Delay(25);
     }
     //fall(state);
     //renderView();
@@ -155,6 +161,7 @@ void Game::jump(const Uint8 *state) {
 
 void Game::left(const Uint8 *state) {
     if(player->playerDirection != PlayerDirection::left || !currentLevel->detectCollision(this->player)) {
+    //if(!currentLevel->detectCollision(this->player)) {
         currentLevel->moveLeft();
         player->moveLeft();
     } 
@@ -164,6 +171,7 @@ void Game::left(const Uint8 *state) {
 
 void Game:: right(const Uint8 *state) {
     if(player->playerDirection != PlayerDirection::right || !currentLevel->detectCollision(this->player)) {
+    //if(!currentLevel->detectCollision(this->player)) {
         currentLevel->moveRight();
         player->moveRight();
     }
@@ -172,17 +180,38 @@ void Game:: right(const Uint8 *state) {
 }
 
 void Game::fall(const Uint8 *state) {    
-    
-    while(true) {
+
+    /*if(!currentLevel->detectCollision(this->player) || this->player->destTextureParams.y < this->height) {
+        player->moveDown(30);
+        renderView();
+        SDL_Delay(25);
+    }*/
+
+    /*while(true) {
         if(this->player->destTextureParams.y > this->height) break;
 
-        if(currentLevel->detectCollisionFall(this->player)) {
+        if(currentLevel->detectCollision(this->player)) {
+            //player->moveUp(30);
             break;
-        } else {
-            player->moveDown(30);
+        }
+
+        if (state[SDL_SCANCODE_LEFT]) {
+            this->left(state);
+        }
+
+        if (state[SDL_SCANCODE_RIGHT]) {
+            this->right(state);            
+        }          
+
+        player->moveDown(30);
+        renderView();
+        SDL_Delay(25);
+    }*/
+
+    while (this->player->destTextureParams.y <= this->height -100) {
+        player->moveDown(30);
             renderView();
             SDL_Delay(25);
-        }
     }
 }
 
