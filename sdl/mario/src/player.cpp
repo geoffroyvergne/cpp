@@ -6,7 +6,7 @@
 Player::Player(SDL_Renderer *render) {
     this->render = render;
 
-    destTextureParams = { 400, tileSize*14,  tileSize, tileSize };
+    destTextureParams = { 200, tileSize*14,  tileSize, tileSize };
     //this->basePosition();
     this->position();
 }

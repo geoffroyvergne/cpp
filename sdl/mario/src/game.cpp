@@ -140,29 +140,21 @@ void Game::startLoop() {
 }
 
 void Game::jump(const Uint8 *state) {
-    for(int i=0; i<8; i++) {
-        /*if (state[SDL_SCANCODE_RIGHT]) {
-            this->right(state);
-            SDL_Delay(25);
-        }
-        if (state[SDL_SCANCODE_LEFT]) {
-            this->left(state);
-            SDL_Delay(25);
-        }*/
-
-        //if(! currentLevel->detectCollision(this->player)) {
+    for(int i=0; i<8; i++) {        
+        if(currentLevel->detectCollisionJump(this->player)) {
+            break;
+        } else {
             player->moveUp(30);
             renderView();
             SDL_Delay(25);
-        //}
+        }
     }
-    fall(state);
+    //fall(state);
     //renderView();
 }
 
-void Game::left(const Uint8 *state) {    
-    
-    if(player->playerDirection == PlayerDirection::right || !currentLevel->detectCollision(this->player)) {
+void Game::left(const Uint8 *state) {
+    if(player->playerDirection != PlayerDirection::left || !currentLevel->detectCollision(this->player)) {
         currentLevel->moveLeft();
         player->moveLeft();
     } 
@@ -171,25 +163,20 @@ void Game::left(const Uint8 *state) {
 }
 
 void Game:: right(const Uint8 *state) {
-    
-    if(player->playerDirection == PlayerDirection::left || !currentLevel->detectCollision(this->player)) {
+    if(player->playerDirection != PlayerDirection::right || !currentLevel->detectCollision(this->player)) {
         currentLevel->moveRight();
         player->moveRight();
-    } 
+    }
     
     renderView();
 }
 
-void Game::fall(const Uint8 *state) {
-    //for(int i=0; i<5; i++) {
-    //while(player->destTextureParams.y < currentLevel->tileSize*14) {
-    //while(!currentLevel->detectCollision(this->player)) {
-        
+void Game::fall(const Uint8 *state) {    
+    
     while(true) {
         if(this->player->destTextureParams.y > this->height) break;
 
         if(currentLevel->detectCollisionFall(this->player)) {
-            //player->moveUp(30);
             break;
         } else {
             player->moveDown(30);

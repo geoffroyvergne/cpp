@@ -23,6 +23,7 @@ class Level {
         void setIntro();
         bool detectCollision(Player *player);
         bool detectCollisionFall(Player *player);
+        bool detectCollisionJump(Player *player);
         void moveRight();
         void moveLeft();
         void setLevel(World world);

@@ -60,6 +60,23 @@ bool Level::detectCollision(Player *player) {
    return false;
 }
 
+bool Level::detectCollisionJump(Player *player) {
+    SDL_bool collision;
+
+    for (size_t i = 0; i < tileList.size(); ++i) {
+        if(this->tileList[i]->collide) {
+            this->tileList[i]->destTextureParams.y++;           
+            collision = SDL_HasIntersection(&this->tileList[i]->destTextureParams, &player->destTextureParams);
+            this->tileList[i]->destTextureParams.y--;
+            if(collision) return true;
+
+            //if(this->tileList[i]->destTextureParams.y == player->destTextureParams.y) return true;
+        }
+    }
+
+   return false;
+}
+
 bool Level::detectCollisionFall(Player *player) {
     SDL_bool collision;
 
