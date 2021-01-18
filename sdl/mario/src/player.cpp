@@ -35,12 +35,12 @@ void Player::position() {
 
         case up :              
             srcTextureParams = { 119, 8,  15, 16 }; //action_jump
-            playerAction = action_jump;            
+            //playerAction = action_jump;            
         break;
 
         case down :              
             srcTextureParams = { 2, 8,  15, 16 };
-            playerAction = action_base;
+            //playerAction = action_base;
         break;
 
         case right : 
@@ -86,13 +86,13 @@ void Player::moveLeft() {
 }
 
 void Player::moveDown(int gap) {  
-    playerDirection = down;
+    //playerDirection = down;
     position();
     destTextureParams.y += gap;
 }
 
 void Player::moveUp(int gap) {  
-    playerDirection = up;
+    //playerDirection = up;
     position();
     destTextureParams.y -= gap;
 }

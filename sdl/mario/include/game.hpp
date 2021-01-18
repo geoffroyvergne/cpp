@@ -36,6 +36,7 @@ class Game {
         void left(const Uint8 *state);
         void right(const Uint8 *state);
         void fall(const Uint8 *state);
+        void down(const Uint8 *state);
         void cleanup();
 };
 
