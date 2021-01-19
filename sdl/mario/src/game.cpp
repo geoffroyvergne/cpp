@@ -30,8 +30,8 @@ void Game::init() {
 	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
 
 	// Create render
-	render = SDL_CreateRenderer(window, -1, 0);
-	//render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	//render = SDL_CreateRenderer(window, -1, 0);
+	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
 
@@ -70,7 +70,6 @@ void Game::displayGame() {
 
 void Game::newLevel(World world) {
     if(this->currentLevel != nullptr) delete this->currentLevel;
-
     currentLevel = new Level(world, render, sdl_texture_levels, sdl_texture_enemies);
 }
 
@@ -80,12 +79,8 @@ void Game::startLoop() {
     SDL_Event e;
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-    //this->fall(state);
-
     while (active) {
-        //if(SDL_GetTicks() < 10000) renderView();
-
-        this->down(state);
+        this->fall(state);
 
         while (SDL_PollEvent(&e)) {      
             if (e.type == SDL_QUIT) {
@@ -94,150 +89,146 @@ void Game::startLoop() {
                 break;
             }
 
-            renderView();
+            //renderView();
 
-            switch( e.type ) {     
-                
+            switch( e.type ) {                     
                 case SDL_KEYDOWN:
                     if (e.key.keysym.sym == SDLK_RETURN) {
                         SDL_Log("SDLK_RETURN");
-                        //break;
-                    }
-
-                    /*if (e.key.keysym.sym == SDLK_q) {
-                        this->jump();
-                        //break;
-                    }*/
-
-                    /*if (e.key.keysym.sym == SDLK_LEFT) {
-                        this->left(state);
-                        break;
-                    }
-
-                    if (e.key.keysym.sym == SDLK_RIGHT) {
-                        this->right(state);
-                        break;
-                    }*/           
+                    }   
             }
         }
 
+        if (state[SDL_SCANCODE_R]) {
+            this->moveRight(state);
+        }
+
+        if (state[SDL_SCANCODE_L]) {
+            this->moveLeft(state);
+        }
+
+        if (state[SDL_SCANCODE_U]) {            
+            this->moveUp(state);
+        }
+
+        if (state[SDL_SCANCODE_D]) {
+            this->moveDown(state);
+        }
+
         if (state[SDL_SCANCODE_RIGHT]) {
-            this->right(state);
+            this->walkRight(state);
         }
 
         if (state[SDL_SCANCODE_LEFT]) {
-            this->left(state);
+            this->walkLeft(state);
         }
 
         if (state[SDL_SCANCODE_UP]) {
-            this->jump(state);            
+            this->jump(state);
         }
 
-        if (state[SDL_SCANCODE_DOWN]) {
-            this->down(state);
-        }
-
+        /*if (state[SDL_SCANCODE_DOWN]) {
+            this->fall(state);
+        }*/
+        
         SDL_Delay(this->loopDelay);
     }
 }
 
-void Game::jump(const Uint8 *state) {
-    for(int i=0; i<6; i++) {    
-        if(currentLevel->detectCollision(this->player)) break;
-        
-        if (state[SDL_SCANCODE_LEFT]) {
-            this->left(state);
-        }
-
-        if (state[SDL_SCANCODE_RIGHT]) {
-            this->right(state);            
-        }
-        
-        player->moveUp(30);
-        renderView();
-        SDL_Delay(25);
-    }
-    //fall(state);
+void Game::moveLeft(const Uint8 *state) {
+    player->moveLeft();
+    currentLevel->moveLeft();
     //renderView();
 }
 
-void Game::left(const Uint8 *state) {
+void Game:: moveRight(const Uint8 *state) {
+    player->moveRight();
+    currentLevel->moveRight();
+    //renderView();
+}
+
+void Game::moveDown(const Uint8 *state) {  
+    player->moveDown(30);
+    //renderView();
+    //SDL_Delay(25);
+}
+
+void Game::moveUp(const Uint8 *state) {  
+    player->moveUp(30);
+    //renderView();
+    //SDL_Delay(25);
+}
+
+void Game::walkLeft(const Uint8 *state) {
     if(player->playerDirection != PlayerDirection::left || !currentLevel->detectCollision(this->player)) {
-    //if(!currentLevel->detectCollision(this->player)) {
         currentLevel->moveLeft();
-        player->moveLeft();
-    } 
-    
-    renderView();
-}
-
-void Game:: right(const Uint8 *state) {
-    if(player->playerDirection != PlayerDirection::right || !currentLevel->detectCollision(this->player)) {
-    //if(!currentLevel->detectCollision(this->player)) {
-        currentLevel->moveRight();
-        player->moveRight();
-    }
-    
-    renderView();
-}
-
-void Game::fall(const Uint8 *state) {    
-
-    /*if(!currentLevel->detectCollision(this->player) || this->player->destTextureParams.y < this->height) {
-        player->moveDown(30);
+        player->walkLeft();
+        
         renderView();
-        SDL_Delay(25);
-    }*/
+    }
+}
 
-    /*while(true) {
-        if(this->player->destTextureParams.y > this->height) break;
+void Game::walkRight(const Uint8 *state) {
+    if(player->playerDirection != PlayerDirection::right || !currentLevel->detectCollision(this->player)) {
+        currentLevel->moveRight();
+        player->walkRight();
+        
+        renderView();
+    }
+}
 
-        if(currentLevel->detectCollision(this->player)) {
-            //player->moveUp(30);
-            break;
-        }
-
-        if (state[SDL_SCANCODE_LEFT]) {
-            this->left(state);
+void Game::jump(const Uint8 *state) {
+    for(int i=0; i<8; i++) {    
+        
+        if(!currentLevel->detectCollision(this->player)) {
+            this->moveUp(state);
+            if(currentLevel->detectCollision(this->player)) {
+                this->moveDown(state);
+                break;
+            } 
+            this->moveDown(state);
         }
 
         if (state[SDL_SCANCODE_RIGHT]) {
-            this->right(state);            
-        }          
+            this->walkRight(state);
+        }
 
-        player->moveDown(30);
+        if (state[SDL_SCANCODE_LEFT]) {
+            this->walkLeft(state);
+        }
+        
+        player->jump(30);
         renderView();
         SDL_Delay(25);
-    }*/
-
-    /*while (this->player->destTextureParams.y <= this->height -100) {
-        player->moveDown(30);
-            renderView();
-            SDL_Delay(25);
-    }*/
-
-    if(this->player->destTextureParams.y <= this->height) {
-        down(state);
     }
 }
 
-void Game::down(const Uint8 *state) {  
-    /*if(! currentLevel->detectCollision(this->player)) {
-        player->moveDown(30);
-    }*/
+void Game::fall(const Uint8 *state) {    
+    while(true) {
+        if(this->player->destTextureParams.y > this->height) break;
 
-    player->moveDown(30);
+        if(!currentLevel->detectCollision(this->player)) {
+            this->moveDown(state);
+            if(currentLevel->detectCollision(this->player)) {
+                this->moveUp(state);
+                break;
+            } else {
+                this->moveUp(state);
+            }
+        } else break;
 
-    if(currentLevel->detectCollision(this->player)) {
-        player->moveUp(30);
+        if (state[SDL_SCANCODE_RIGHT]) {
+            this->walkRight(state);
+        }
+
+        if (state[SDL_SCANCODE_LEFT]) {
+            this->walkLeft(state);
+        }
+        
+        player->fall(30);
+        renderView();
+        SDL_Delay(25);
     }
-    
-    renderView();
-    SDL_Delay(25);
-
-    /*if(currentLevel->detectCollision(this->player)) {
-        player->moveUp(30);
-    }*/
 }
 
 void Game::cleanup() {

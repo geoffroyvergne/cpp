@@ -22,14 +22,17 @@ class Player {
         PlayerAction playerAction = action_base;
         PlayerDirection playerDirection = direction_base;
 
-        //void basePosition();
         void position();
         void moveRight();
         void moveLeft();
         void moveUp(int gap);
         void moveDown(int gap);
-        //void jump();
-        //void fall();
+        
+        void walkRight();
+        void walkLeft();
+
+        void jump(int gap);
+        void fall(int gap);
 
         void display();
         void cleanup();

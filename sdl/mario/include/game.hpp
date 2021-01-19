@@ -32,11 +32,17 @@ class Game {
         void displayIntro();
         void displayGame();
         void newLevel(World world);
+        
+        void moveLeft(const Uint8 *state);
+        void moveRight(const Uint8 *state);
+        void moveDown(const Uint8 *state);
+        void moveUp(const Uint8 *state);
+
         void jump(const Uint8 *state);
-        void left(const Uint8 *state);
-        void right(const Uint8 *state);
+        void walkLeft(const Uint8 *state);
+        void walkRight(const Uint8 *state);
         void fall(const Uint8 *state);
-        void down(const Uint8 *state);
+        
         void cleanup();
 };
 

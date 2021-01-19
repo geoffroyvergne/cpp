@@ -3,36 +3,40 @@
 #define TILETYPE
 
 enum TileType {
-    none,           //00
-    ground,         //01
-    brick,          //02
-    question_mark,  //03
 
-    // pipe
-    pipe_ul,        //04
-    pipe_ur,        //05
-    pipe_ll,        //06
-    pipe_lr,        //07
+    // genral 00-09
+    none            = 00,
+    ground          = 01,
+    brick           = 02,
+    question_mark   = 03,
 
-    // hill
-    hill_l,         
-    hill_r,
-    hill_cs,         
-    hill_c,     
-    hill_t,         
+    // pipe 20-29
+    pipe_ul         = 20,
+    pipe_ur         = 21,
+    pipe_ll         = 22,
+    pipe_lr         = 23,
 
-    // bush
-    bush_l,         
-    bush_c,        
-    bush_r,         
+    // hill 30-39
+    hill_l          = 30,
+    hill_r          = 31,
+    hill_cs         = 32,
+    hill_c          = 33,
+    hill_t          = 34,
 
-    // cloud
-    cloud_ul,       
-    cloud_ur,       
-    cloud_uc,       
-    cloud_ll,       
-    cloud_lr,       
-    cloud_lc,       
+    // bush 40-49
+    bush_l          = 40,
+    bush_c          = 41,
+    bush_r          = 42,
+
+    // cloud 50-59
+    cloud_ul        = 50,
+    cloud_ur        = 51,
+    cloud_uc        = 52,
+    cloud_ll        = 53,
+    cloud_lr        = 54,
+    cloud_lc        = 55,
+
+    
 };
 
 #endif

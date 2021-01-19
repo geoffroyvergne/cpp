@@ -7,23 +7,12 @@ Player::Player(SDL_Renderer *render) {
     this->render = render;
 
     destTextureParams = { 200, tileSize*14,  tileSize, tileSize };
-    //this->basePosition();
     this->position();
 }
 
 Player::~Player() { 
     cleanup();
 }
-
-/*void Player::basePosition() {    
-    srcTextureParams = { 1, 8,  15, 16 };
-    destTextureParams.y = tileSize*11;
-
-    if(destTextureParams.y < tileSize*11) {
-        SDL_Log("basePosition");
-        destTextureParams.y += tileSize;
-    }
-}*/
 
 void Player::position() {
     switch(playerDirection) {
@@ -35,12 +24,12 @@ void Player::position() {
 
         case up :              
             srcTextureParams = { 119, 8,  15, 16 }; //action_jump
-            //playerAction = action_jump;            
+            playerAction = action_jump;            
         break;
 
         case down :              
             srcTextureParams = { 2, 8,  15, 16 };
-            //playerAction = action_base;
+            playerAction = action_base;
         break;
 
         case right : 
@@ -75,35 +64,43 @@ void Player::position() {
 
 void Player::moveRight() {  
     playerDirection = right;
-    position();
     playerFlip = SDL_FLIP_NONE;
 }
 
 void Player::moveLeft() {
     playerDirection = left;
-    position();
     playerFlip = SDL_FLIP_HORIZONTAL;
 }
 
 void Player::moveDown(int gap) {  
-    //playerDirection = down;
-    position();
+    playerDirection = down;
     destTextureParams.y += gap;
 }
 
 void Player::moveUp(int gap) {  
-    //playerDirection = up;
-    position();
+    playerDirection = up;
     destTextureParams.y -= gap;
 }
 
-/*void Player::jump() {
-    
+void Player::walkRight() {
+    this->moveRight();
+    position();
 }
 
-void Player::fall() {
-    
-}*/
+void Player::walkLeft() {
+    this->moveLeft();
+    position();
+}
+
+void Player::jump(int gap) {
+    moveUp(gap);
+    position();
+}
+
+void Player::fall(int gap) {
+    moveDown(gap);
+    position();
+}
 
 void Player::display() {
     SDL_RenderCopyEx(render, sdl_texture, &srcTextureParams ,&destTextureParams, 0.0, NULL, playerFlip);

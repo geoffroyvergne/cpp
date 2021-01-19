@@ -7,8 +7,10 @@ enum PlayerAction {
     left2,    
     right1,
     right2,
+    action_up,
+    action_down,
     action_jump,
-    falling,
+    action_fall,
 };
 
 #endif

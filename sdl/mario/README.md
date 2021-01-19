@@ -9,4 +9,9 @@ cmake --build build/
 top -pid $(pgrep -f mario)
 
 # TODO
-- [ ]
+- [ ] Improve collision detection, more accurate
+- [ ] when jump, pass over pipe
+- [ ] add enemies
+- [ ] add level begin
+- [ ] improve scrolling smoothness (sdl help)
+- [ ] 
