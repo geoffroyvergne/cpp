@@ -4,7 +4,7 @@
 
 Game::Game() { 
     init();
-    this->sdl_texture_symbols = IMG_LoadTexture(render, "../assets/symbols.png");
+    this->sdl_texture_symbols = IMG_LoadTexture(render, "../assets/symbols-v3.png");
 }
 
 Game::~Game() { 
@@ -20,7 +20,7 @@ void Game::init() {
 	}
 
 	// Create window
-	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->width, SDL_WINDOW_SHOWN);
 	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
 
 	// Create render
@@ -31,12 +31,12 @@ void Game::init() {
 
     //TTF_Init();
 
-    //SDL_SetRenderDrawColor(render, 4, 156, 216, 255);
+    SDL_SetRenderDrawColor(render, 4, 156, 216, 255);
 }
 
 void Game::renderView() {
     SDL_RenderClear(render);        
-        
+    this->plateau->display();
     SDL_RenderPresent(render);
 }
 

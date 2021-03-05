@@ -11,8 +11,7 @@ class Game {
     public:
         Game();
         ~Game();
-        std::string name = "Chess";
-        int height = 500;
+        std::string name = "Chess";        
         int width = 600;
         int loopDelay = 100;
 
@@ -29,4 +28,3 @@ class Game {
 };
 
 #endif
-

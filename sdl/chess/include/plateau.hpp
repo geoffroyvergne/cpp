@@ -5,20 +5,24 @@
 #include <array>
 #include <vector>
 
-#include <case.hpp>
+#include <piece.hpp>
+#include <square.hpp>
 
 #ifndef PLATEAU
 #define PLATEAU
 
 class Plateau {
     public:
-        Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture);
+        Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture, int squareWidth);
         ~Plateau();
 
-        std::vector<Case*> caseList;
+        int squareWidth;
+        std::vector<Square*> squareList;
+        std::vector<Piece*> pieceList;
+        SDL_Renderer *render;
+        SDL_Texture *sdl_texture;
 
         void init();
-
         void display();
         void cleanup();
 };
