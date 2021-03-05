@@ -38,6 +38,7 @@ void Game::init() {
     TTF_Init();
 
     SDL_SetRenderDrawColor(render, 4, 156, 216, 255);
+    SDL_ShowCursor(SDL_DISABLE);
 }
 
 void Game::renderView() {
