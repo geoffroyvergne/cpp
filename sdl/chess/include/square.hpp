@@ -4,6 +4,7 @@
 #include <square-position.hpp>
 #include <piece-type.hpp>
 #include <color.hpp>
+#include <piece.hpp>
 
 #ifndef CASE
 #define CASE
@@ -15,18 +16,28 @@ class Square {
         int width;
         int id;
         Color color;
+        std::string colorStr;
         SquarePosition position;
-        PieceType pieceType;
+        bool selected = false;
+        Piece *piece = NULL;
 
         SDL_Renderer *render;
         SDL_Texture *sdl_texture;
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
 
+        SDL_Rect srcSelectedTextureParams; // Real texture size and placement
+        //SDL_Rect destSelectedTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
+
         Square* up();
         Square* down();
         Square* left();
         Square* right();
+
+        Square* diagUpRight();
+        Square* diagUpLeft();
+        Square* diagDownRight();
+        Square* diagDownLeft();
         
         void display();
         void cleanup();

@@ -18,11 +18,14 @@ class Plateau {
 
         int squareWidth;
         std::vector<Square*> squareList;
-        std::vector<Piece*> pieceList;
+        //std::vector<Piece*> pieceList;
         SDL_Renderer *render;
         SDL_Texture *sdl_texture;
 
         void init();
+        Piece* getPieceById(int id);
+        Square* getSquareById(int id);
+
         void display();
         void cleanup();
 };

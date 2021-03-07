@@ -18,80 +18,6 @@ Plateau::~Plateau() {
     cleanup();
 }
 
-void Plateau::init() {
-    std::array<std::array<int, 8>, 8>
-    plateauDef = {
-                    {
-                        { 2, 1, 2, 1, 2, 1, 2, 1 },
-                        { 1, 2, 1, 2, 1, 2, 1, 2 },
-                        { 2, 1, 2, 1, 2, 1, 2, 1 },
-                        { 1, 2, 1, 2, 1, 2, 1, 2 },
-                        { 2, 1, 2, 1, 2, 1, 2, 1 },
-                        { 1, 2, 1, 2, 1, 2, 1, 2 },
-                        { 2, 1, 2, 1, 2, 1, 2, 1 },
-                        { 1, 2, 1, 2, 1, 2, 1, 2 },
-                    }
-                };
-
-    int squareId = 0;
-    for (int i = 0; i < plateauDef.size(); ++i) {        
-        for (int j = 0; j < plateauDef[i].size(); ++j) {
-            //if(static_cast<SquareType>(plateauDef[i][j]) == empty) continue;
-            Square *square = new Square(render, sdl_texture, static_cast<Color>(plateauDef[i][j]), squareWidth, squareId);
-            square->destTextureParams.x += i *squareWidth; 
-            square->destTextureParams.y += j *squareWidth; 
-            squareList.push_back(square);
-
-            squareId++;
-        }
-    }
-
-    std::array<std::array<int, 8>, 8> 
-    plateauPiecesDef = {
-                    {
-                        { 3, 5, 4, 1, 2, 4, 5, 3 },
-                        { 6, 6, 6, 6, 6, 6, 6, 6 },
-                        { 0, 0, 0, 0, 0, 0, 0, 0 },
-                        { 0, 0, 0, 0, 0, 0, 0, 0 },
-                        { 0, 0, 0, 0, 0, 0, 0, 0 },
-                        { 0, 0, 0, 0, 0, 0, 0, 0 },
-                        { 6, 6, 6, 6, 6, 6, 6, 6 },
-                        { 3, 5, 4, 1, 2, 4, 5, 3 },
-                    }
-                };
-
-    Color pieceColor = transparent;
-    for (int i = 0; i < plateauPiecesDef.size(); ++i) {
-        for (int j = 0; j < plateauPiecesDef[i].size(); ++j) {
-            if(static_cast<PieceType>(plateauPiecesDef[i][j]) == none) continue;
-            
-            if(i<=1) pieceColor = black;
-            if(i>=6) pieceColor = white;
-            
-            Piece *piece = new Piece(render, sdl_texture, static_cast<PieceType>(plateauPiecesDef[i][j]), pieceColor, squareWidth);
-            
-            piece->destTextureParams.x += j *squareWidth; 
-            piece->destTextureParams.y += i *squareWidth; 
-            pieceList.push_back(piece);
-        }
-    }
-}
-
-/*
-
-    a   b   c   d   e   f   g   h
-8   a8  b8  c8  d8  e8  f8  g8  h8   8
-7   a7  b7  c7  d7  e7  f7  g7  h7  7
-6   a6  b6  c6  d6  e6  f6  g6  h6  6
-5   a5  b5  c5  d5  e5  f5  g5  h5  5
-4   a4  b4  c4  d4  e4  f4  g4  h4  4
-3   a3  b3  c3  d3  e3  f3  g3  h3  3
-2   a2  b2  c2  d2  e2  f2  g2  h2  2
-1   a1  b1  c1  d1  e1  f1  g1  h1  1
-    a   b   c   d   e   f   g   h
-
-*/
-
 /*
 
     a   b   c   d   e   f   g   h
@@ -122,13 +48,140 @@ void Plateau::init() {
 
 */
 
+/*
+
+    a   b   c   d   e   f   g   h
+8   a8  b8  c8  d8  e8  f8  g8  h8  8
+7   a7  b7  c7  d7  e7  f7  g7  h7  7
+6   a6  b6  c6  d6  e6  f6  g6  h6  6
+5   a5  b5  c5  d5  e5  f5  g5  h5  5
+4   a4  b4  c4  d4  e4  f4  g4  h4  4
+3   a3  b3  c3  d3  e3  f3  g3  h3  3
+2   a2  b2  c2  d2  e2  f2  g2  h2  2
+1   a1  b1  c1  d1  e1  f1  g1  h1  1
+    a   b   c   d   e   f   g   h
+
+*/
+
+/*void Plateau::init() {
+    
+    Square *a8 = new Square(render, sdl_texture, white, squareWidth, 0);
+    Square *b8 = new Square(render, sdl_texture, black, squareWidth, 1);
+    Square *c8 = new Square(render, sdl_texture, white, squareWidth, 2);
+
+    Square *a7 = new Square(render, sdl_texture, black, squareWidth, 8);
+    Square *b7 = new Square(render, sdl_texture, white, squareWidth, 9);
+    Square *c7 = new Square(render, sdl_texture, black, squareWidth, 10);
+
+    Square *a6 = new Square(render, sdl_texture, white, squareWidth, 16);
+    Square *b6 = new Square(render, sdl_texture, black, squareWidth, 17);
+    Square *c6 = new Square(render, sdl_texture, white, squareWidth, 18);
+
+    b7->up = b8;
+    b7->down = b6;
+    b7->left = a7;
+    b7->right = c7;
+}*/
+
+void Plateau::init() {
+    std::array<std::array<int, 8>, 8>
+    plateauDef = {
+                    {
+                        { 2, 1, 2, 1, 2, 1, 2, 1 },
+                        { 1, 2, 1, 2, 1, 2, 1, 2 },
+                        { 2, 1, 2, 1, 2, 1, 2, 1 },
+                        { 1, 2, 1, 2, 1, 2, 1, 2 },
+                        { 2, 1, 2, 1, 2, 1, 2, 1 },
+                        { 1, 2, 1, 2, 1, 2, 1, 2 },
+                        { 2, 1, 2, 1, 2, 1, 2, 1 },
+                        { 1, 2, 1, 2, 1, 2, 1, 2 },
+                    }
+                };
+
+    int squareId = 0;
+    for (int i = 0; i < plateauDef.size(); ++i) {        
+        for (int j = 0; j < plateauDef[i].size(); ++j) {
+            //if(static_cast<SquareType>(plateauDef[i][j]) == empty) continue;
+            
+            Square *square = new Square(render, sdl_texture, static_cast<Color>(plateauDef[i][j]), squareWidth, squareId);
+            if(i == 3 && j == 3) square->selected = true;
+            square->destTextureParams.x += i *squareWidth; 
+            square->destTextureParams.y += j *squareWidth; 
+            squareList.push_back(square);
+
+            squareId++;
+        }
+    }
+
+    std::array<std::array<int, 8>, 8> 
+    plateauPiecesDef = {
+                    {
+                        { 3, 5, 4, 1, 2, 4, 5, 3 },
+                        { 6, 6, 6, 6, 6, 6, 6, 6 },
+                        { 0, 0, 0, 0, 0, 0, 0, 0 },
+                        { 0, 0, 0, 0, 0, 0, 0, 0 },
+                        { 0, 0, 0, 0, 0, 0, 0, 0 },
+                        { 0, 0, 0, 0, 0, 0, 0, 0 },
+                        { 6, 6, 6, 6, 6, 6, 6, 6 },
+                        { 3, 5, 4, 1, 2, 4, 5, 3 },
+                    }
+                };
+
+    int pieceId = 0;
+    Color pieceColor = transparent;
+    for (int i = 0; i < plateauPiecesDef.size(); ++i) {
+        for (int j = 0; j < plateauPiecesDef[i].size(); ++j) {
+            if(static_cast<PieceType>(plateauPiecesDef[i][j]) == none) {
+                pieceId++;
+                continue;
+            }
+            
+            if(i <= 2) pieceColor = black;
+            else if(i >= 6) pieceColor = white;
+            else pieceColor = transparent;
+            
+            squareList.at(pieceId)->piece = new Piece(render, sdl_texture, static_cast<PieceType>(plateauPiecesDef[i][j]), pieceColor, squareWidth);
+            
+            squareList.at(pieceId)->piece->id = pieceId;
+            squareList.at(pieceId)->piece->destTextureParams.x += j *squareWidth; 
+            squareList.at(pieceId)->piece->destTextureParams.y += i *squareWidth; 
+            //pieceList.push_back(piece);
+
+            //squareList.at(pieceId)->piece = piece;
+
+            pieceId++;
+        }
+    }
+}
+
+Piece* Plateau::getPieceById(int id) {
+    Square *square = getSquareById(id);
+    if(square->piece != NULL) {
+        return square->piece;
+    }
+
+    return NULL;
+}
+
+Square* Plateau::getSquareById(int id) {
+    for (size_t i = 0; i < squareList.size(); ++i) {
+        if(id == this->squareList[i]->id) {
+            return this->squareList[i];
+        }
+    }
+
+    return NULL;
+}
+
 void Plateau::display() {
     for (size_t i = 0; i < squareList.size(); ++i) {
         this->squareList[i]->display();
     }
 
-    for (size_t i = 0; i < pieceList.size(); ++i) {
-        this->pieceList[i]->display();
+    for (size_t i = 0; i < squareList.size(); ++i) {
+        if(this->squareList[i]->piece != NULL) {
+            this->squareList[i]->piece->display();
+        }
     }
 }
 
@@ -137,7 +190,9 @@ void Plateau::cleanup() {
         SDL_DestroyTexture(this->squareList[i]->sdl_texture);
     }
 
-    for (size_t i = 0; i < pieceList.size(); ++i) {
-        SDL_DestroyTexture(this->pieceList[i]->sdl_texture);
+    for (size_t i = 0; i < squareList.size(); ++i) {
+        if(this->squareList[i]->piece != NULL) {
+            SDL_DestroyTexture(this->squareList[i]->piece->sdl_texture);
+        }
     }
 }

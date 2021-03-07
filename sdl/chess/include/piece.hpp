@@ -12,11 +12,13 @@ class Piece {
         Piece(SDL_Renderer *render, SDL_Texture *sdl_texture, PieceType type, Color color, int width);
         ~Piece();
         int width;
+        int id;
         PieceType type;
+        std::string name;
         Color color;
+        std::string colorStr;
         bool selected = false;
         
-
         SDL_Renderer *render;
         SDL_Texture *sdl_texture;
         SDL_Rect srcTextureParams; // Real texture size and placement

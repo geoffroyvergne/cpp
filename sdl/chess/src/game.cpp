@@ -1,10 +1,13 @@
 #include <iostream>
 #include <SDL.h>
 #include <game.hpp>
+#include <cursor.hpp>
+#include <piece.hpp>
+#include <square.hpp>
 
 Game::Game() { 
-    init();
-    this->sdl_texture_symbols = IMG_LoadTexture(render, "../assets/symbols-v3.png");
+    //init();
+    //this->sdl_texture_symbols = IMG_LoadTexture(render, "../assets/symbols-v4.png");
 }
 
 Game::~Game() { 
@@ -37,6 +40,7 @@ void Game::init() {
 void Game::renderView() {
     SDL_RenderClear(render);        
     this->plateau->display();
+    this->cursor->display();
     SDL_RenderPresent(render);
 }
 
@@ -55,6 +59,51 @@ void Game::startLoop() {
             }
 
             renderView();
+
+            switch( e.type ) {
+                case SDL_KEYDOWN:
+                    if (e.key.keysym.sym == SDLK_ESCAPE) {
+                        SDL_Log("Escape");
+                    }
+
+                    if (e.key.keysym.sym == SDLK_RETURN) {
+                        int cursorId = this->cursor->getId();                        
+                        //Square *square = this->plateau->squareList.at(cursorId);
+
+                        Square *square = this->plateau->getSquareById(cursorId);
+                        Piece *piece = this->plateau->getPieceById(cursorId);
+                        
+                        //Piece *piece = this->plateau->pieceList.at(cursorId);
+                        //Piece *piece = square->piece;
+
+                        if(square != NULL) {
+                            SDL_Log("Square : %s", square->colorStr.c_str());
+                        }
+
+                        if(piece != NULL) {
+                            SDL_Log("Piece : %s %s", piece->name.c_str(), piece->colorStr.c_str());
+                        }
+                    }
+
+                    if (e.key.keysym.sym == SDLK_UP) {                        
+                        this->cursor->up();
+                    }
+
+                    if (e.key.keysym.sym == SDLK_DOWN) {                            
+                        this->cursor->down();
+                    }
+
+                    if (e.key.keysym.sym == SDLK_LEFT) {                        
+                        this->cursor->left();
+                    }
+
+                    if (e.key.keysym.sym == SDLK_RIGHT) {                        
+                        this->cursor->right();
+                    }
+                    break;
+
+                break;
+            }
         }
         
         SDL_Delay(this->loopDelay);
@@ -62,8 +111,10 @@ void Game::startLoop() {
 }
 
 void Game::cleanup() {
+    
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
     //TTF_Quit();
+    //SDL_DestroyTexture(sdl_texture_symbols);
 	SDL_Quit();
 }
