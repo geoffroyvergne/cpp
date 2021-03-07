@@ -25,6 +25,11 @@ class Game {
         Cursor* cursor;
 
         void init();
+
+        void selectPiece();
+        void replacePiece();
+        void cancelSelectPiece();
+
         void renderView();
         void startLoop();
         void cleanup();

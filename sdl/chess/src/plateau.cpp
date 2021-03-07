@@ -179,7 +179,7 @@ void Plateau::display() {
     }
 
     for (size_t i = 0; i < squareList.size(); ++i) {
-        if(this->squareList[i]->piece != NULL) {
+        if(this->squareList[i]->piece != nullptr) {
             this->squareList[i]->piece->display();
         }
     }
@@ -192,7 +192,7 @@ void Plateau::cleanup() {
 
     for (size_t i = 0; i < squareList.size(); ++i) {
         if(this->squareList[i]->piece != NULL) {
-            SDL_DestroyTexture(this->squareList[i]->piece->sdl_texture);
+            //SDL_DestroyTexture(this->squareList[i]->piece->sdl_texture);
         }
     }
 }

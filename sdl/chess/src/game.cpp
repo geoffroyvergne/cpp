@@ -62,27 +62,16 @@ void Game::startLoop() {
 
             switch( e.type ) {
                 case SDL_KEYDOWN:
-                    if (e.key.keysym.sym == SDLK_ESCAPE) {
-                        SDL_Log("Escape");
+                    if (e.key.keysym.sym == SDLK_ESCAPE) {    
+                        this->cancelSelectPiece();                        
                     }
 
-                    if (e.key.keysym.sym == SDLK_RETURN) {
-                        int cursorId = this->cursor->getId();                        
-                        //Square *square = this->plateau->squareList.at(cursorId);
+                    /*if (e.key.keysym.sym == SDLK_m) {
+                        this->replacePiece();                        
+                    }*/
 
-                        Square *square = this->plateau->getSquareById(cursorId);
-                        Piece *piece = this->plateau->getPieceById(cursorId);
-                        
-                        //Piece *piece = this->plateau->pieceList.at(cursorId);
-                        //Piece *piece = square->piece;
-
-                        if(square != NULL) {
-                            SDL_Log("Square : %s", square->colorStr.c_str());
-                        }
-
-                        if(piece != NULL) {
-                            SDL_Log("Piece : %s %s", piece->name.c_str(), piece->colorStr.c_str());
-                        }
+                    if (e.key.keysym.sym == SDLK_RETURN) {  
+                        this->selectPiece();                                           
                     }
 
                     if (e.key.keysym.sym == SDLK_UP) {                        
@@ -108,6 +97,44 @@ void Game::startLoop() {
         
         SDL_Delay(this->loopDelay);
     }
+}
+
+void Game::selectPiece() {
+    int cursorId = this->cursor->getId();                                                
+    Square *currentSquarePtr = this->plateau->getSquareById(cursorId);
+
+    if(currentSquarePtr->piece != NULL) {
+        SDL_Log("Selected piece : %s, %s", currentSquarePtr->piece->name.c_str(), currentSquarePtr->piece->colorStr.c_str());
+    }
+
+    /*if(currentSquarePtr->piece != NULL) {
+        Square currentSquare = *currentSquarePtr;
+        this->cursor->sourceSquare = &currentSquare;
+        this->cursor->sourceSquareId = cursorId;
+        currentSquarePtr->piece = NULL;
+
+        SDL_Log("Selected piece : %s, %s", this->cursor->sourceSquare->piece->name.c_str(), this->cursor->sourceSquare->piece->colorStr.c_str());
+    }*/
+}
+
+/*void Game::replacePiece() {
+    int cursorId = this->cursor->getId();                                                
+    Square *currentSquare = this->plateau->getSquareById(cursorId);
+    currentSquare->piece = this->cursor->sourceSquare->piece;
+
+    SDL_Log("Moved piece : %s, %s", this->cursor->sourceSquare->piece->name.c_str(), this->cursor->sourceSquare->piece->colorStr.c_str());
+}*/
+
+void Game::cancelSelectPiece() {
+    //if(this->cursor->sourceSquare != NULL) {
+        //int sourceSquareId = this->cursor->sourceSquareId;
+        //Square *sourceSquare = this->plateau->getSquareById(this->cursor->sourceSquareId);
+        //sourceSquare->piece = this->cursor->sourceSquare->piece;
+
+        //SDL_Log("Replaced piece : %s, %s", this->cursor->sourceSquare->piece->name.c_str(), this->cursor->sourceSquare->piece->colorStr.c_str());
+        //this->cursor->sourceSquare = NULL;
+        //this->cursor->sourceSquareId = 0;
+    //}
 }
 
 void Game::cleanup() {

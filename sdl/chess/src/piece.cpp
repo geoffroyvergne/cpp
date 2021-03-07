@@ -80,5 +80,5 @@ void Piece::display() {
 }
 
 void Piece::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(sdl_texture);
 }

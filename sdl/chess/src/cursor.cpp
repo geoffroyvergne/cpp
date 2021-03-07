@@ -48,5 +48,5 @@ void Cursor::display() {
 }
 
 void Cursor::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(sdl_texture);
 }

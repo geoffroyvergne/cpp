@@ -45,5 +45,5 @@ void Square::display() {
 }
 
 void Square::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(sdl_texture);
 }
