@@ -37,6 +37,11 @@ void Game::init() {
     SDL_SetRenderDrawColor(render, 4, 156, 216, 255);
 }
 
+void Game::reset() {
+    SDL_Log("New game");
+    this->plateau->reset();
+}
+
 void Game::renderView() {
     SDL_RenderClear(render);        
     this->plateau->display();
@@ -47,7 +52,7 @@ void Game::renderView() {
 void Game::startLoop() {
     int active = 1;
     SDL_Event e;
-    const Uint8 *state = SDL_GetKeyboardState(NULL);
+    //const Uint8 *state = SDL_GetKeyboardState(NULL);
 
     while (active) {
         while (SDL_PollEvent(&e)) {          
@@ -66,28 +71,36 @@ void Game::startLoop() {
                         this->cancelSelectPiece();                        
                     }
 
-                    /*if (e.key.keysym.sym == SDLK_m) {
-                        this->replacePiece();                        
-                    }*/
+                    if (e.key.keysym.sym == SDLK_r) {
+                        this->reset();
+                    }
 
-                    if (e.key.keysym.sym == SDLK_RETURN) {  
+                    if (e.key.keysym.sym == SDLK_d) {
+                        this->deletePiece();
+                    }
+
+                    if (e.key.keysym.sym == SDLK_v) {
+                        this->validatePiece();                        
+                    }
+
+                    if (e.key.keysym.sym == SDLK_s) {  
                         this->selectPiece();                                           
                     }
 
                     if (e.key.keysym.sym == SDLK_UP) {                        
-                        this->cursor->up();
+                        this->cursorUp();
                     }
 
                     if (e.key.keysym.sym == SDLK_DOWN) {                            
-                        this->cursor->down();
+                        this->cursorDown();
                     }
 
                     if (e.key.keysym.sym == SDLK_LEFT) {                        
-                        this->cursor->left();
+                        this->cursorLeft();
                     }
 
                     if (e.key.keysym.sym == SDLK_RIGHT) {                        
-                        this->cursor->right();
+                        this->cursorRight();
                     }
                     break;
 
@@ -99,42 +112,98 @@ void Game::startLoop() {
     }
 }
 
-void Game::selectPiece() {
-    int cursorId = this->cursor->getId();                                                
-    Square *currentSquarePtr = this->plateau->getSquareById(cursorId);
+void Game::deletePiece() {
+    if(this->cursor->currentPiece == NULL) {
+        int cursorId = this->cursor->getId();
+        Piece *piece = this->plateau->getPieceById(cursorId);
 
-    if(currentSquarePtr->piece != NULL) {
-        SDL_Log("Selected piece : %s, %s", currentSquarePtr->piece->name.c_str(), currentSquarePtr->piece->colorStr.c_str());
+        this->plateau->deletePieceById(cursorId);
+        //SDL_Log("Deleted piece id : %d %s %s", piece->id, piece->name.c_str(), piece->colorStr.c_str());
     }
-
-    /*if(currentSquarePtr->piece != NULL) {
-        Square currentSquare = *currentSquarePtr;
-        this->cursor->sourceSquare = &currentSquare;
-        this->cursor->sourceSquareId = cursorId;
-        currentSquarePtr->piece = NULL;
-
-        SDL_Log("Selected piece : %s, %s", this->cursor->sourceSquare->piece->name.c_str(), this->cursor->sourceSquare->piece->colorStr.c_str());
-    }*/
 }
 
-/*void Game::replacePiece() {
-    int cursorId = this->cursor->getId();                                                
-    Square *currentSquare = this->plateau->getSquareById(cursorId);
-    currentSquare->piece = this->cursor->sourceSquare->piece;
+void Game::selectPiece() {
+    if(this->cursor->currentPiece == NULL) {
+        int cursorId = this->cursor->getId();
+        Piece *piece = this->plateau->getPieceById(cursorId);
 
-    SDL_Log("Moved piece : %s, %s", this->cursor->sourceSquare->piece->name.c_str(), this->cursor->sourceSquare->piece->colorStr.c_str());
-}*/
+        if(piece != NULL) {
+            //SDL_Log("Selected piece id : %d %s %s", piece->id, piece->name.c_str(), piece->colorStr.c_str());
+            this->cursor->currentPiece = piece;
+        }
+    }
+}
+
+void Game::validatePiece() {
+    if(this->cursor->currentPiece != NULL) {
+        int currentId = this->cursor->currentPiece->id;
+        Piece *currentPiece = this->plateau->getPieceById(currentId);
+
+        int newId = this->cursor->currentPiece->calculateNewId();
+
+        if(this->cursor->currentPiece->validateMove(currentId, newId)) {
+            if(this->plateau->caseAlreadyUsed(this->cursor->getId())) {
+                Piece *deletedPiece = this->plateau->getPieceById(newId);
+                
+                this->plateau->deletePieceById(this->cursor->getId());
+                //SDL_Log("Deleted piece id : %d %s %s", deletedPiece->id, deletedPiece->name.c_str(), deletedPiece->colorStr.c_str());
+                SDL_Log("%s %s take %s %s in %s", 
+                    this->cursor->currentPiece->name.c_str(), 
+                    this->cursor->currentPiece->colorStr.c_str(),
+                    deletedPiece->name.c_str(), 
+                    deletedPiece->colorStr.c_str(),
+                    this->plateau->getSquarePositionById(deletedPiece->id).c_str()
+                );
+            }
+
+            //SDL_Log("Validated selected piece from id : %d to id %d %s %s", currentId, newId, this->cursor->currentPiece->name.c_str(), this->cursor->currentPiece->colorStr.c_str());
+            
+            this->cursor->currentPiece->setId(newId);
+            this->cursor->currentPiece = NULL;
+        }
+    }
+}
 
 void Game::cancelSelectPiece() {
-    //if(this->cursor->sourceSquare != NULL) {
-        //int sourceSquareId = this->cursor->sourceSquareId;
-        //Square *sourceSquare = this->plateau->getSquareById(this->cursor->sourceSquareId);
-        //sourceSquare->piece = this->cursor->sourceSquare->piece;
+    if(this->cursor->currentPiece != NULL) {
+        this->cursor->currentPiece->setDestTextureParam(this->cursor->currentPiece->id);
 
-        //SDL_Log("Replaced piece : %s, %s", this->cursor->sourceSquare->piece->name.c_str(), this->cursor->sourceSquare->piece->colorStr.c_str());
-        //this->cursor->sourceSquare = NULL;
-        //this->cursor->sourceSquareId = 0;
-    //}
+        SDL_Log("Cancel selected piece id %d %s %s", this->cursor->currentPiece->id, this->cursor->currentPiece->name.c_str(), this->cursor->currentPiece->colorStr.c_str());
+        
+        this->cursor->currentPiece = NULL;
+    }
+}
+
+void Game::cursorUp() {
+    this->cursor->up();
+
+    if(this->cursor->currentPiece != NULL) {
+        this->cursor->currentPiece->up();
+    }
+}
+
+void Game::cursorDown() {
+    this->cursor->down();
+
+    if(this->cursor->currentPiece != NULL) {
+        this->cursor->currentPiece->down();
+    }
+}
+
+void Game::cursorLeft() {
+    this->cursor->left();
+
+    if(this->cursor->currentPiece != NULL) {
+        this->cursor->currentPiece->left();
+    }
+}
+
+void Game::cursorRight() {
+    this->cursor->right();
+
+    if(this->cursor->currentPiece != NULL) {
+        this->cursor->currentPiece->right();
+    }
 }
 
 void Game::cleanup() {
@@ -142,6 +211,6 @@ void Game::cleanup() {
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
     //TTF_Quit();
-    //SDL_DestroyTexture(sdl_texture_symbols);
+    SDL_DestroyTexture(sdl_texture_symbols);
 	SDL_Quit();
 }

@@ -9,20 +9,31 @@
 
 class Piece {
     public:
-        Piece(SDL_Renderer *render, SDL_Texture *sdl_texture, PieceType type, Color color, int width);
+        Piece(SDL_Renderer *render, SDL_Texture *sdl_texture, PieceType type, Color color, int width, int border);
         ~Piece();
         int width;
+        int border;
         int id;
         PieceType type;
         std::string name;
         Color color;
         std::string colorStr;
-        bool selected = false;
+        //bool selected = false;
         
         SDL_Renderer *render;
         SDL_Texture *sdl_texture;
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
+
+        bool validateMove(int currentId, int newId);
+        int calculateNewId();
+        void setId(int id);
+        void setDestTextureParam(int id);
+
+        void up();
+        void down();
+        void left();
+        void right();
 
         void init();
         void display();

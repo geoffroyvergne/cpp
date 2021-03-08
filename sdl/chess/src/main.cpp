@@ -12,11 +12,14 @@ int main(int argc, char** argv) {
     game->width = game->border*10;
 
     int squareWidth = (game->width -(game->border*2)) / 8;
+    SDL_Log("squareWidth %d", squareWidth);
+    SDL_Log("game->width %d", game->width);
+    SDL_Log("game->border %d", game->border);
 
     game->init();
     game->sdl_texture_symbols = IMG_LoadTexture(game->render, "../assets/symbols-v4.png");
 
-    game->plateau = new Plateau(game->render, game->sdl_texture_symbols, squareWidth);
+    game->plateau = new Plateau(game->render, game->sdl_texture_symbols, squareWidth, game->border);
     game->cursor = new Cursor(game->render, game->sdl_texture_symbols, squareWidth, game->border);
 
     game->startLoop();

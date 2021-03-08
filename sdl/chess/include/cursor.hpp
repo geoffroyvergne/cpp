@@ -19,8 +19,8 @@ class Cursor {
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
 
-        Square* sourceSquare = NULL;
-        //Piece currentPiece;
+        //Square* sourceSquare = NULL;
+        Piece *currentPiece = NULL;
         //Square* targetSquare = NULL;
 
         int sourceSquareId = 0;
