@@ -3,7 +3,13 @@
 
 enum BlockColor {
     grey,
-    blue
+    blue,
+    green,
+    orange,
+    pink,
+    purple,
+    red,
+    yellow
 };
 
 #endif
