@@ -20,12 +20,7 @@ class Block {
         SDL_Texture *sdl_texture;
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams = { 250, 250,  50, 50 }; // Texture seen in game
-        //SDL_Rect textureParams;
-        
-        void moveUp();
-        void moveDown();
-        void moveRight();
-        void moveLeft();
+        //SDL_Rect textureParams;        
 
         void display();
         void cleanup();

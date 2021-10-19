@@ -23,6 +23,12 @@ Plateau::~Plateau() {
 
 void Plateau::addSnake() {    
     snake = new Snake(this->render, this->sdl_texture);
+
+    Block *block = new Block(render, tail, sdl_texture);
+    block->destTextureParams.x = 250;
+    block->destTextureParams.y = 400;
+
+    snake->addBlock(block);
 }
 
 void Plateau::addWall() {

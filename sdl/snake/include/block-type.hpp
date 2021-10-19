@@ -3,7 +3,7 @@
 
 enum BlockType {
     base,
-    snake
+    tail
 };
 
 #endif

@@ -4,6 +4,7 @@
 
 #include <block.hpp>
 //#include <plateau.hpp>
+#include <direction.hpp>
 
 #ifndef SNAKE
 #define SNAKE
@@ -16,6 +17,7 @@ class Snake {
         std::vector<Block*> blockList;
         SDL_Renderer *render;
         SDL_Texture *sdl_texture;
+        Direction currentDirection;
 
         void addBlock(Block *block);
 

@@ -17,7 +17,7 @@ Block::Block(SDL_Renderer *render, BlockType type, SDL_Texture *sdl_texture) {
             srcTextureParams.y = 0;
             break;
 
-        case snake : 
+        case tail : 
             srcTextureParams.x = 50;
             srcTextureParams.y = 0;
             break;

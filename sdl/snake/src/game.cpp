@@ -35,6 +35,7 @@ void Game::renderView() {
         plateau->display();
         //plateau->displayCurrentPiece();
         //plateau->displayPieces();
+        plateau->snake->display();
     SDL_RenderPresent(render);
 }
 
@@ -55,21 +56,25 @@ void Game::startLoop() {
             switch( e.type ) {
                 case SDL_KEYDOWN:
 
-                    if (e.key.keysym.sym == SDLK_DOWN) {
-                        SDL_Log("SDLK_DOWN");                        
+                    if (e.key.keysym.sym == SDLK_UP) {
+                        SDL_Log("SDLK_UP");                        
                         //break;
+                        plateau->snake->moveUp();
                     }
 
                     if (e.key.keysym.sym == SDLK_DOWN) {
-                        SDL_Log("SDLK_DOWN");                        
+                        SDL_Log("SDLK_DOWN"); 
+                        plateau->snake->moveDown();                       
                     }
 
-                    if (e.key.keysym.sym == SDLK_DOWN) {
-                        SDL_Log("SDLK_DOWN");                        
+                    if (e.key.keysym.sym == SDLK_LEFT) {
+                        SDL_Log("SDLK_LEFT");      
+                        plateau->snake->moveLeft();                  
                     }
 
-                    if (e.key.keysym.sym == SDLK_DOWN) {
-                        SDL_Log("SDLK_DOWN");                        
+                    if (e.key.keysym.sym == SDLK_RIGHT) {
+                        SDL_Log("SDLK_RIGHT");     
+                        plateau->snake->moveRight();                   
                     }
 
                     if (e.key.keysym.sym == SDLK_r) {

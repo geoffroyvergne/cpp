@@ -13,6 +13,7 @@ int main(int argc, char** argv) {
     SDL_Texture *sdl_texture = IMG_LoadTexture(game->render, imagePath.c_str());   
     
     game->plateau = new Plateau(game->render, sdl_texture);
+    game->plateau->addSnake();
 
     game->startLoop();
     
