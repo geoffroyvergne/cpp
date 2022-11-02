@@ -11,3 +11,4 @@
 *.s
 **/CMakeFiles/
 **/fc_base
+**/bazel-*
