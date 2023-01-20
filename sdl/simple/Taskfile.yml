@@ -1,0 +1,18 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build binary.
+    cmds:
+      - cmake . -B build/
+      - cmake --build build/
+
+  run:
+    desc: Run binary.
+    cmds:
+      - ./build/sdl-simple
+
+  clean:
+    desc: Clean.
+    cmds:
+      - rm -Rf build/

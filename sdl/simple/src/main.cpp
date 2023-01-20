@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
     }
 
     SDL_Window* pWindow = NULL;
-    pWindow = SDL_CreateWindow("SDL_CreateWindow Error", SDL_WINDOWPOS_UNDEFINED,
+    pWindow = SDL_CreateWindow("Simple SDL Game", SDL_WINDOWPOS_UNDEFINED,
                                                         SDL_WINDOWPOS_UNDEFINED,
                                                         SCREEN_WIDTH,
                                                         SCREEN_HEIGHT,

@@ -1,16 +1,18 @@
 #include <iostream>
 #include <piece.hpp>
 
-Piece::Piece(SDL_Renderer *render, PieceType pieceype, SDL_Texture *sdl_texture) {
-    this->render = render;
-    this->sdl_texture = sdl_texture;
+#include "singleton_init.hpp"
+
+Piece::Piece(PieceType pieceype) {
+    //this->render = render;
+    //this->sdl_texture = sdl_texture;
 
     //textureParams = { 120, 120,  90, 90 };
     //srcTextureParams = { 0, 0,  90, 90 };
 
     this->togglePieceType(pieceype);
 
-    destTextureParams = { 120, 120,  90, 90 };
+    destTextureParams = { 120, 150,  90, 90 };
 }
 
 Piece::~Piece() {
@@ -105,7 +107,7 @@ void Piece::randomPiece() {
 }
 
 void Piece::display() {
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(SingletonInit::getInstance()->getRender(), SingletonInit::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Piece::cleanup() {

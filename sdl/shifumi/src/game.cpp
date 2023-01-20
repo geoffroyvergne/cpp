@@ -5,44 +5,26 @@
 #include <player.hpp>
 
 Game::Game() {
-    /*std::string imagePath = "../assets/images-set.png";
-    this->sdl_texture = IMG_LoadTexture(render, imagePath.c_str());*/
+    
 }
 
 Game::~Game() { 
-    cleanup();
-}
-
-void Game::init() {
-    //Start up SDL, and make sure it went ok
-	if (SDL_Init(SDL_INIT_VIDEO) != 0){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
-        
-		exit(EXIT_FAILURE);
-	}
-
-	// Create window
-	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
-	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-	// Create render
-	render = SDL_CreateRenderer(window, -1, 0);
-	//render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);	
-	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-    SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-    //SDL_RenderClear(render);
-	//SDL_RenderPresent(render); 
+    SingletonInit::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(render);
+    SDL_RenderClear(SingletonInit::getInstance()->getRender());
 
-    this->message->displayMessage();
+    //SDL_Color color = { 128, 128, 128 };
+    //SDL_Rect textureParams = { 128, 30,  256, 45 };
+
+    SingletonInit::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, "Shifumi");
+    SingletonInit::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, getScore());
+    
     this->player1->piece->display();
     this->player2->piece->display();
 
-    SDL_RenderPresent(render);
+    SDL_RenderPresent(SingletonInit::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -71,7 +53,7 @@ void Game::startLoop() {
                         // Update render
                         renderView();
 
-                        SDL_Delay(1000);
+                        SDL_Delay(100);
 
                         this->result();
                         this->setWinner(winner);
@@ -81,7 +63,8 @@ void Game::startLoop() {
                         SDL_Log("%s" , getScore().c_str());
 
                         // Update score message
-                        message->message = getScore();
+                        //message->message = getScore();
+                        //this->message->displayMessage(getScore());
                         
                         this->newGame();
                         
@@ -139,7 +122,7 @@ Player* Game::getWinner(PlayerType type) {
 }
 
 std::string Game::getScore() {
-    return "" + player1->name + " - " + std::to_string(player1->score) + " / " + player2->name + " - " + std::to_string(player2->score);
+    return "" + player1->name + " score " + std::to_string(player1->score) + " | " + player2->name + " score " + std::to_string(player2->score);
 }
 
 void Game::newGame() {
@@ -151,10 +134,4 @@ void Game::newGame() {
     this->player2->winner = 0;
 
     winner = playerNoneType;
-}
-
-void Game::cleanup() {
-    SDL_DestroyRenderer(render);
-    SDL_DestroyWindow(window);
-	SDL_Quit();
 }

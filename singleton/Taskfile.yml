@@ -1,0 +1,27 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build binary.
+    cmds:
+      - g++ -std=c++11 simple-singleton.cpp tread-safe-singleton.cpp main.cpp -o bin/all-simple-singleton 
+    deps:
+      - create-bin
+  
+  run:
+    desc: Run binary.
+    cmds:
+      - bin/all-simple-singleton
+    deps:
+      - build
+
+  create-bin:
+    cmds:
+      - mkdir bin
+    status:
+      - test -d bin/
+
+  clean:
+    desc: Clean binary directory.
+    cmds:
+      - rm -Rf bin/
