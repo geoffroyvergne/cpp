@@ -9,22 +9,22 @@ Game::Game() {
 }
 
 Game::~Game() { 
-    SingletonInit::getInstance()->cleanup();
+    Core::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(SingletonInit::getInstance()->getRender());
+    SDL_RenderClear(Core::getInstance()->getRender());
 
     //SDL_Color color = { 128, 128, 128 };
     //SDL_Rect textureParams = { 128, 30,  256, 45 };
 
-    SingletonInit::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, "Shifumi");
-    SingletonInit::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, getScore());
+    Core::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, Core::getInstance()->name);
+    Core::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, getScore());
     
     this->player1->piece->display();
     this->player2->piece->display();
 
-    SDL_RenderPresent(SingletonInit::getInstance()->getRender());
+    SDL_RenderPresent(Core::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -32,8 +32,7 @@ void Game::startLoop() {
     SDL_Event e;
     while (active) {
         
-        while (SDL_PollEvent(&e)) {	            
-
+        while (SDL_PollEvent(&e)) {
             //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
             if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
@@ -53,27 +52,21 @@ void Game::startLoop() {
                         // Update render
                         renderView();
 
-                        SDL_Delay(100);
+                        SDL_Delay(this->loopDelay);
 
                         this->result();
                         this->setWinner(winner);
 
                         SDL_Log("player1 : %s player2 : %s", this->player1->piece->name.c_str(), this->player2->piece->name.c_str());              
                         SDL_Log("partyNumber %d winner : %s", this->partyNumber, this->getWinner(winner)->name.c_str());                       
-                        SDL_Log("%s" , getScore().c_str());
-
-                        // Update score message
-                        //message->message = getScore();
-                        //this->message->displayMessage(getScore());
+                        SDL_Log("%s" , getScore().c_str());                    
                         
                         this->newGame();
                         
                         break;
                     }
 
-                    if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_DOWN) {
-                        //SDL_Log("change piece");
-
+                    if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_DOWN) {                       
                         this->player1->piece->nextPiece();
                         
                         break;
@@ -81,7 +74,7 @@ void Game::startLoop() {
                 break;
             }
         }
-        SDL_Delay(this->loopDelay); 
+        //SDL_Delay(this->loopDelay); 
     }
 }
 
@@ -122,7 +115,7 @@ Player* Game::getWinner(PlayerType type) {
 }
 
 std::string Game::getScore() {
-    return "" + player1->name + " score " + std::to_string(player1->score) + " | " + player2->name + " score " + std::to_string(player2->score);
+    return "" + std::to_string(partyNumber) + " " + player1->name + " score " + std::to_string(player1->score) + " | " + player2->name + " score " + std::to_string(player2->score);
 }
 
 void Game::newGame() {

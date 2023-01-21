@@ -2,9 +2,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "singleton_init.hpp"
+#include "core.hpp"
 
-void SingletonInit::init() { 
+void Core::init() { 
     // init sdl
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
@@ -33,38 +33,40 @@ void SingletonInit::init() {
     TTF_Init();
 }
 
-SingletonInit* SingletonInit::getInstance() {
-    if(!SingletonInit::instance) {
-        SingletonInit::instance = new SingletonInit();
+Core* Core::getInstance() {
+    if(!Core::instance) {
+        Core::instance = new Core();
     }
     return instance;
 }
 
-SDL_Window* SingletonInit::getWindow() {
+SDL_Window* Core::getWindow() {
     return window;
 }
 
-SDL_Texture* SingletonInit::getSdlTexture() {
+SDL_Texture* Core::getSdlTexture() {
     return sdl_texture;
 }
 
-SDL_Renderer* SingletonInit::getRender() {
+SDL_Renderer* Core::getRender() {
     return render;
 }
 
-void SingletonInit::displayMessage(int fontSize, SDL_Color color, SDL_Rect textureParams, std::string message) {     
-    
+void Core::displayMessage(int fontSize, SDL_Color color, SDL_Rect textureParams, std::string message) {
     font = TTF_OpenFont(fontPath.c_str(), fontSize);
     //sdlSurface = TTF_RenderText_Blended(font, message.c_str(), color);
     sdlSurface = TTF_RenderText_Blended(font, message.c_str(), color);
-    sdlTexture = SDL_CreateTextureFromSurface(SingletonInit::getInstance()->getRender(), sdlSurface);
-    SDL_RenderCopy(SingletonInit::getInstance()->getRender(), sdlTexture, NULL, &textureParams);  
+    sdlTexture = SDL_CreateTextureFromSurface(Core::getInstance()->getRender(), sdlSurface);
+    SDL_RenderCopy(Core::getInstance()->getRender(), sdlTexture, NULL, &textureParams);  
 
     //SDL_DestroyTexture(sdlTexture);
     //SDL_FreeSurface(sdlSurface);
 }
 
-void SingletonInit::cleanup() {
+void Core::cleanup() {
+    SDL_DestroyTexture(sdlTexture);
+    SDL_FreeSurface(sdlSurface);
+
     TTF_CloseFont(font);    
     TTF_Quit();
 
@@ -73,4 +75,4 @@ void SingletonInit::cleanup() {
 	SDL_Quit();
 }
 
-SingletonInit* SingletonInit::instance = nullptr;
+Core* Core::instance = nullptr;

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <piece.hpp>
 
-#include "singleton_init.hpp"
+#include "core.hpp"
 
 Piece::Piece(PieceType pieceype) {
     //this->render = render;
@@ -107,7 +107,7 @@ void Piece::randomPiece() {
 }
 
 void Piece::display() {
-    SDL_RenderCopy(SingletonInit::getInstance()->getRender(), SingletonInit::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Piece::cleanup() {

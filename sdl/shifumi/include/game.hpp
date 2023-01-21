@@ -3,7 +3,7 @@
 
 #include <player.hpp>
 
-#include "singleton_init.hpp"
+#include "core.hpp"
 
 #ifndef GAME
 #define GAME
@@ -15,7 +15,7 @@ class Game {
         std::string name = "shifumi";
         int width = 512;
         int height = 512;
-        int loopDelay = 10;
+        int loopDelay = 200;
         int partyNumber = 0;
         
         Player *player1;
