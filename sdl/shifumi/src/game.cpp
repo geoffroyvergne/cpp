@@ -71,6 +71,14 @@ void Game::startLoop() {
                         
                         break;
                     }
+
+                    // reset key
+                    if (e.key.keysym.sym == SDLK_r) {
+                        SDL_Log("New Game\n");
+                        partyNumber = 0;
+                        player1->score = 0;
+                        player2->score = 0;
+                    }
                 break;
             }
         }
