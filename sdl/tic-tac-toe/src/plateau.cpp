@@ -3,19 +3,15 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <plateau.hpp>
+#include <core.hpp>
 
-Plateau::Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture) {
-    this->render = render;
-    this->sdl_texture = sdl_texture;
-    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
-
+Plateau::Plateau() {
     srcTextureParams = { 87, 187,  512, 512 };
     destTextureParams = { 0, 0,  512, 512 };
 }
 
 void Plateau::display() {
-    //SDL_RenderCopy(render, sdl_texture, NULL, &textureParams);
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 int Plateau::caseAlreadyUsed(Piece *piece) {
@@ -58,16 +54,70 @@ Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
     if(player == cross) pieceType = black_cross;
     else if(player == circle) pieceType = black_circle;
 
-    Piece *piece = new Piece(render, pieceType, sdl_texture);
+    Piece *piece = new Piece(pieceType);
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
     piece->destTextureParams.y = currentPiece->destTextureParams.y;
+    
+    //piece->setCaseNumberByTextureParams();
+    //SDL_Log("Case Number %d", piece->caseNumber);
 
-    piece->getCaseNumberByTextureParams();
-    SDL_Log("Case Number %d", piece->caseNumber);
+    //SDL_Log("Case Number %d", getCaseNumberByTextureParams(currentPiece));
+
+    //SDL_Log("srcTextureParams.x %d", piece->destTextureParams.x);
+    //SDL_Log("srcTextureParams.y %d", piece->destTextureParams.y);
+
+    int caseNumber = getCaseNumberByTextureParams(piece->destTextureParams.x, piece->destTextureParams.y);
+    piece->caseNumber = caseNumber;
+
+    //SDL_Log("srcTextureParams.x %d", piece->destTextureParams.x);
+    //SDL_Log("srcTextureParams.y %d", piece->destTextureParams.y);
+    SDL_Log("caseNumber %d", caseNumber);
 
     pieceList.push_back(piece);
 
     return this->lineDone();
+}
+
+int Plateau::getCaseNumberByTextureParams(int x, int y) {
+    // 30 210 390
+
+    if(x == 30 && y == 30) {
+        return 0;
+    }
+
+    else if(x == 210 && y == 30) {
+        return 1;
+    }
+
+    else if(x == 390 && y == 30) {
+        return 2;
+    }
+
+    else if(x == 30 && y == 210) {
+        return 3;
+    }
+
+    else if(x == 210 && y == 210) {
+        return 4;
+    }
+
+    else if(x == 390 && y == 210) {
+        return 5;
+    }
+
+    else if(x == 30 && y == 390) {
+        return 6;
+    }
+
+    else if(x == 210 && y == 390) {
+        return 7;
+    }
+
+    else if(x == 390 && y == 390) {
+        return 8;
+    }
+
+    else return 0;
 }
 
 int Plateau::vectorContains(int caseNumber, Player player) {

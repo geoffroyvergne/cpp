@@ -6,7 +6,6 @@
 #include <piece.hpp>
 #include <plateau.hpp>
 #include <player.hpp>
-#include <message.hpp>
 
 #ifndef GAME
 #define GAME
@@ -14,24 +13,19 @@
 class Game {
     public:
         ~Game();
-        std::string name = "tic-tac-toe";
-        int width = 512;
-        int height = 512;
-        int loopDelay = 10;
+        
+        int loopDelay = 20;
         int circleScore = 0;
         int crossScore = 0;
-        
-        SDL_Window *window;
-        SDL_Renderer *render;
         
         Player currentPlayer = circle;
         Piece *currentPiece;
         Plateau *plateau;
         Player winner = none;
         Player lastWinner = none;
-        Message *message;
+        //Message *message;
         
-        void init();
+        void renderView();
         void startLoop();
         void newGame();
         void increaseScore(Player player);
@@ -39,7 +33,6 @@ class Game {
         std::string getPlayer(Player player);
         void togglePlayer();
         void destroyTextures();
-        void cleanup();       
 };
 
 #endif

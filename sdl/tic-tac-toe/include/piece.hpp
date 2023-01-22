@@ -9,21 +9,15 @@
 
 class Piece {
     public:
-        Piece(SDL_Renderer *render, PieceType type, SDL_Texture *sdl_texture);
+        Piece(PieceType type);
         ~Piece();
-        Player player;
-        SDL_Renderer *render;
-        std::string imagePath;
-        SDL_Texture *sdl_texture;
-        //SDL_Rect textureParams = { 30, 30,  90, 90 };
-        //SDL_Rect textureParams;
+        Player player;       
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams = { 250, 250,  50, 50 }; // Texture seen in game
         int caseNumber = 0;
 
         void togglePlayer(PieceType pieceype);
         void toggleColor();
-        void getCaseNumberByTextureParams();
         void display();
         void moveUp();
         void moveDown();

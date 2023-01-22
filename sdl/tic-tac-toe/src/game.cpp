@@ -5,34 +5,25 @@
 #include <game.hpp>
 #include <plateau.hpp>
 #include <piece.hpp>
-#include <message.hpp>
+#include <core.hpp>
 
 Game::~Game() { 
-    cleanup();
+    Core::getInstance()->cleanup();
 }
 
-void Game::init() {
-    //SDL_Log("Init game");
+void Game::renderView() {
+    SDL_RenderClear(Core::getInstance()->getRender());
 
-    //First we need to start up SDL, and make sure it went ok
-	if (SDL_Init(SDL_INIT_VIDEO) != 0){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
-        
-		exit(EXIT_FAILURE);
-	}
+    plateau->display();
+    plateau->displayPieces();
+    currentPiece->display();
+    
+    std::string message = getScore() + " winner : " + getPlayer(lastWinner);
 
-	// Create window
-	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
-	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
+    Core::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, Core::getInstance()->name);
+    Core::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, message);
 
-	// Create render
-	render = SDL_CreateRenderer(window, -1, 0);
-	//render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);	
-	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-    SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-    SDL_RenderClear(render);
-	SDL_RenderPresent(render); 
+    SDL_RenderPresent(Core::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -40,12 +31,12 @@ void Game::startLoop() {
     int active = 1;
     SDL_Event e;
     while (active) { 
-        // if winner is known, start a new game
+        // if winner is none, start a new game
         if(winner != none) {
             lastWinner = winner;
             // Increase score to the right player
             increaseScore(winner);
-            SDL_Log("Winner is %s score : %s", getPlayer(winner).c_str(), getScore().c_str());
+            SDL_Log("Game over Winner is %s score : %s", getPlayer(winner).c_str(), getScore().c_str());
 
             newGame();
             winner = none;
@@ -55,7 +46,7 @@ void Game::startLoop() {
 
         // If all cases used Game over !
         if(this->plateau->casesUsed >= 9) {
-            SDL_Log("Game Over null match");
+            SDL_Log("Game Over no winner");
             //SDL_Delay(1000);
             newGame();
             continue;
@@ -63,22 +54,13 @@ void Game::startLoop() {
         
 		while (SDL_PollEvent(&e)) {	
 			//if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
-            if (e.type == SDL_QUIT) {
+            //if (e.type == SDL_QUIT) {
+            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
 				SDL_Log("Quit\n");
 			}
 
-            SDL_RenderClear(render);
-
-            plateau->display();
-            plateau->displayPieces();
-            currentPiece->display();
-           
-            std::string message = "TIC TAC TOE " + getScore() + " winner : " + getPlayer(lastWinner);
-            this->message->message = message;
-            this->message->displayMessage();
-
-            SDL_RenderPresent(render);
+            renderView();
 
             switch( e.type ) {
                 case SDL_KEYDOWN:                    
@@ -93,14 +75,21 @@ void Game::startLoop() {
                                 winner = plateau->addNewPiece(currentPiece, currentPlayer);
                                 togglePlayer();
                                 currentPiece = plateau->addCurrentPiece(currentPiece, currentPlayer);  
-                                this->plateau->casesUsed ++;                                                            
+                                this->plateau->casesUsed ++;                                                                               
                             } else {                            
                                 SDL_Log("Case already used");
-                                //newGame();
                             }
                         }
                         
                         break;
+                    }
+
+                    // reset key
+                    if (e.key.keysym.sym == SDLK_r) {
+                        SDL_Log("New Game\n");
+                        circleScore = 0;
+                        crossScore = 0;
+                        newGame();
                     }
 
                     // Up Arrow
@@ -145,15 +134,11 @@ void Game::startLoop() {
     delete(currentPiece);
 }
 
-void Game::newGame() {
-    destroyTextures();
-    
-    for (auto piece : this->plateau->pieceList) {
-        delete piece;
-    } 
+void Game::newGame() {    
     this->plateau->pieceList.clear();
-
     this->plateau->casesUsed = 0;
+
+    renderView();
 }
 
 void Game::increaseScore(Player player) {
@@ -184,19 +169,7 @@ void Game::togglePlayer() {
 }
 
 void Game::destroyTextures() {
-
     /*for (size_t i = 0; i < this->plateau->pieceList.size(); ++i) {
 		SDL_DestroyTexture(this->plateau->pieceList[i]->sdl_texture);
 	}*/
-}
-
-void Game::cleanup() {
-    //TTF_Quit();
-    //TTF_CloseFont(font);
-
-    message->cleanUp();
-    //TTF_CloseFont(message->font);
-    destroyTextures();    
-	SDL_DestroyWindow(window);
-	SDL_Quit();
 }
