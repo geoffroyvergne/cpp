@@ -9,26 +9,18 @@
 #include <block-type.hpp>
 #include <map>
 #include <iterator>
+#include <core.hpp>
 
-Plateau::Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture) {
-    this->render = render;   
+Plateau::Plateau() {
     this->currentBlockType = base; 
-    this->sdl_texture = sdl_texture;
-    
-    /*if (sdl_texture == NULL){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "sdl_texture Error: %s\n", IMG_GetError());
-		//return NULL;
-	}*/
-
     this->addWall();
 }
 
 Plateau::~Plateau() {
-    cleanup();
+    Core::getInstance()->cleanup();
 }
 
 int Plateau::detectCollision() {
-    //TODO implement
     SDL_Rect pieceBloc;
     SDL_Rect wallBloc;
     SDL_bool collision;
@@ -57,15 +49,9 @@ int Plateau::detectCollision() {
     return false;
 }
 
-/*void Plateau::displayPieces() {
-    for (size_t i = 0; i < this->pieceList.size(); ++i) {        
-        this->pieceList[i]->display();
-	}
-}*/
-
 void Plateau::addWall() {
     for(int i=0; i<15; i++) {
-        Block *block = new Block(render, base, sdl_texture);
+        Block *block = new Block(base);
         block->destTextureParams.x = 0;
         block->destTextureParams.y = (i+1) * 50;
 
@@ -73,7 +59,7 @@ void Plateau::addWall() {
     }
 
     for(int i=0; i<15; i++) {
-        Block *block = new Block(render, base, sdl_texture);
+        Block *block = new Block(base);
         block->destTextureParams.x = 500;
         block->destTextureParams.y = (i+1) * 50;
 
@@ -81,7 +67,7 @@ void Plateau::addWall() {
     }
 
     for(int i=0; i<9; i++) {
-        Block *block = new Block(render, base, sdl_texture);
+        Block *block = new Block(base);
         block->destTextureParams.x = (i+1) * 50;
         block->destTextureParams.y = 750;
 
@@ -124,7 +110,6 @@ void Plateau::toggleBlockType() {
             this->currentBlockType=I;
             break;
     }
-    //this->currentBlockType=base;
 }
 
 void Plateau::randomBlockType() {
@@ -166,11 +151,9 @@ void Plateau::randomBlockType() {
 }
 
 void Plateau::addPiece() {
-    Piece *piece = new Piece(this->render, this->currentBlockType, this->sdl_texture);
+    Piece *piece = new Piece(this->currentBlockType);
     piece->blockList = this->currentPiece->blockList;
     piece->type = this->currentPiece->type;
-
-    //this->pieceList.push_back(piece);
 }
 
 void Plateau::displayCurrentPiece() {
@@ -181,7 +164,7 @@ void Plateau::addCurrentPiece() {
     //toggleBlockType();
     randomBlockType();
     if(currentPiece == NULL) delete currentPiece;
-    currentPiece = new Piece(this->render, this->currentBlockType, this->sdl_texture);
+    currentPiece = new Piece(this->currentBlockType);
     //SDL_Log("this->currentBlockType : %d", this->currentBlockType);
 }
 
@@ -248,22 +231,25 @@ void Plateau::rotateCurrentPiece() {
 }
 
 void Plateau::resetWall() {
+
+    this->wallList.clear();
+    this->addWall();
+    
     /*for (auto wall : this->wallList) {
         delete wall;
-    } 
-    this->wallList.clear();
-    this->addWall();*/
-    int erased = 0;
+    }*/
 
     //TODO fixe it
-    for(int i=0; i<4; i++) {
+    /*int erased = 0;
+
+    for(int i=0; i<5; i++) {
         for (size_t i = 0; i < this->wallList.size(); ++i) {
             if(this->wallList[i]->type != base) {
                 //this->wallList[i]->cleanup();
                 this->wallList.erase(this->wallList.begin() + i);
             }
         }
-    }
+    }*/
 }
 
 // if 9 blocks with the same y position, there is a line
@@ -296,22 +282,10 @@ int Plateau::detectLineDone() {
     return 0;
 }
 
-/*for (auto p : testList) {
-    delete p;
-}*/
-
-// remove this line
-//this->wallList[i]->cleanup();
-//this->wallList.erase(this->wallList.begin() +i);
-//this->wallList.erase(std::remove(this->wallList.begin(), this->wallList.end(), this->wallList[i]), this->wallList.end());
-//this->wallList.shrink_to_fit();
-
-//delete this->wallList[i];
-
 // TODO remove properly blocks instead of moving them
 void Plateau::removeLine(int lineDone) {
     //TODO fixe it
-    for(int i=0; i<4; i++) {
+    for(int i=0; i<5; i++) {
         for (size_t i = 0; i < this->wallList.size(); ++i) {
             if(this->wallList[i]->destTextureParams.y == lineDone && this->wallList[i]->type != base) {
                 // move up this line
@@ -321,12 +295,6 @@ void Plateau::removeLine(int lineDone) {
             }
         }
     }
-
-    /*for (auto wall : this->wallList) {
-        if(wall->destTextureParams.y == lineDone && wall->type != base) {
-            delete wall;
-        }
-    }*/
 }
 
 void Plateau::moveDownLine(int lineDone) {

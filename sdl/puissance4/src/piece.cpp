@@ -2,11 +2,10 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <piece.hpp>
+#include <core.hpp>
 
-Piece::Piece(SDL_Renderer *render, PieceType pieceType, SDL_Texture *sdl_texture) {
-    this->render = render;
+Piece::Piece(PieceType pieceType) {
     this->type = pieceType;
-    this->sdl_texture = sdl_texture;
     //{ 26, 2,  55, 55 } initial position case
 
     //{ 26, 69,  55, 55 } first case
@@ -24,23 +23,18 @@ Piece::~Piece() {
 void Piece::togglePlayer(PieceType pieceType) {
     switch(pieceType) {
         case yellow_circle : 
-            //imagePath = "../assets/puisance4-yellow-spot.png"; 
             srcTextureParams.x = 365;
             srcTextureParams.y = 17;
             player = yellow;
             break;
 
         case red_circle : 
-            //imagePath = "../assets/puisance4-red-spot.png"; 
             srcTextureParams.x = 150;
             srcTextureParams.y = 14;
             player = red;
             break;
     }
     this->type = pieceType;
-
-    //if(sdl_texture != NULL) SDL_DestroyTexture(sdl_texture);
-    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
 }
 
 void Piece::toggleColor() {
@@ -48,8 +42,7 @@ void Piece::toggleColor() {
 }
 
 void Piece::display() {
-    //SDL_RenderCopy(render, sdl_texture, NULL, &textureParams);
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Piece::moveRight() {
@@ -75,5 +68,5 @@ void Piece::moveDown() {
 }
 
 void Piece::cleanup() {
-    //SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
 }

@@ -1,45 +1,25 @@
 #include <iostream>
 #include <SDL.h>
 #include <game.hpp>
-
-//Game::Game() {}
+#include <core.hpp>
 
 Game::~Game() { 
-    cleanup();
-}
-
-void Game::init() {
-    //Start up SDL, and make sure it went ok
-	if (SDL_Init(SDL_INIT_VIDEO) != 0){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
-        
-		exit(EXIT_FAILURE);
-	}
-
-	// Create window
-	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
-	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-	// Create render
-	render = SDL_CreateRenderer(window, -1, 0);
-	//render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);	
-	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-    SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-    SDL_RenderClear(render);
-	SDL_RenderPresent(render); 
+    Core::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(render);
-        std::string message = this->name + " red : " + std::to_string(this->redScore) + " yellow : " + std::to_string(this->yellowScore);
-        this->message->message = message;
-        this->message->displayMessage();
-        //message->displayMessage();
-        plateau->display();
-        currentPiece->display();
-        plateau->displayPieces();
-    SDL_RenderPresent(render);
+    SDL_RenderClear(Core::getInstance()->getRender());
+
+    plateau->display();
+    plateau->displayPieces();
+    currentPiece->display();
+    
+    std::string message = this->name + " red : " + std::to_string(this->redScore) + " yellow : " + std::to_string(this->yellowScore);
+
+    Core::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, Core::getInstance()->name);
+    Core::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, message);
+
+    SDL_RenderPresent(Core::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -48,7 +28,7 @@ void Game::startLoop() {
     while (active) {        
         while (SDL_PollEvent(&e)) {	            
             //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
-            if (e.type == SDL_QUIT) {
+            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
 				SDL_Log("Quit\n");
                 break;
@@ -89,23 +69,7 @@ void Game::startLoop() {
                         currentPiece->moveLeft();
 
                         break;
-                    }
-
-                    // Up Arrow
-                    /*if (e.key.keysym.sym == SDLK_UP) {
-                        //SDL_Log("SDLK_UP");
-                        currentPiece->moveUp();
-
-                        break;
-                    }*/
-
-                    // Down Arrow
-                    /*if (e.key.keysym.sym == SDLK_DOWN) {
-                        //SDL_Log("SDLK_DOWN");
-                        currentPiece->moveDown();
-
-                        break;
-                    }*/
+                    }                    
                 break;
             }            
         }
@@ -146,10 +110,4 @@ void Game::newGame() {
     } 
     this->plateau->pieceList.clear();
     this->plateau->casesUsed = 0;    
-}
-
-void Game::cleanup() {
-    SDL_DestroyRenderer(render);
-    SDL_DestroyWindow(window);
-	SDL_Quit();
 }

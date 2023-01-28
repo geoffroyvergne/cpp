@@ -2,13 +2,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <piece.hpp>
-//#include <block.hpp>
 #include <block-type.hpp>
-//#include <plateau.hpp>
 
-Piece::Piece(SDL_Renderer *render, BlockType type, SDL_Texture *sdl_texture) {
-    this->render = render;
-    this->sdl_texture = sdl_texture;
+Piece::Piece(BlockType type) {
 
     switch(type) {
         case base : 
@@ -37,10 +33,6 @@ Piece::Piece(SDL_Renderer *render, BlockType type, SDL_Texture *sdl_texture) {
             addO(type);
             break;
     }
-
-    //std::string imagePath = "../assets/image-set.png"; 
-    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
-   
 }
 
 Piece::~Piece() { 
@@ -87,14 +79,14 @@ void Piece::previousPosition() {
 
 // Block Base
 void Piece::addBase(BlockType type) {
-    Block *block = new Block(render, type, sdl_texture);
+    Block *block = new Block(type);
     addBlock(block);
 }
 
 // Block I
 void Piece::addI(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type, sdl_texture);
+        Block *block = new Block(type);
         if(i==1) block->destTextureParams.y += 50;
         if(i==2) block->destTextureParams.y += 100;
         if(i==3) block->destTextureParams.y += 150;
@@ -134,7 +126,7 @@ void Piece::rotateI(BlockType type) {
 // Block Z
 void Piece::addZ(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type, sdl_texture);        
+        Block *block = new Block(type);        
         if(i==1) block->destTextureParams.x -= 50;
         if(i==2) block->destTextureParams.y += 50;
         if(i==3) {
@@ -213,7 +205,7 @@ void Piece::rotateZ(BlockType type) {
 // Block L
 void Piece::addL(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type, sdl_texture);
+        Block *block = new Block(type);
         //block->destTextureParams.y += ((i+1)*50);
         if(i==1) block->destTextureParams.y += 50;
         if(i==2) block->destTextureParams.y += 100;
@@ -292,7 +284,7 @@ void Piece::rotateL(BlockType type) {
 // Block J
 void Piece::addJ(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type, sdl_texture);
+        Block *block = new Block(type);
         //block->destTextureParams.y += ((i+1)*50);
         if(i==1) block->destTextureParams.y += 50;
         if(i==2) block->destTextureParams.y += 100;
@@ -371,7 +363,7 @@ void Piece::rotateJ(BlockType type) {
 // Block T
 void Piece::addT(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type, sdl_texture);
+        Block *block = new Block(type);
         if(i==0) block->destTextureParams.x -= 50;
         if(i==2) block->destTextureParams.x += 50;
         if(i==3) block->destTextureParams.y += 50;
@@ -435,7 +427,7 @@ void Piece::rotateT(BlockType type) {
 // Block S
 void Piece::addS(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type, sdl_texture);        
+        Block *block = new Block(type);        
         if(i==1) block->destTextureParams.x += 50;
         if(i==2) block->destTextureParams.y += 50;
         if(i==3) {
@@ -515,7 +507,7 @@ void Piece::rotateS(BlockType type) {
 // Block O
 void Piece::addO(BlockType type) {
     for(int i=0; i<4; i++) {
-        Block *block = new Block(render, type, sdl_texture);
+        Block *block = new Block(type);
         if(i==1) block->destTextureParams.y += 50;
         if(i==2) block->destTextureParams.x += 50;
         if(i==3) {

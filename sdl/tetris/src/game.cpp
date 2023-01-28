@@ -1,41 +1,20 @@
 #include <iostream>
 #include <SDL.h>
 #include <game.hpp>
+#include <core.hpp>
 
 //Game::Game() {}
 
 Game::~Game() { 
-    cleanup();
-}
-
-void Game::init() {
-    //Start up SDL, and make sure it went ok
-	if (SDL_Init(SDL_INIT_VIDEO) != 0){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
-        
-		exit(EXIT_FAILURE);
-	}
-
-	// Create window
-	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
-	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-	// Create render
-	render = SDL_CreateRenderer(window, -1, 0);
-	//render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);	
-	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-    SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-    SDL_RenderClear(render);
-	SDL_RenderPresent(render); 
+     Core::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(render);
-        plateau->display();
-        plateau->displayCurrentPiece();
-        //plateau->displayPieces();
-    SDL_RenderPresent(render);
+    SDL_RenderClear(Core::getInstance()->getRender());
+    plateau->display();
+    plateau->displayCurrentPiece();
+    //plateau->displayPieces();
+    SDL_RenderPresent(Core::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -44,8 +23,7 @@ void Game::startLoop() {
     SDL_Event e;
     while (active) {
         while (SDL_PollEvent(&e)) {          
-            //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
-            if (e.type == SDL_QUIT) {
+            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
                 active = 0;
                 SDL_Log("Quit");
                 break;
@@ -108,12 +86,12 @@ void Game::startLoop() {
                     }
 
                     // Up Arrow
-                    /*if (e.key.keysym.sym == SDLK_UP) {
+                    if (e.key.keysym.sym == SDLK_UP) {
                         //SDL_Log("SDLK_UP");
                         plateau->currentPiece->moveUp();
 
                         //break;
-                    }*/
+                    }
 
                     // Down Arrow
                     if (e.key.keysym.sym == SDLK_DOWN) {
@@ -128,11 +106,11 @@ void Game::startLoop() {
             }
         
         }
-        SDL_Delay(this->loopDelay);
+        SDL_Delay(Core::getInstance()->loopDelay);        
 
         // Automate piece move down
-        if(iterations % 100 == 0 && !pause) {
-            moveDown(); 
+        if(iterations % this->speed == 0 && !pause) {
+            this->moveDown(); 
             renderView();           
         }
         iterations++;
@@ -143,7 +121,7 @@ void Game::moveDown() {
     plateau->currentPiece->moveDown();
     if(plateau->detectCollision()) {
         plateau->currentPiece->moveUp();
-        SDL_Log("Reached bottom");
+        //SDL_Log("Reached bottom");
         
         for (size_t i = 0; i < this->plateau->currentPiece->blockList.size(); ++i) {
             this->plateau->wallList.push_back(this->plateau->currentPiece->blockList[i]);            
@@ -151,17 +129,12 @@ void Game::moveDown() {
 
         int lineDone = 0;
         while((lineDone = plateau->detectLineDone()) > 0) {
-            //SDL_Log("Line Done");
+            SDL_Log("Line Done");
             plateau->removeLine(lineDone);
             plateau->moveDownLine(lineDone);
         }
 
-        plateau->addCurrentPiece();
-
-        // TODO fixe it
-        for(int i=0; i<4; i++) {
-            plateau->rotateCurrentPiece();
-        }
+        plateau->addCurrentPiece();        
 
         if(plateau->gameOver()) {
             plateau->resetWall();
@@ -170,10 +143,4 @@ void Game::moveDown() {
 
         //renderView();
     }
-}
-
-void Game::cleanup() {
-    SDL_DestroyRenderer(render);
-    SDL_DestroyWindow(window);
-	SDL_Quit();
 }

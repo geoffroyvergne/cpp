@@ -3,12 +3,9 @@
 #include <SDL_image.h>
 
 #include <plateau.hpp>
+#include <core.hpp>
 
-Plateau::Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture) {
-    this->render = render;
-    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
-    this->sdl_texture = sdl_texture;
-
+Plateau::Plateau() {
     srcTextureParams = { 70, 139,  512, 460 };
     destTextureParams = { 11, 85,  512, 460 };
 }
@@ -24,7 +21,7 @@ void Plateau::displayPieces() {
 }
 
 int Plateau::addNewPiece(Piece *currentPiece) {    
-    Piece *piece = new Piece(render, currentPiece->type, sdl_texture);
+    Piece *piece = new Piece(currentPiece->type);
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
     piece->destTextureParams.y = 429;
 
@@ -129,11 +126,10 @@ Player Plateau::lineDone() {
 }
 
 void Plateau::display() {
-    //SDL_RenderCopy(render, sdl_texture, NULL, &textureParams);
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Plateau::cleanup() {
-    //SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
 }
 

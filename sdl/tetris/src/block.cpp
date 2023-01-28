@@ -3,12 +3,10 @@
 #include <SDL_image.h>
 #include <block.hpp>
 #include <block-type.hpp>
+#include <core.hpp>
 
-Block::Block(SDL_Renderer *render, BlockType type, SDL_Texture *sdl_texture) {
-    this->render = render;
-    this->type = type;
-    this->sdl_texture = sdl_texture;
-    
+Block::Block(BlockType type) {
+    this->type = type;    
     srcTextureParams = { 0, 0,  50, 50 };
 
     switch(type) {
@@ -54,11 +52,6 @@ Block::Block(SDL_Renderer *render, BlockType type, SDL_Texture *sdl_texture) {
     }
     
     destTextureParams = { 250, 50,  50, 50 };
-
-    //if(sdl_texture != NULL) SDL_DestroyTexture(sdl_texture);
-
-    //imagePath = "../assets/image-set.png"; 
-    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
 }
 
 Block::~Block() { 
@@ -66,9 +59,9 @@ Block::~Block() {
 }
 
 void Block::display() {
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Block::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
 }
