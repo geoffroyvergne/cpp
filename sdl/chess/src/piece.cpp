@@ -2,13 +2,12 @@
 #include <SDL.h>
 #include <piece.hpp>
 #include <color.hpp>
+#include <core.hpp>
 
-Piece::Piece(SDL_Renderer *render, SDL_Texture *sdl_texture, PieceType type, Color color, int width, int border) {
+Piece::Piece(PieceType type, Color color, int width, int border) {
     this->width = width;
     this->border = border;
     this->color = color;
-    this->render = render;
-    this->sdl_texture = sdl_texture;
     this->type = type;
 
     init();
@@ -133,9 +132,9 @@ void Piece::right() {
 }
 
 void Piece::display() {
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Piece::cleanup() {
-    //SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(Core::getInstance()->->getSdlTexture());
 }

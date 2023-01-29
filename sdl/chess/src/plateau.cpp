@@ -5,11 +5,10 @@
 #include <piece.hpp>
 #include <color.hpp>
 #include <array>
+#include <core.hpp>
 
-Plateau::Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture, int squareWidth, int border) { 
-    this->squareWidth = squareWidth;
-    this->render = render;
-    this->sdl_texture = sdl_texture;
+Plateau::Plateau(int squareWidth, int border) { 
+    this->squareWidth = squareWidth;    
     this->border = border;
 
     init();
@@ -84,7 +83,7 @@ void Plateau::init() {
         for (int j = 0; j < plateauDef[i].size(); ++j) {
             //if(static_cast<SquareType>(plateauDef[i][j]) == empty) continue;
             
-            Square *square = new Square(render, sdl_texture, static_cast<Color>(plateauDef[i][j]), squareWidth, squareId);
+            Square *square = new Square(static_cast<Color>(plateauDef[i][j]), squareWidth, squareId);
             if(i == 3 && j == 3) square->selected = true;
             square->destTextureParams.x += i *squareWidth; 
             square->destTextureParams.y += j *squareWidth; 
@@ -121,7 +120,7 @@ void Plateau::init() {
             else if(i >= 6) pieceColor = white;
             else pieceColor = transparent;
             
-            Piece *piece = new Piece(render, sdl_texture, static_cast<PieceType>(plateauPiecesDef[i][j]), pieceColor, squareWidth, border);
+            Piece *piece = new Piece(static_cast<PieceType>(plateauPiecesDef[i][j]), pieceColor, squareWidth, border);
             
             piece->id = pieceId;
             piece->destTextureParams.x += j *squareWidth; 
@@ -206,7 +205,7 @@ void Plateau::display() {
 }
 
 void Plateau::cleanup() {
-    for (size_t i = 0; i < squareList.size(); ++i) {
+    /*for (size_t i = 0; i < squareList.size(); ++i) {
         SDL_DestroyTexture(this->squareList[i]->sdl_texture);
     }
 
@@ -214,5 +213,5 @@ void Plateau::cleanup() {
         if(this->squareList[i]->piece != NULL) {
             //SDL_DestroyTexture(this->squareList[i]->piece->sdl_texture);
         }
-    }
+    }*/
 }

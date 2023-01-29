@@ -2,15 +2,16 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <game.hpp>
+#include <core.hpp>
 
 int main(int argc, char** argv) {
+    Core::getInstance()->init();
+
     Game *game = new Game();
-    SDL_Log("%s", game->name.c_str());
+    SDL_Log("%s", Core::getInstance()->name.c_str());
 
-    game->intro = new Message(game->render, "../assets/Pretendo.ttf");
-
-    game->player = new Player(game->render);
-    game->player->sdl_texture = IMG_LoadTexture(game->render, "../assets/player.png");
+    game->newLevel(w11); // World 1 - 1
+    game->player = new Player();
 
     game->startLoop();
     

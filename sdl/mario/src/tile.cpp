@@ -1,10 +1,11 @@
 #include <iostream>
 #include <SDL.h>
 #include <tile.hpp>
+#include <core.hpp>
 
-Tile::Tile(TileType tileType, SDL_Renderer *render, SDL_Texture *sdl_texture) { 
-    this->render = render;
-    this->sdl_texture = sdl_texture;
+Tile::Tile(TileType tileType) { 
+    //this->render = render;
+    //this->sdl_texture = sdl_texture;
     this->tileType = tileType;
 
     switch(tileType) {
@@ -100,13 +101,13 @@ Tile::~Tile() {
 }
 
 void Tile::display() { 
-    //SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
-    SDL_RenderCopyEx(render, sdl_texture, &srcTextureParams ,&destTextureParams, 0.0, NULL, flip);
+    //SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTextureLevels(), &srcTextureParams, &destTextureParams);
+    SDL_RenderCopyEx(Core::getInstance()->getRender(), Core::getInstance()->getSdlTextureLevels(), &srcTextureParams ,&destTextureParams, 0.0, NULL, flip);
 
     //SDL_FLIP_NONE
     //SDL_FLIP_HORIZONTAL
 }
 
 void Tile::cleanUp() { 
-    SDL_DestroyTexture(sdl_texture);
+    SDL_DestroyTexture(Core::getInstance()->getSdlTextureLevels());
 }

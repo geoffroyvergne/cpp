@@ -7,11 +7,9 @@
 
 class Tile {
     public:
-        Tile(TileType tileType, SDL_Renderer *render, SDL_Texture *sdl_texture);
+        Tile(TileType tileType);
         ~Tile();
-
-        SDL_Renderer *render;
-        SDL_Texture *sdl_texture;
+       
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams; // Texture seen in game
         SDL_RendererFlip flip = SDL_FLIP_NONE;

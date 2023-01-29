@@ -2,10 +2,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <player.hpp>
+#include <core.hpp>
 
-Player::Player(SDL_Renderer *render) {
-    this->render = render;
-
+Player::Player() {
     destTextureParams = { 200, tileSize*14,  tileSize, tileSize };
     this->position();
 }
@@ -103,9 +102,9 @@ void Player::fall(int gap) {
 }
 
 void Player::display() {
-    SDL_RenderCopyEx(render, sdl_texture, &srcTextureParams ,&destTextureParams, 0.0, NULL, playerFlip);
+    SDL_RenderCopyEx(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexturePlayer(), &srcTextureParams ,&destTextureParams, 0.0, NULL, playerFlip);
 }
 
 void Player::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    SDL_DestroyTexture(Core::getInstance()->getSdlTexturePlayer());
 }

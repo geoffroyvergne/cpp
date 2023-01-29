@@ -12,19 +12,10 @@ class Game {
     public:
         Game();
         ~Game();
-        std::string name = "Chess";        
-        int width = 600;
-        int loopDelay = 100;
-        int border = 50;
-
-        SDL_Window *window;
-        SDL_Renderer *render;
-        SDL_Texture *sdl_texture_symbols;
 
         Plateau* plateau;
         Cursor* cursor;
-
-        void init();
+       
         void reset();
 
         void cursorUp();
@@ -38,8 +29,7 @@ class Game {
         void cancelSelectPiece();
 
         void renderView();
-        void startLoop();
-        void cleanup();
+        void startLoop();        
 };
 
 #endif

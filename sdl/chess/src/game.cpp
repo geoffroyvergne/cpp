@@ -4,17 +4,17 @@
 #include <cursor.hpp>
 #include <piece.hpp>
 #include <square.hpp>
+#include <core.hpp>
 
 Game::Game() { 
-    //init();
-    //this->sdl_texture_symbols = IMG_LoadTexture(render, "../assets/symbols-v4.png");
+    
 }
 
 Game::~Game() { 
-    cleanup();
+   Core::getInstance()->cleanup();
 }
 
-void Game::init() {
+/*void Game::init() {
     //Start up SDL, and make sure it went ok
 	if (SDL_Init(SDL_INIT_VIDEO) != 0){
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
@@ -35,7 +35,7 @@ void Game::init() {
     //TTF_Init();
 
     SDL_SetRenderDrawColor(render, 4, 156, 216, 255);
-}
+}*/
 
 void Game::reset() {
     SDL_Log("New game");
@@ -43,10 +43,10 @@ void Game::reset() {
 }
 
 void Game::renderView() {
-    SDL_RenderClear(render);        
+    SDL_RenderClear(Core::getInstance()->getRender());        
     this->plateau->display();
     this->cursor->display();
-    SDL_RenderPresent(render);
+    SDL_RenderPresent(Core::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -57,7 +57,7 @@ void Game::startLoop() {
     while (active) {
         while (SDL_PollEvent(&e)) {          
             //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
-            if (e.type == SDL_QUIT) {
+            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
                 active = 0;
                 SDL_Log("Quit");
                 break;
@@ -108,7 +108,7 @@ void Game::startLoop() {
             }
         }
         
-        SDL_Delay(this->loopDelay);
+        SDL_Delay(Core::getInstance()->loopDelay);
     }
 }
 
@@ -204,13 +204,4 @@ void Game::cursorRight() {
     if(this->cursor->currentPiece != NULL) {
         this->cursor->currentPiece->right();
     }
-}
-
-void Game::cleanup() {
-    
-    SDL_DestroyRenderer(render);
-    SDL_DestroyWindow(window);
-    //TTF_Quit();
-    SDL_DestroyTexture(sdl_texture_symbols);
-	SDL_Quit();
 }

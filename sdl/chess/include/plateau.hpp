@@ -13,17 +13,14 @@
 
 class Plateau {
     public:
-        Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture, int squareWidth, int border);
+        Plateau(int squareWidth, int border);
         ~Plateau();
 
         int squareWidth;
         int border;
         
         std::vector<Square*> squareList;
-        std::vector<Piece*> pieceList;
-
-        SDL_Renderer *render;
-        SDL_Texture *sdl_texture;
+        std::vector<Piece*> pieceList;       
 
         void init();
 

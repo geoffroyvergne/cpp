@@ -9,7 +9,7 @@
 
 class Piece {
     public:
-        Piece(SDL_Renderer *render, SDL_Texture *sdl_texture, PieceType type, Color color, int width, int border);
+        Piece(PieceType type, Color color, int width, int border);
         ~Piece();
         int width;
         int border;
@@ -19,9 +19,7 @@ class Piece {
         Color color;
         std::string colorStr;
         //bool selected = false;
-        
-        SDL_Renderer *render;
-        SDL_Texture *sdl_texture;
+                
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
 

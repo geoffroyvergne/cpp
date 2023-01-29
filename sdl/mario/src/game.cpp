@@ -3,53 +3,25 @@
 #include <game.hpp>
 #include <message.hpp>
 #include <player.hpp>
+#include <core.hpp>
 
 Game::Game() { 
-    init();
     
-    this->sdl_texture_levels = IMG_LoadTexture(render, "../assets/levels.png");
-    this->sdl_texture_enemies = IMG_LoadTexture(render, "../assets/enemies.png");
-
-    newLevel(w11);
 }
 
 Game::~Game() { 
-    cleanup();
-}
-
-void Game::init() {
-    //Start up SDL, and make sure it went ok
-	if (SDL_Init(SDL_INIT_VIDEO) != 0){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
-        
-		exit(EXIT_FAILURE);
-	}
-
-	// Create window
-	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
-	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-	// Create render
-	//render = SDL_CreateRenderer(window, -1, 0);
-	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-    TTF_Init();
-
-    SDL_SetRenderDrawColor(render, 4, 156, 216, 255);
-    SDL_ShowCursor(SDL_DISABLE);
+    Core::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(render);        
+    SDL_RenderClear(Core::getInstance()->getRender());        
         //displayIntro();
         displayGame();
         this->player->display();
-    SDL_RenderPresent(render);
+    SDL_RenderPresent(Core::getInstance()->getRender());
 }
 
-void Game::displayIntro() {
+/*void Game::displayIntro() {
     if(SDL_GetTicks() < 3000) {
         if(intro != NULL) {
             SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
@@ -59,11 +31,11 @@ void Game::displayIntro() {
         }
         intro->displayMessage();
     }
-}
+}*/
 
 void Game::displayGame() {
     //if(SDL_GetTicks() > 3000) {        
-        SDL_SetRenderDrawColor(render, 4, 156, 216, 255);
+        SDL_SetRenderDrawColor(Core::getInstance()->getRender(), 4, 156, 216, 255);
         
         this->currentLevel->display();
     //}
@@ -71,7 +43,7 @@ void Game::displayGame() {
 
 void Game::newLevel(World world) {
     if(this->currentLevel != nullptr) delete this->currentLevel;
-    currentLevel = new Level(world, render, sdl_texture_levels, sdl_texture_enemies);
+    currentLevel = new Level(world);
 }
 
 void Game::startLoop() {
@@ -84,7 +56,7 @@ void Game::startLoop() {
         this->fall(state);
 
         while (SDL_PollEvent(&e)) {      
-            if (e.type == SDL_QUIT) {
+            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
                 active = 0;
                 SDL_Log("Quit");
                 break;
@@ -232,9 +204,9 @@ void Game::fall(const Uint8 *state) {
     }
 }
 
-void Game::cleanup() {
+/*void Game::cleanup() {
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
     TTF_Quit();
 	SDL_Quit();
-}
+}*/

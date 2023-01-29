@@ -3,24 +3,25 @@
 #include <SDL_image.h>
 #include <game.hpp>
 #include <cursor.hpp>
+#include <core.hpp>
 
 int main(int argc, char** argv) {
+
+    Core::getInstance()->init();
+
     Game *game = new Game();
-    SDL_Log("%s", game->name.c_str());
+    SDL_Log("%s", Core::getInstance()->name.c_str());
 
-    game->border = 50;
-    game->width = game->border*10;
+    Core::getInstance()->border = 50;
+    Core::getInstance()->width = Core::getInstance()->border*10;
 
-    int squareWidth = (game->width -(game->border*2)) / 8;
+    int squareWidth = (Core::getInstance()->width -(Core::getInstance()->border*2)) / 8;
     SDL_Log("squareWidth %d", squareWidth);
-    SDL_Log("game->width %d", game->width);
-    SDL_Log("game->border %d", game->border);
+    SDL_Log("game->width %d", Core::getInstance()->width);
+    SDL_Log("game->border %d", Core::getInstance()->border);
 
-    game->init();
-    game->sdl_texture_symbols = IMG_LoadTexture(game->render, "../assets/symbols-v4.png");
-
-    game->plateau = new Plateau(game->render, game->sdl_texture_symbols, squareWidth, game->border);
-    game->cursor = new Cursor(game->render, game->sdl_texture_symbols, squareWidth, game->border);
+    game->plateau = new Plateau(squareWidth, Core::getInstance()->border);
+    game->cursor = new Cursor(squareWidth, Core::getInstance()->border);
 
     game->startLoop();
     

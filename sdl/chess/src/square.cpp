@@ -2,12 +2,11 @@
 #include <SDL.h>
 #include <square.hpp>
 #include <color.hpp>
+#include <core.hpp>
 
-Square::Square(SDL_Renderer *render, SDL_Texture *sdl_texture, Color color, int width, int id) { 
+Square::Square(Color color, int width, int id) { 
     this->width = width;
-    this->id = id;
-    this->render = render;
-    this->sdl_texture = sdl_texture;
+    this->id = id;    
     this->color = color;
     bool selected = false;
 
@@ -38,12 +37,12 @@ Square::~Square() {
 }
 
 void Square::display() {
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
     /*if(this->selected) {
-        SDL_RenderCopy(render, sdl_texture, &srcSelectedTextureParams, &destTextureParams);
+        SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcSelectedTextureParams, &destTextureParams);
     }*/
 }
 
 void Square::cleanup() {
-    //SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
 }

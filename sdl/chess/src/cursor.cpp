@@ -1,12 +1,11 @@
 #include <iostream>
 #include <SDL.h>
 #include <cursor.hpp>
+#include <core.hpp>
 
-Cursor::Cursor(SDL_Renderer *render, SDL_Texture *sdl_texture, int width, int border) {
+Cursor::Cursor(int width, int border) {
     this->width = width;
     this->border = border;
-    this->render = render;
-    this->sdl_texture = sdl_texture;
 
     srcTextureParams = { 158, 360, 36, 33 };
     destTextureParams = { border + width*3, border + width*3, width, width };
@@ -44,9 +43,9 @@ int Cursor::getId() {
 }
 
 void Cursor::display() {
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);    
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);    
 }
 
 void Cursor::cleanup() {
-    //SDL_DestroyTexture(sdl_texture);
+    //SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
 }

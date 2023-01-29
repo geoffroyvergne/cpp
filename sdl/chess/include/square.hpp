@@ -11,7 +11,7 @@
 
 class Square {
     public:
-        Square(SDL_Renderer *render, SDL_Texture *sdl_texture, Color color, int width, int id);
+        Square(Color color, int width, int id);
         ~Square();
         int width;
         int id;
@@ -20,9 +20,7 @@ class Square {
         SquarePosition position;
         bool selected = false;
         Piece *piece = NULL;
-
-        SDL_Renderer *render;
-        SDL_Texture *sdl_texture;
+        
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
 
