@@ -6,14 +6,15 @@
 #include <levels.hpp>
 #include <enemy.hpp>
 #include <enemy-type.hpp>
+#include <core.hpp>
 
 //Game::Game() {}
 
 Game::~Game() { 
-    cleanup();
+    Core::getInstance()->cleanup();
 }
 
-void Game::init() {
+/*void Game::init() {
     //Start up SDL, and make sure it went ok
 	if (SDL_Init(SDL_INIT_VIDEO) != 0){
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
@@ -23,27 +24,31 @@ void Game::init() {
 
 	// Create window
 	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
-	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
+	if (window == NULL) {
+        cleanup(); 
+        exit(EXIT_FAILURE);
+    }
 
 	// Create render
 	render = SDL_CreateRenderer(window, -1, 0);
 	//render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
-}
+	if (render == NULL) {
+        cleanup(); 
+        exit(EXIT_FAILURE);
+    }
+}*/
 
 void Game::renderView() {
-    SDL_RenderClear(render);        
+    SDL_RenderClear(Core::getInstance()->getRender());        
         this->currentLevel->display();
         this->player->display();
-    SDL_RenderPresent(render);
+    SDL_RenderPresent(Core::getInstance()->getRender());
 }
 
 void Game::addLevel(Levels level) {
-    if(currentLevel != NULL) delete currentLevel;
-    SDL_Texture *sdl_texture_overworld = IMG_LoadTexture(render, "../assets/overworld-tileset.png");
-    SDL_Texture *sdl_texture_overworld_enemies = IMG_LoadTexture(render, "../assets/overworld-enemies.png");
-    currentLevel = new Level(render, level, sdl_texture_overworld, sdl_texture_overworld_enemies);
+    if(currentLevel != NULL) delete currentLevel;    
+    currentLevel = new Level(level);
 
     SDL_Log("Level number : %s", currentLevel->name.c_str());
 }
@@ -55,8 +60,7 @@ void Game::startLoop() {
 
     while (active) {
         while (SDL_PollEvent(&e)) {          
-            //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
-            if (e.type == SDL_QUIT) {
+            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
                 active = 0;
                 SDL_Log("Quit");
                 break;
@@ -201,8 +205,8 @@ void Game::attack(){
     this->player->position();
 }
 
-void Game::cleanup() {
+/*void Game::cleanup() {
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
 	SDL_Quit();
-}
+}*/

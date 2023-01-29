@@ -12,18 +12,14 @@
 
 class Level {
     public:
-        Level(SDL_Renderer *render, Levels number,  SDL_Texture *sdl_texture_overworld, SDL_Texture *sdl_texture_overworld_enemies);
+        Level(Levels number);
         ~Level();
-        std::string imagePath;
         std::vector<Sprite*> spriteList;
         std::vector<Enemy*> enemyList;
         Levels number;
         std::string name = "none";
         int spriteSize = 50;
-
-        SDL_Renderer *render;
-        SDL_Texture *sdl_texture_overworld;
-        SDL_Texture *sdl_texture_overworld_enemies;
+        
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams; // Texture seen in game
 

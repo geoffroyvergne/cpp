@@ -2,23 +2,21 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <sprite.hpp>
+#include <core.hpp>
 
-Sprite::Sprite(SDL_Renderer *render, SDL_Texture *sdl_texture) {
-    this->render = render;
-    this->sdl_texture = sdl_texture;
-
+Sprite::Sprite() {
     srcTextureParams = { 1, 11,  15, 16 };
     destTextureParams = { 18, 11,  15, 16 };
 }
 
 Sprite::~Sprite() { 
-    cleanup();
+    Core::getInstance()->cleanup();
 }
 
 void Sprite::display() {
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTextureOverWorld(), &srcTextureParams, &destTextureParams);
 }
 
 void Sprite::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    SDL_DestroyTexture(Core::getInstance()->getSdlTextureOverWorld());
 }

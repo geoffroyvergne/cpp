@@ -2,9 +2,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <player.hpp>
+#include <core.hpp>
 
-Player::Player(SDL_Renderer *render) {
-    this->render = render;
+Player::Player() {
 
     /*
     int x the x location of the rectangle's upper left corner
@@ -15,7 +15,6 @@ Player::Player(SDL_Renderer *render) {
 
     srcTextureParams = { 1, 11,  15, 16 }; // base front1
     //destTextureParams = { 235, 240,  50, 50 };
-    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
 }
 
 Player::~Player() { 
@@ -42,6 +41,9 @@ bool Player::isAttack() {
     switch(playerAction) {
         case swordFront1: case swordLeft1: case swordRight1: case swordBack1: 
             return true;
+            break;
+            
+        default:
             break;
     }
 
@@ -178,9 +180,9 @@ void Player::attack() {
 
 void Player::display() {
     //SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
-    SDL_RenderCopyEx(render, sdl_texture, &srcTextureParams ,&destTextureParams, 0.0, NULL, playerFlip);
+    SDL_RenderCopyEx(Core::getInstance()->getRender(), Core::getInstance()->getSdlTextureLink(), &srcTextureParams ,&destTextureParams, 0.0, NULL, playerFlip);
 }
 
 void Player::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    SDL_DestroyTexture(Core::getInstance()->getSdlTextureLink());
 }

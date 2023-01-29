@@ -20,16 +20,12 @@ class Game {
         std::string name = "Zelda";
         int height = 500;
         int width = 600;
-        int loopDelay = 100;
+        int loopDelay = 100;        
 
-        SDL_Window *window;
-        SDL_Renderer *render;
-        //SDL_Texture *sdl_texture;
-        SDL_Texture *sdl_texture_items;
         Player *player;
         Level *currentLevel;
         
-        void init();
+        //void init();
         void addLevel(Levels level);
         void displayDashboard();
         void renderView();
@@ -41,7 +37,7 @@ class Game {
         void left();
         void attack();
         
-        void cleanup();
+        //void cleanup();
 };
 
 #endif

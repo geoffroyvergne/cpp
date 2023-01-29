@@ -2,19 +2,17 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <game.hpp>
+#include <core.hpp>
 
 int main(int argc, char** argv) {
-    Game *game = new Game();
-    SDL_Log("%s", game->name.c_str());
+    Core::getInstance()->init();
 
-    game->init();
-    game->sdl_texture_items = IMG_LoadTexture(game->render, "../assets/items.png");
+    Game *game = new Game();
+    SDL_Log("%s", Core::getInstance()->name.c_str());    
     
-    game->player = new Player(game->render);
-    game->player->sdl_texture = IMG_LoadTexture(game->render, "../assets/link.png");
+    game->player = new Player();
 
     game->addLevel(h08);
-
     game->startLoop();
     
     delete game;

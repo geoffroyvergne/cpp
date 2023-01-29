@@ -8,13 +8,9 @@
 
 class Player {
     public:
-        Player(SDL_Renderer *render);
+        Player();
         ~Player();
-        std::string name = "Link";
-        //std::string imagePath = "../assets/link.png";
-
-        SDL_Renderer *render;
-        SDL_Texture *sdl_texture;
+        std::string name = "Link";        
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams = { 250, 250,  50, 50 }; // Texture seen in game
         SDL_RendererFlip playerFlip = SDL_FLIP_NONE;
