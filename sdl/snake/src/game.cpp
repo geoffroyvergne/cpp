@@ -1,42 +1,22 @@
 #include <iostream>
 #include <SDL.h>
 #include <game.hpp>
+#include <direction.hpp>
+#include <core.hpp>
 
 //Game::Game() {}
 
 Game::~Game() { 
-    cleanup();
-}
-
-void Game::init() {
-    //Start up SDL, and make sure it went ok
-	if (SDL_Init(SDL_INIT_VIDEO) != 0){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
-        
-		exit(EXIT_FAILURE);
-	}
-
-	// Create window
-	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
-	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-	// Create render
-	render = SDL_CreateRenderer(window, -1, 0);
-	//render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);	
-	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-    SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-    SDL_RenderClear(render);
-	SDL_RenderPresent(render); 
+    Core::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(render);
+    SDL_RenderClear(Core::getInstance()->getRender());
         plateau->display();
         //plateau->displayCurrentPiece();
         //plateau->displayPieces();
         plateau->snake->display();
-    SDL_RenderPresent(render);
+    SDL_RenderPresent(Core::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -45,36 +25,35 @@ void Game::startLoop() {
     while (active) {
         while (SDL_PollEvent(&e)) {          
             //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
-            if (e.type == SDL_QUIT) {
+            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
                 active = 0;
                 SDL_Log("Quit");
                 break;
             }
 
-            renderView();
+            //renderView();
 
             switch( e.type ) {
                 case SDL_KEYDOWN:
 
                     if (e.key.keysym.sym == SDLK_UP) {
-                        SDL_Log("SDLK_UP");                        
-                        //break;
-                        plateau->snake->moveUp();
+                        //SDL_Log("SDLK_UP");
+                        plateau->snake->changeDirection(up);
                     }
 
                     if (e.key.keysym.sym == SDLK_DOWN) {
-                        SDL_Log("SDLK_DOWN"); 
-                        plateau->snake->moveDown();                       
+                        //SDL_Log("SDLK_DOWN");
+                        plateau->snake->changeDirection(down);                     
                     }
 
                     if (e.key.keysym.sym == SDLK_LEFT) {
-                        SDL_Log("SDLK_LEFT");      
-                        plateau->snake->moveLeft();                  
+                        //SDL_Log("SDLK_LEFT");
+                        plateau->snake->changeDirection(left);                
                     }
 
                     if (e.key.keysym.sym == SDLK_RIGHT) {
-                        SDL_Log("SDLK_RIGHT");     
-                        plateau->snake->moveRight();                   
+                        //SDL_Log("SDLK_RIGHT");
+                        plateau->snake->changeDirection(right);                 
                     }
 
                     if (e.key.keysym.sym == SDLK_r) {
@@ -84,11 +63,9 @@ void Game::startLoop() {
                     break;
             }
         }
+        SDL_Delay(Core::getInstance()->loopDelay);
+        plateau->snake->moveCurrentDirection();
+        renderView();
     }
-}
-
-void Game::cleanup() {
-    SDL_DestroyRenderer(render);
-    SDL_DestroyWindow(window);
-	SDL_Quit();
+    
 }

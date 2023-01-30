@@ -7,9 +7,7 @@
 //#include <plateau.hpp>
 #include <direction.hpp>
 
-Snake::Snake(SDL_Renderer *render, SDL_Texture *sdl_texture) {
-    this->render = render;
-    this->sdl_texture = sdl_texture;
+Snake::Snake() {
     currentDirection = none;
 }
 
@@ -17,44 +15,51 @@ Snake::~Snake() {
     cleanup();
 }
 
-void Snake::addBlock(Block *block) {
-     blockList.push_back(block);
+/*void Snake::addBlock(Block *block) {
+    
+    blockList.push_back(block);
+
+    SDL_Log("addblock %lu blocks", blockList.size());
+}*/
+
+void Snake::moveCurrentDirection() {
+
+    this->blockList[0]->currentDirection = this->currentDirection;
+
+    /*for (size_t i = this->blockList.size()-1; i >= this->blockList.size(); --i) {
+        this->blockList[i]->currentDirection = this->blockList[i - 1]->currentDirection;
+    }*/
+
+    for (size_t i = 0; i < this->blockList.size(); ++i) {                
+        this->blockList[i]->moveCurrentDirection();
+    }
+
+    for (size_t i = 0; i < this->blockList.size(); ++i) {        
+        this->blockList[i]->currentDirection = this->currentDirection;        
+    }
 }
 
-void Snake::moveUp() {
-    //if(currentDirection != up) {
-        for (size_t i = 0; i < this->blockList.size(); ++i) {
-            this->blockList[i]->destTextureParams.y -= 50;
+void Snake::changeDirection(Direction direction) { 
+    if(isNewDirection(direction)) {
+        this->currentDirection = direction;
+        
+        // this is a new direction add block
+        Block *block = new Block(tail);
+
+        if(blockList.size() >= 1) {
+            block->currentDirection = this->blockList[blockList.size() -1]->currentDirection;
+            block->destTextureParams = this->blockList[blockList.size() -1]->destTextureParams;
+            //this->addBlock(block);
+
+            blockList.push_back(block);
+            SDL_Log("addblock %lu blocks", blockList.size());
         }
-        currentDirection = up;
-    //}
+    }
 }
 
-void Snake::moveDown() {
-    //if(currentDirection != down) {
-        for (size_t i = 0; i < this->blockList.size(); ++i) {
-            this->blockList[i]->destTextureParams.y += 50;
-        }
-        currentDirection = down;
-    //}
-}
-
-void Snake::moveRight() {
-    //if(currentDirection != right) {
-        for (size_t i = 0; i < this->blockList.size(); ++i) {
-            this->blockList[i]->destTextureParams.x += 50;
-        }
-        currentDirection = right;
-    //}
-}
-
-void Snake::moveLeft() {
-    //if(currentDirection != left) {
-        for (size_t i = 0; i < this->blockList.size(); ++i) {
-            this->blockList[i]->destTextureParams.x -= 50;
-        }
-        currentDirection = left;
-    //}
+bool Snake::isNewDirection(Direction direction) {
+    if(direction != this->currentDirection) return true;
+    else return false;
 }
 
 void Snake::display() {
@@ -68,3 +73,54 @@ void Snake::cleanup() {
         this->blockList[i]->cleanup();
     }
 }
+
+/*void Snake::moveUp() {
+    for (size_t i = 0; i < this->blockList.size(); ++i) {
+        if(this->blockList[i]->destTextureParams.y >= 100)
+        this->blockList[i]->destTextureParams.y -= 50;
+    }
+}
+
+void Snake::moveDown() {
+    for (size_t i = 0; i < this->blockList.size(); ++i) {
+        if(this->blockList[i]->destTextureParams.y <= 650)
+        this->blockList[i]->destTextureParams.y += 50;
+    }
+}
+
+void Snake::moveRight() {
+    for (size_t i = 0; i < this->blockList.size(); ++i) {
+        if(this->blockList[i]->destTextureParams.x <= 400)
+        this->blockList[i]->destTextureParams.x += 50;
+    }
+}
+
+void Snake::moveLeft() {
+    for (size_t i = 0; i < this->blockList.size(); ++i) {
+        if(this->blockList[i]->destTextureParams.x >= 100)
+        this->blockList[i]->destTextureParams.x -= 50;
+    }
+}
+
+void Snake::moveCurrentDirection() {
+    switch(currentDirection) {
+        case up:
+            this->moveUp();
+            break;
+
+        case down:
+            this->moveDown();
+            break;
+
+        case left:
+            this->moveLeft();
+            break;
+
+        case right:
+            this->moveRight();
+            break;
+
+        case none:
+            break;
+    }
+}*/

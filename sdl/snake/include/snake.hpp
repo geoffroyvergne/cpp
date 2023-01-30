@@ -11,20 +11,22 @@
 
 class Snake {
     public:
-        Snake(SDL_Renderer *render, SDL_Texture *sdl_texture);
+        Snake();
         ~Snake();
 
-        std::vector<Block*> blockList;
-        SDL_Renderer *render;
-        SDL_Texture *sdl_texture;
+        std::vector<Block*> blockList;        
         Direction currentDirection;
 
-        void addBlock(Block *block);
+        //void addBlock(Block *block);
 
-        void moveUp();
+        /*void moveUp();
         void moveDown();
         void moveRight();
-        void moveLeft();
+        void moveLeft();*/
+
+        void moveCurrentDirection();
+        bool isNewDirection(Direction direction);
+        void changeDirection(Direction direction);
 
         void display();
         void cleanup();

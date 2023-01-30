@@ -2,7 +2,8 @@
 #define BLOCKTYPE
 
 enum BlockType {
-    base,
+    wall,
+    head,
     tail
 };
 

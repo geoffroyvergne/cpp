@@ -14,11 +14,11 @@ class Game {
         int width = 550;
         int height = 800;
 
-        SDL_Window *window;
-        SDL_Renderer *render;
+        //SDL_Window *window;
+        //SDL_Renderer *render;
         Plateau *plateau;
 
-        void init();
+        //void init();
         void renderView();
         void startLoop();
         void cleanup();

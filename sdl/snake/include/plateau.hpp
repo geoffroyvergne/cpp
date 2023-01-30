@@ -10,14 +10,14 @@
 
 class Plateau {
     public:
-        Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture);
+        Plateau();
         ~Plateau();
         std::vector<Block*> wallList;        
         BlockType currentBlockType;
         Snake *snake;
 
-        SDL_Renderer *render;
-        SDL_Texture *sdl_texture;
+        //SDL_Renderer *render;
+        //SDL_Texture *sdl_texture;
 
         void addSnake();
         

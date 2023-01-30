@@ -4,16 +4,8 @@
 #include <plateau.hpp>
 #include <snake.hpp>
 
-Plateau::Plateau(SDL_Renderer *render, SDL_Texture *sdl_texture) {
-    this->render = render;   
-    this->currentBlockType = base; 
-    this->sdl_texture = sdl_texture;
-    
-    /*if (sdl_texture == NULL){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "sdl_texture Error: %s\n", IMG_GetError());
-		//return NULL;
-	}*/
-
+Plateau::Plateau() {
+    this->currentBlockType = head; 
     this->addWall();
 }
 
@@ -22,18 +14,19 @@ Plateau::~Plateau() {
 }
 
 void Plateau::addSnake() {    
-    snake = new Snake(this->render, this->sdl_texture);
+    snake = new Snake();
 
-    Block *block = new Block(render, tail, sdl_texture);
+    Block *block = new Block(head);
     block->destTextureParams.x = 250;
     block->destTextureParams.y = 400;
 
-    snake->addBlock(block);
+    //snake->addBlock(block);
+    snake->blockList.push_back(block);
 }
 
 void Plateau::addWall() {
     for(int i=0; i<16; i++) {
-        Block *block = new Block(render, base, sdl_texture);
+        Block *block = new Block(wall);
         block->destTextureParams.x = 0;
         block->destTextureParams.y = (i) * 50;
 
@@ -41,7 +34,7 @@ void Plateau::addWall() {
     }
 
     for(int i=0; i<16; i++) {
-        Block *block = new Block(render, base, sdl_texture);
+        Block *block = new Block(wall);
         block->destTextureParams.x = 500;
         block->destTextureParams.y = (i) * 50;
 
@@ -49,7 +42,7 @@ void Plateau::addWall() {
     }
 
     for(int i=0; i<9; i++) {
-        Block *block = new Block(render, base, sdl_texture);
+        Block *block = new Block(wall);
         block->destTextureParams.x = (i+1) * 50;
         block->destTextureParams.y = 750;
 
@@ -57,7 +50,7 @@ void Plateau::addWall() {
     }
 
     for(int i=0; i<9; i++) {
-        Block *block = new Block(render, base, sdl_texture);
+        Block *block = new Block(wall);
         block->destTextureParams.x = (i+1) * 50;
         block->destTextureParams.y = 0;
 

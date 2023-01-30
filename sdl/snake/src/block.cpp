@@ -3,42 +3,83 @@
 #include <SDL_image.h>
 #include <block.hpp>
 #include <block-type.hpp>
+#include <core.hpp>
 
-Block::Block(SDL_Renderer *render, BlockType type, SDL_Texture *sdl_texture) {
-    this->render = render;
-    this->type = type;
-    this->sdl_texture = sdl_texture;
-    
+Block::Block(BlockType type) {
+    this->type = type;    
     srcTextureParams = { 0, 0,  50, 50 };
 
     switch(type) {
-        case base : 
+        case wall : 
             srcTextureParams.x = 0;
             srcTextureParams.y = 0;
             break;
 
-        case tail : 
+        case head : 
             srcTextureParams.x = 50;
+            srcTextureParams.y = 0;
+            break;
+
+         case tail : 
+            srcTextureParams.x = 0;
             srcTextureParams.y = 0;
             break;
     }
     
     destTextureParams = { 250, 50,  50, 50 };
-
-    //if(sdl_texture != NULL) SDL_DestroyTexture(sdl_texture);
-
-    //imagePath = "../assets/image-set.png"; 
-    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
 }
 
 Block::~Block() { 
     cleanup();
 }
 
+void Block::moveUp() {
+    if(this->destTextureParams.y >= 100)
+    this->destTextureParams.y -= 50;
+}
+
+void Block::moveDown() {
+    if(this->destTextureParams.y <= 650)
+    this->destTextureParams.y += 50;
+}
+
+void Block::moveRight() {
+    if(this->destTextureParams.x <= 400)
+    this->destTextureParams.x += 50;
+}
+
+void Block::moveLeft() {
+    if(this->destTextureParams.x >= 100)
+    this->destTextureParams.x -= 50;
+}
+
+void Block::moveCurrentDirection() {
+    switch(currentDirection) {
+        case up:
+            this->moveUp();
+            break;
+
+        case down:
+            this->moveDown();
+            break;
+
+        case left:
+            this->moveLeft();
+            break;
+
+        case right:
+            this->moveRight();
+            break;
+
+        case none:
+            break;
+    }
+}
+
 void Block::display() {
-    SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Block::cleanup() {
-    SDL_DestroyTexture(sdl_texture);
+    SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
 }
