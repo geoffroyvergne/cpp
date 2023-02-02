@@ -13,8 +13,6 @@ Game::~Game() {
 void Game::renderView() {
     SDL_RenderClear(Core::getInstance()->getRender());
         plateau->display();
-        //plateau->displayCurrentPiece();
-        //plateau->displayPieces();
         plateau->snake->display();
     SDL_RenderPresent(Core::getInstance()->getRender());
 }
@@ -23,6 +21,8 @@ void Game::startLoop() {
     int active = 1;
     SDL_Event e;
     while (active) {
+        //plateau->snake->newDirection = false;
+
         while (SDL_PollEvent(&e)) {          
             //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
             if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
@@ -60,12 +60,14 @@ void Game::startLoop() {
                         SDL_Log("SDLK_r");
                     }
 
-                    break;
+                    //break;
             }
         }
-        SDL_Delay(Core::getInstance()->loopDelay);
+
         plateau->snake->moveCurrentDirection();
         renderView();
+
+        SDL_Delay(Core::getInstance()->loopDelay);
     }
     
 }

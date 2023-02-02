@@ -4,11 +4,19 @@
 #include <block.hpp>
 #include <block-type.hpp>
 #include <core.hpp>
+#include <direction.hpp>
 
 Block::Block(BlockType type) {
-    this->type = type;    
+    //this->type = type;    
+    //this->currentDirection = none;
     srcTextureParams = { 0, 0,  50, 50 };
 
+    switchType(type);
+    
+    destTextureParams = { 250, 50,  50, 50 };
+}
+
+void Block::switchType(BlockType type) {
     switch(type) {
         case wall : 
             srcTextureParams.x = 0;
@@ -25,15 +33,13 @@ Block::Block(BlockType type) {
             srcTextureParams.y = 0;
             break;
     }
-    
-    destTextureParams = { 250, 50,  50, 50 };
 }
 
 Block::~Block() { 
     cleanup();
 }
 
-void Block::moveUp() {
+/*void Block::moveUp() {
     if(this->destTextureParams.y >= 100)
     this->destTextureParams.y -= 50;
 }
@@ -51,9 +57,9 @@ void Block::moveRight() {
 void Block::moveLeft() {
     if(this->destTextureParams.x >= 100)
     this->destTextureParams.x -= 50;
-}
+}*/
 
-void Block::moveCurrentDirection() {
+/*void Block::moveCurrentDirection() {
     switch(currentDirection) {
         case up:
             this->moveUp();
@@ -74,7 +80,7 @@ void Block::moveCurrentDirection() {
         case none:
             break;
     }
-}
+}*/
 
 void Block::display() {
     SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);

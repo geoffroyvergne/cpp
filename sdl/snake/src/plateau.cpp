@@ -5,7 +5,7 @@
 #include <snake.hpp>
 
 Plateau::Plateau() {
-    this->currentBlockType = head; 
+    //this->currentBlockType = head; 
     this->addWall();
 }
 
@@ -21,7 +21,7 @@ void Plateau::addSnake() {
     block->destTextureParams.y = 400;
 
     //snake->addBlock(block);
-    snake->blockList.push_back(block);
+    snake->blockList.push_front(block);
 }
 
 void Plateau::addWall() {

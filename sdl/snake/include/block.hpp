@@ -15,23 +15,22 @@ class Block {
         ~Block();
         
         std::string imagePath;
-        BlockType type;
-        BlockColor color;
+        //BlockType type;
+        //BlockColor color;
 
-        Direction currentDirection;
+        //Direction currentDirection;
 
-        //SDL_Renderer *render;
-        //SDL_Texture *sdl_texture;
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams = { 250, 250,  50, 50 }; // Texture seen in game
-        //SDL_Rect textureParams;        
 
-        void moveUp();
+        void switchType(BlockType type);
+        
+        /*void moveUp();
         void moveDown();
         void moveRight();
         void moveLeft();
 
-        void moveCurrentDirection();
+        void moveCurrentDirection();*/
 
         void display();
         void cleanup();

@@ -6,6 +6,7 @@
 #include <block-type.hpp>
 //#include <plateau.hpp>
 #include <direction.hpp>
+#include <list>
 
 Snake::Snake() {
     currentDirection = none;
@@ -15,112 +16,80 @@ Snake::~Snake() {
     cleanup();
 }
 
-/*void Snake::addBlock(Block *block) {
+void Snake::moveCurrentDirection() {
+    if(this->currentDirection == none) return;
     
-    blockList.push_back(block);
+    //if(this->newDirection) {
+        blockList.front()->switchType(tail);
 
-    SDL_Log("addblock %lu blocks", blockList.size());
+        // add tail block to front
+        Block *block = new Block(head);
+        block->destTextureParams = blockList.front()->destTextureParams;
+        blockList.push_front(block);
+
+        // move head to new position
+        blockList.front()->destTextureParams = getNextPositionByDirection(blockList.front()->destTextureParams, this->currentDirection);
+    //}
+
+    // if snake is too big remove last block
+    if(blockList.size() >= 7){        
+        blockList.pop_back();
+    }
+}
+
+void Snake::changeDirection(Direction direction) {    
+        //this->previousDirection = this->currentDirection;
+        //this->newDirection = true;
+        this->currentDirection = direction;
+}
+
+/*bool Snake::isNewDirection() {
+    if(this->previousDirection != this->currentDirection) return true;
+    else return false;
 }*/
 
-void Snake::moveCurrentDirection() {
+SDL_Rect Snake::getNextPositionByDirection(SDL_Rect destTextureParams, Direction direction) {
+    switch(direction) {
+        case up:
+            destTextureParams.y = destTextureParams.y -50;
+            break;
 
-    this->blockList[0]->currentDirection = this->currentDirection;
+        case down:
+            destTextureParams.y = destTextureParams.y +50;
+            break;
 
-    /*for (size_t i = this->blockList.size()-1; i >= this->blockList.size(); --i) {
-        this->blockList[i]->currentDirection = this->blockList[i - 1]->currentDirection;
-    }*/
+        case left:
+            destTextureParams.x = destTextureParams.x -50;
+            break;
 
-    for (size_t i = 0; i < this->blockList.size(); ++i) {                
-        this->blockList[i]->moveCurrentDirection();
+        case right:
+            destTextureParams.x = destTextureParams.x +50;
+            break;
+
+        case none:
+             
+            break;
     }
 
-    for (size_t i = 0; i < this->blockList.size(); ++i) {        
-        this->blockList[i]->currentDirection = this->currentDirection;        
-    }
-}
-
-void Snake::changeDirection(Direction direction) { 
-    if(isNewDirection(direction)) {
-        this->currentDirection = direction;
-        
-        // this is a new direction add block
-        Block *block = new Block(tail);
-
-        if(blockList.size() >= 1) {
-            block->currentDirection = this->blockList[blockList.size() -1]->currentDirection;
-            block->destTextureParams = this->blockList[blockList.size() -1]->destTextureParams;
-            //this->addBlock(block);
-
-            blockList.push_back(block);
-            SDL_Log("addblock %lu blocks", blockList.size());
-        }
-    }
-}
-
-bool Snake::isNewDirection(Direction direction) {
-    if(direction != this->currentDirection) return true;
-    else return false;
+        return destTextureParams;
 }
 
 void Snake::display() {
-    for (size_t i = 0; i < this->blockList.size(); ++i) {
+    /*for (size_t i = 0; i < this->blockList.size(); ++i) {
         this->blockList[i]->display();
+    }*/
+
+    for(Block* block : this->blockList) {
+        block->display();
     }
 }
 
 void Snake::cleanup() {
-    for (size_t i = 0; i < this->blockList.size(); ++i) {
+    /*for (size_t i = 0; i < this->blockList.size(); ++i) {
         this->blockList[i]->cleanup();
+    }*/
+
+    for(Block* block : this->blockList) {
+        block->cleanup();
     }
 }
-
-/*void Snake::moveUp() {
-    for (size_t i = 0; i < this->blockList.size(); ++i) {
-        if(this->blockList[i]->destTextureParams.y >= 100)
-        this->blockList[i]->destTextureParams.y -= 50;
-    }
-}
-
-void Snake::moveDown() {
-    for (size_t i = 0; i < this->blockList.size(); ++i) {
-        if(this->blockList[i]->destTextureParams.y <= 650)
-        this->blockList[i]->destTextureParams.y += 50;
-    }
-}
-
-void Snake::moveRight() {
-    for (size_t i = 0; i < this->blockList.size(); ++i) {
-        if(this->blockList[i]->destTextureParams.x <= 400)
-        this->blockList[i]->destTextureParams.x += 50;
-    }
-}
-
-void Snake::moveLeft() {
-    for (size_t i = 0; i < this->blockList.size(); ++i) {
-        if(this->blockList[i]->destTextureParams.x >= 100)
-        this->blockList[i]->destTextureParams.x -= 50;
-    }
-}
-
-void Snake::moveCurrentDirection() {
-    switch(currentDirection) {
-        case up:
-            this->moveUp();
-            break;
-
-        case down:
-            this->moveDown();
-            break;
-
-        case left:
-            this->moveLeft();
-            break;
-
-        case right:
-            this->moveRight();
-            break;
-
-        case none:
-            break;
-    }
-}*/
