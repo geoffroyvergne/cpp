@@ -33,6 +33,7 @@ class Snake {
         SDL_Rect getNextPositionByDirection(SDL_Rect destTextureParams, Direction direction);        
         
         bool newDirection = false;
+        int size = 1;
 
         void display();
         void cleanup();

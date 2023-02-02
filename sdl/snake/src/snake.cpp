@@ -32,7 +32,7 @@ void Snake::moveCurrentDirection() {
     //}
 
     // if snake is too big remove last block
-    if(blockList.size() >= 7){        
+    if(blockList.size() >= this->size){        
         blockList.pop_back();
     }
 }
@@ -40,6 +40,7 @@ void Snake::moveCurrentDirection() {
 void Snake::changeDirection(Direction direction) {    
         //this->previousDirection = this->currentDirection;
         //this->newDirection = true;
+        this->size++;
         this->currentDirection = direction;
 }
 
