@@ -57,7 +57,14 @@ void Game::startLoop() {
                     }
 
                     if (e.key.keysym.sym == SDLK_r) {
-                        SDL_Log("SDLK_r");
+                        SDL_Log("reset game");
+                        newGame();
+                    }
+
+                    if (e.key.keysym.sym == SDLK_p) {
+                        SDL_Log("pause");
+                        if(plateau->snake->pause) plateau->snake->pause = false;
+                        else plateau->snake->pause = true;                        
                     }
 
                     //break;
@@ -70,4 +77,9 @@ void Game::startLoop() {
         SDL_Delay(Core::getInstance()->loopDelay);
     }
     
+}
+
+void Game::newGame() {
+    plateau->snake->blockList.clear();
+    plateau->addSnake();
 }

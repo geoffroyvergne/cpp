@@ -21,16 +21,19 @@ void Block::switchType(BlockType type) {
         case wall : 
             srcTextureParams.x = 0;
             srcTextureParams.y = 0;
+            type = wall;
             break;
 
         case head : 
             srcTextureParams.x = 50;
             srcTextureParams.y = 0;
+            type = head;
             break;
 
          case tail : 
             srcTextureParams.x = 0;
             srcTextureParams.y = 0;
+            type = tail;
             break;
     }
 }

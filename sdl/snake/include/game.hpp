@@ -13,6 +13,7 @@ class Game {
 
         int width = 550;
         int height = 800;
+        //bool pause = false;
 
         //SDL_Window *window;
         //SDL_Renderer *render;
@@ -21,6 +22,7 @@ class Game {
         //void init();
         void renderView();
         void startLoop();
+        void newGame();
         void cleanup();
 };
 

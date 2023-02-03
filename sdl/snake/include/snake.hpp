@@ -19,21 +19,17 @@ class Snake {
         std::list<Block*> blockList;
 
         Direction previousDirection; 
-        Direction currentDirection;
-
-        //void addBlock(Block *block);        
-        /*void moveUp();
-        void moveDown();
-        void moveRight();
-        void moveLeft();*/
+        Direction currentDirection;        
 
         void moveCurrentDirection();
-        //bool isNewDirection();
         void changeDirection(Direction direction);
         SDL_Rect getNextPositionByDirection(SDL_Rect destTextureParams, Direction direction);        
         
         bool newDirection = false;
         int size = 1;
+        bool reachLimit();
+        bool touchTail();
+        bool pause;
 
         void display();
         void cleanup();

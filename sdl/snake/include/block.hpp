@@ -15,7 +15,7 @@ class Block {
         ~Block();
         
         std::string imagePath;
-        //BlockType type;
+        BlockType type;
         //BlockColor color;
 
         //Direction currentDirection;
