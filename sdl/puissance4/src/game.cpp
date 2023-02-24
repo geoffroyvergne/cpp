@@ -60,9 +60,9 @@ void Game::startLoop() {
                     //SDL_Log("piece x %d piece y %d", currentPiece->textureParams.x, currentPiece->textureParams.y);
                     
                     if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {                        
-                        validateRow();
-                        renderView();
-
+                        //validateRow();
+                        //renderView();
+                        addPiece();
                         break;
                     }
 
@@ -99,8 +99,12 @@ void Game::togglePlayer() {
     this->currentPiece->togglePlayer(pieceType);
 }
 
+void Game::addPiece() {
+
+}
+
 void Game::validateRow() {
-    winner = plateau->lineDone(currentPlayer);
+    /*winner = plateau->lineDone(currentPlayer);
     if(winner != player_none) {
         if(winner == yellow) yellowScore ++;
         if(winner == red) redScore ++;
@@ -109,7 +113,7 @@ void Game::validateRow() {
     } else {
         int rowFull = plateau->addNewPiece(currentPiece);
         if(!rowFull) togglePlayer();
-    }
+    }*/
 }
 
 void Game::newGame() {

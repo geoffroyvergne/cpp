@@ -30,6 +30,7 @@ class Game {
         void startLoop();
         void togglePlayer();
         void validateRow();
+        void addPiece();
         void newGame();
 };
 
