@@ -40,6 +40,9 @@ void Piece::togglePlayer(PieceType pieceype) {
             srcTextureParams.y = 20;
             player = cross;
             break;
+
+        case piece_none :
+            break;
     }
 }
 

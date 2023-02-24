@@ -32,6 +32,7 @@ class Game {
         std::string getScore();
         std::string getPlayer(Player player);
         void togglePlayer();
+        void validate();
         void destroyTextures();
 };
 

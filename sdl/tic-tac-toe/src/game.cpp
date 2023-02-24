@@ -53,8 +53,6 @@ void Game::startLoop() {
         } 
         
 		while (SDL_PollEvent(&e)) {	
-			//if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
-            //if (e.type == SDL_QUIT) {
             if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
 				SDL_Log("Quit\n");
@@ -66,20 +64,7 @@ void Game::startLoop() {
                 case SDL_KEYDOWN:                    
                     //Enter key
                     if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {
-                        //SDL_Log("SDLK_KP_ENTER\n");
-                        
-                        // Check if there is a winner                        
-                        if(winner == none) {
-                            // Check if case already ised
-                            if(! plateau->caseAlreadyUsed(currentPiece)) {
-                                winner = plateau->addNewPiece(currentPiece, currentPlayer);
-                                togglePlayer();
-                                currentPiece = plateau->addCurrentPiece(currentPiece, currentPlayer);  
-                                this->plateau->casesUsed ++;                                                                               
-                            } else {                            
-                                SDL_Log("Case already used");
-                            }
-                        }
+                        validate();
                         
                         break;
                     }
@@ -94,7 +79,6 @@ void Game::startLoop() {
 
                     // Up Arrow
                     if (e.key.keysym.sym == SDLK_UP) {
-                        //SDL_Log("SDLK_UP\n");
                         currentPiece->moveUp();
 
                         break;
@@ -102,7 +86,6 @@ void Game::startLoop() {
 
                     // Down Arrow
                     if (e.key.keysym.sym == SDLK_DOWN) {
-                        //SDL_Log("SDLK_DOWN\n");
                         currentPiece->moveDown();
 
                         break;
@@ -110,7 +93,6 @@ void Game::startLoop() {
 
                     // Right Arrow
                     if (e.key.keysym.sym == SDLK_RIGHT) {
-                        //SDL_Log("SDLK_RIGHT\n");
                         currentPiece->moveRight();
 
                         break;
@@ -118,7 +100,6 @@ void Game::startLoop() {
 
                     // Left Arrow
                     if (e.key.keysym.sym == SDLK_LEFT) {
-                        //SDL_Log("SDLK_LEFT\n");
                         currentPiece->moveLeft();
 
                         break;
@@ -136,6 +117,8 @@ void Game::startLoop() {
 
 void Game::newGame() {    
     this->plateau->pieceList.clear();
+
+    //this->plateau->pieceList.fill(nullptr);
     this->plateau->casesUsed = 0;
 
     renderView();
@@ -166,6 +149,21 @@ std::string Game::getPlayer(Player player) {
 void Game::togglePlayer() {
     if(currentPlayer == cross) currentPlayer = circle;
     else if(currentPlayer == circle) currentPlayer = cross;
+}
+
+void Game::validate() {
+    // Check if there is a winner                        
+    if(winner == none) {
+        // Check if case already ised
+        if(! plateau->caseAlreadyUsed(currentPiece)) {
+            winner = plateau->addNewPiece(currentPiece, currentPlayer);
+            togglePlayer();
+            currentPiece = plateau->addCurrentPiece(currentPiece, currentPlayer);  
+            this->plateau->casesUsed ++;                                                                               
+        } else {                            
+            SDL_Log("Case already used");
+        }
+    }
 }
 
 void Game::destroyTextures() {

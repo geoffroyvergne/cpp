@@ -7,6 +7,12 @@
 #ifndef CIRCLE
 #define CIRCLE
 
+struct Position {
+    int caseNumber;
+    int rowNumber;
+    int lineNumber;
+};
+
 class Piece {
     public:
         Piece(PieceType type);
@@ -15,6 +21,7 @@ class Piece {
         SDL_Rect srcTextureParams; // Real texture size and placement
         SDL_Rect destTextureParams = { 250, 250,  50, 50 }; // Texture seen in game
         int caseNumber = 0;
+        Position position;
 
         void togglePlayer(PieceType pieceype);
         void toggleColor();

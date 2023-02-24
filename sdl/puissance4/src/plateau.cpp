@@ -15,9 +15,13 @@ Plateau::~Plateau() {
 }
 
 void Plateau::displayPieces() {
-    for (size_t i = 0; i < this->pieceList.size(); ++i) {
+    /*for (size_t i = 0; i < this->pieceList.size(); ++i) {
         this->pieceList[i]->display();
-	}
+	}*/
+
+    for(Piece* piece : pieceList) {
+        piece->display();
+    }
 }
 
 int Plateau::addNewPiece(Piece *currentPiece) {    
@@ -25,7 +29,10 @@ int Plateau::addNewPiece(Piece *currentPiece) {
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
     piece->destTextureParams.y = 429;
 
-    getCaseNumberByTextureParams(piece);
+    
+
+    //int caseNumber = getCaseNumberByTextureParams(piece->destTextureParams.x, piece->destTextureParams.y);
+    //piece->caseNumber = caseNumber;
 
     //first row : 69
     //lastRow : 430
@@ -39,16 +46,26 @@ int Plateau::addNewPiece(Piece *currentPiece) {
         if(rowFull) break;
     }
 
+    int caseNumber = getCaseNumberByTextureParams(piece);
+
     if(! rowFull) {
-        pieceList.push_back(piece);        
+        //pieceList.push_back(piece);
+        //pieceList.insert(pieceList.begin() + piece->caseNumber, piece); 
+
+        if(pieceList.empty()){
+            pieceList.push_back(piece);    
+        } else {
+            pieceList.insert(pieceList.begin(), caseNumber, piece);
+        }
     } 
 
     return rowFull;
 }
 
 int Plateau::caseAlreadyUsed(Piece *piece) {
-     for (size_t i = 0; i < this->pieceList.size(); ++i) {
-         if(piece->destTextureParams.x == this->pieceList[i]->destTextureParams.x && piece->destTextureParams.y == this->pieceList[i]->destTextureParams.y) {
+     //for (size_t i = 0; i < this->pieceList.size(); ++i) {
+    for(Piece* pieceInList : pieceList) {        
+         if(piece->destTextureParams.x == pieceInList->destTextureParams.x && piece->destTextureParams.y == pieceInList->destTextureParams.y) {
              return true;
          }
      }
@@ -56,7 +73,7 @@ int Plateau::caseAlreadyUsed(Piece *piece) {
      return false;
 }
 
-void Plateau::getCaseNumberByTextureParams(Piece *piece) {
+int Plateau::getCaseNumberByTextureParams(Piece *piece) {
     /*
 (+67)
 lines   26   93   160  227  294  361  428
@@ -87,29 +104,51 @@ lines   26   93   160  227  294  361  428
     int rowNumber = 0;
     int lineNumber = 0;
 
-    int rowArray[] = { 69, 141, 213, 285, 357, 429 };
-    int lineArray[] = { 26, 93, 160, 227, 294, 361, 428 };
+    int rowArray[] = { 89, 157, 225, 293, 361, 429 };
+    int lineArray[] = { 17, 84, 151, 218, 285, 352, 419 };
+    //int lineArray[] = { 26, 93, 160, 227, 294, 361, 428 };
+
+    //SDL_Log("piece->destTextureParams.x %d piece->destTextureParams.y %d", piece->destTextureParams.x, piece->destTextureParams.y);
 
     for(int row=0; row<6; row++) {
+        rowNumber ++;
+        int lineNumber = 0;
+
         for(int line=0; line<7; line++) {
             //SDL_Log("lineArray[line] %d rowArray[row] %d ", lineArray[line], rowArray[row]);
             
+            lineNumber ++;
+
             if(piece->destTextureParams.x == lineArray[line] && piece->destTextureParams.y == rowArray[row]) {
                 piece->position = { caseNumber, rowArray[row], lineArray[line] };
                 piece->caseNumber = caseNumber;
 
-                break;                
+                SDL_Log("caseNumber %d rowNumber %d lineNumber %d ", caseNumber, rowNumber, lineNumber);
+
+                return caseNumber;          
             }
             caseNumber++;
         }
     }
 
+    return caseNumber;
+
     //SDL_Log("destTextureParams.x %d destTextureParams.y %d", piece->destTextureParams.x, piece->destTextureParams.y);
     //SDL_Log("Case Number %d", piece->caseNumber);
 }
 
+int Plateau::vectorContains(int caseNumber, Player player) {
+    for(Piece* piece : pieceList) {
+        if(piece->caseNumber == (caseNumber) && piece->player == player) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 //TODO implement
-Player Plateau::lineDone() {
+Player Plateau::lineDone(Player currentPlayer) {
     Player winner = player_none;
 
     /*
@@ -121,6 +160,32 @@ Player Plateau::lineDone() {
     5   35   36   37   38   39   40   41
         0    1    2    3    4    5    6   
     */
+
+   if(pieceList.size() >= 3) {
+        int linecheck[48][4] = {
+            {0,1,2,3}, {1,2,3,4}, {2,3,4,5}, {3,4,5,6}, // horizontale 1
+            {}, {}, {}, {}, // horizontale 2
+            {}, {}, {}, {}, // horizontale 3
+            {}, {}, {}, {}, // horizontale 4
+            {35,36,37,38}, {}, {}, {}, // horizontale 5
+            {0,7,14,21}, {7,14,21,28}, {14,21,28,35}, // verticale 1
+            {}, {}, {}, {}, // verticale 2
+            {}, {}, {}, {}, // verticale 3
+            {}, {}, {}, {}, // verticale 4
+            {}, {}, {}, {}, // verticale 5
+            {}, {}, {}, {}, // verticale 6
+            {}, {}, {}, {}, // verticale 7
+        };
+        
+        for (int i=0; i<48; i++) {
+            if(
+                vectorContains(linecheck[i][0], currentPlayer) && 
+                vectorContains(linecheck[i][1], currentPlayer) && 
+                vectorContains(linecheck[i][2], currentPlayer) && 
+                vectorContains(linecheck[i][3], currentPlayer)
+            ) return currentPlayer;
+        }
+    }
 
     return winner;
 }

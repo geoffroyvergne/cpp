@@ -7,7 +7,7 @@
 #include <levels.hpp>
 #include <core.hpp>
 
-Level::Level(Levels number) {    
+Level::Level(Worlds number) {    
     this->number = number;
     this->move(number);
 
@@ -35,7 +35,7 @@ h   h01 h02 h03 h04 h05 h06 h07 h08 h09 h10 h11 h12 h13 h14 h15 h16
 
 //first level : h08 right h09 left h07 up g08 down NULL
 
-void Level::move(Levels levels) {
+void Level::move(Worlds levels) {
     switch(levels) {
         case h07 : 
             name = "h07";
@@ -73,6 +73,11 @@ void Level::move(Levels levels) {
             downNumber = h09;
             break;
 
+        case ca01 :
+            name = "ca01";
+            downNumber = h07;
+            break;
+
         default:
             break;
     }
@@ -95,9 +100,7 @@ bool Level::detectCollision(Player *player) {
             if(collision) {
                 // collision with enemy means one life less if not in attack mode
                 if(player->isAttack()) {
-                    this->enemyList.erase(this->enemyList.begin() + i);
-                    //this->enemyList[i]->cleanup();
-                    //std::cout << "kill enemy" << std::endl;
+                    this->enemyList.erase(this->enemyList.begin() + i);                          
                     SDL_Log("kill enemy");
                 } else {
                     player->lives --;
@@ -118,8 +121,7 @@ Enemy* Level::getEnemy(EnemyType type, int x, int y) {
                 Enemy *enemy = new Enemy();
                 enemy->srcTextureParams = { 1, 11,  15, 16 };
                 enemy->destTextureParams = { x, y,  50, 50 };
-                //sprite->collide = false;
-
+                
                 return enemy;
             }
         break;
@@ -134,70 +136,85 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
                 sprite->srcTextureParams = { 362, 164,  4, 4 };
                 sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
                 sprite->collide = false;
+                sprite->type = type;
 
                 return sprite;
             }
-        break; 
+        break;
+
         case green_rock_standalone : 
             {
                 Sprite *sprite = new Sprite();
                 sprite->srcTextureParams = { 290, 107,  15, 16 };
                 sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
+                sprite->type = type;
 
                 return sprite;
             }
         break;
+
         case green_rock : 
             {
                 Sprite *sprite = new Sprite();
                 sprite->srcTextureParams = { 355, 107,  15, 16 };
                 sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
+                sprite->type = type;
 
                 return sprite;
             }
-        break; 
+        break;
+
         case green_rock_corner_low_right : 
             {
                 Sprite *sprite = new Sprite();
                 sprite->srcTextureParams = { 371, 107,  15, 16 };
                 sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
                 sprite->collide = false;
+                sprite->type = type;
 
                 return sprite;
             }
         break;
+
         case green_bush : 
             {
                 Sprite *sprite = new Sprite();
                 sprite->srcTextureParams = { 314, 107,  15, 16 };
                 sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
+                sprite->type = type;
 
                 return sprite;
             }
         break;
+
         case green_tree : 
             {
                 Sprite *sprite = new Sprite();
                 sprite->srcTextureParams = { 275, 107,  15, 16 };
                 sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
+                sprite->type = type;
 
                 return sprite;
             }
         break;
+
         case brown_rock_standalone : 
             {
                 Sprite *sprite = new Sprite();
                 sprite->srcTextureParams = { 419, 107,  15, 16 };
                 sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
+                sprite->type = type;
 
                 return sprite;
             }
         break;
+
         case brown_rock : 
             {
                 Sprite *sprite = new Sprite();
                 sprite->srcTextureParams = { 478, 107,  15, 16 };
                 sprite->destTextureParams = { x, y,  spriteSize, spriteSize };
+                sprite->type = type;
 
                 return sprite;
             }
@@ -209,7 +226,7 @@ Sprite* Level::getSprite(SpriteType type, int x, int y) {
     };
 }
 
-void Level::addEnemies(Levels number) {
+void Level::addEnemies(Worlds number) {
     int spriteSize = 50;
 
     switch(number) {
@@ -224,7 +241,7 @@ void Level::addEnemies(Levels number) {
     };
 }
 
-void Level::addSprites(Levels number) {
+void Level::addSprites(Worlds number) {
     std::array<std::array<int, 12>, 10> levelDef;
 
     switch(number) {
@@ -243,14 +260,7 @@ void Level::addSprites(Levels number) {
                         {00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
                         {00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
                     }
-                };    
-
-                /*for (int i = 0; i < levelDef.size(); ++i) {
-                    for (int j = 0; j < levelDef[i].size(); ++j) {
-                        if(static_cast<SpriteType>(levelDef[i][j]) == empty) continue;                        
-                        spriteList.push_back(getSprite(static_cast<SpriteType>(levelDef[i][j]), j*spriteSize, i*spriteSize));
-                    }
-                }*/
+                };
 
                 pushLevel(&levelDef);            
             }
@@ -382,7 +392,6 @@ void Level::pushLevel(std::array<std::array<int, 12>, 10> *levelDefPtr) {
 
 void Level::display() {
     SDL_SetRenderDrawColor(Core::getInstance()->getRender(), 252, 216, 168, 255);
-    //SDL_RenderCopy(render, sdl_texture, &srcTextureParams, &destTextureParams);
 
     for (size_t i = 0; i < spriteList.size(); ++i) {
         this->spriteList[i]->display();

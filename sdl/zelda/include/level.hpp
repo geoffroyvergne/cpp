@@ -12,29 +12,29 @@
 
 class Level {
     public:
-        Level(Levels number);
+        Level(Worlds number);
         ~Level();
         std::vector<Sprite*> spriteList;
         std::vector<Enemy*> enemyList;
-        Levels number;
+        Worlds number;
         std::string name = "none";
         int spriteSize = 50;
         
-        SDL_Rect srcTextureParams; // Real texture size and placement
-        SDL_Rect destTextureParams; // Texture seen in game
+        Worlds currentNumber = none;
+        Worlds leftNumber = none;
+        Worlds rightNumber = none;
+        Worlds upNumber = none;
+        Worlds downNumber = none;
 
-        Levels currentNumber = none;
-        Levels leftNumber = none;
-        Levels rightNumber = none;
-        Levels upNumber = none;
-        Levels downNumber = none;
+        Worlds bellowNumber = none;
+        Worlds upponNumber = none;
 
-        void move(Levels levels);
+        void move(Worlds levels);
         bool detectCollision(Player *player);
         Enemy *getEnemy(EnemyType type, int x, int y);
         Sprite *getSprite(SpriteType type, int x, int y);
-        void addEnemies(Levels number);
-        void addSprites(Levels number);
+        void addEnemies(Worlds number);
+        void addSprites(Worlds number);
         void pushLevel(std::array<std::array<int, 12>, 10> *levelDef);
         void display();
         void cleanup();

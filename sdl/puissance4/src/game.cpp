@@ -25,9 +25,22 @@ void Game::renderView() {
 void Game::startLoop() {
     int active = 1;
     SDL_Event e;
-    while (active) {        
+    while (active) {       
+
+        /*if(winner != player_none) {
+            //lastWinner = winner;
+            // Increase score to the right player
+            //increaseScore(winner);
+            //SDL_Log("Game over Winner is %s score : %s", getPlayer(winner).c_str(), getScore().c_str());
+
+            newGame();
+            winner = player_none;
+            
+            //SDL_Delay(1000);
+            continue;            
+        }*/
+
         while (SDL_PollEvent(&e)) {	            
-            //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
             if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
 				SDL_Log("Quit\n");
@@ -46,9 +59,7 @@ void Game::startLoop() {
 
                     //SDL_Log("piece x %d piece y %d", currentPiece->textureParams.x, currentPiece->textureParams.y);
                     
-                    if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {
-                        //SDL_Log("SDLK_RETURN");
-                        
+                    if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {                        
                         validateRow();
                         renderView();
 
@@ -57,7 +68,6 @@ void Game::startLoop() {
 
                     // Right Arrow
                     if (e.key.keysym.sym == SDLK_RIGHT) {
-                        //SDL_Log("SDLK_RIGHT");
                         currentPiece->moveRight();
 
                         break;
@@ -65,7 +75,6 @@ void Game::startLoop() {
 
                     // Left Arrow
                     if (e.key.keysym.sym == SDLK_LEFT) {
-                        //SDL_Log("SDLK_LEFT");
                         currentPiece->moveLeft();
 
                         break;
@@ -91,12 +100,11 @@ void Game::togglePlayer() {
 }
 
 void Game::validateRow() {
-    Player winner = plateau->lineDone();
+    winner = plateau->lineDone(currentPlayer);
     if(winner != player_none) {
-
         if(winner == yellow) yellowScore ++;
         if(winner == red) redScore ++;
-        SDL_Delay(1000);
+        //SDL_Delay(1000);
         newGame();
     } else {
         int rowFull = plateau->addNewPiece(currentPiece);
@@ -105,9 +113,6 @@ void Game::validateRow() {
 }
 
 void Game::newGame() {
-    for (auto piece : this->plateau->pieceList) {
-        delete piece;
-    } 
     this->plateau->pieceList.clear();
     this->plateau->casesUsed = 0;    
 }

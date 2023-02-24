@@ -5,7 +5,8 @@ enum PieceType {
     black_circle,
     black_cross,
     red_circle,
-    red_cross
+    red_cross,
+    piece_none
 };
 
 #endif

@@ -8,36 +8,9 @@
 #include <enemy-type.hpp>
 #include <core.hpp>
 
-//Game::Game() {}
-
 Game::~Game() { 
     Core::getInstance()->cleanup();
 }
-
-/*void Game::init() {
-    //Start up SDL, and make sure it went ok
-	if (SDL_Init(SDL_INIT_VIDEO) != 0){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
-        
-		exit(EXIT_FAILURE);
-	}
-
-	// Create window
-	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
-	if (window == NULL) {
-        cleanup(); 
-        exit(EXIT_FAILURE);
-    }
-
-	// Create render
-	render = SDL_CreateRenderer(window, -1, 0);
-	//render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-	if (render == NULL) {
-        cleanup(); 
-        exit(EXIT_FAILURE);
-    }
-}*/
 
 void Game::renderView() {
     SDL_RenderClear(Core::getInstance()->getRender());        
@@ -46,7 +19,7 @@ void Game::renderView() {
     SDL_RenderPresent(Core::getInstance()->getRender());
 }
 
-void Game::addLevel(Levels level) {
+void Game::addLevel(Worlds level) {
     if(currentLevel != NULL) delete currentLevel;    
     currentLevel = new Level(level);
 
@@ -67,37 +40,6 @@ void Game::startLoop() {
             }
 
             renderView();
-
-            //switch( e.type ) {
-                //case SDL_KEYDOWN:
-                    /*if (e.key.keysym.sym == SDLK_RETURN) {
-                        this->attack();
-                    }
-
-                    if (e.key.keysym.sym == SDLK_UP) {
-                        this->up();
-                        //break;
-                    }
-
-                    if (e.key.keysym.sym == SDLK_DOWN) {    
-                        this->down();
-                        //break;
-                    }
-
-                    if (e.key.keysym.sym == SDLK_LEFT) {
-                        this->left();
-                        //break;
-                    }
-
-                    if (e.key.keysym.sym == SDLK_RIGHT) {
-                        this->right();
-                        //break;
-                    }
-                    break;*/
-
-                //break;
-            //}
-        
         }
 
         if (state[SDL_SCANCODE_RETURN]) {
@@ -134,7 +76,6 @@ void Game::up(){
         if(currentLevel->upNumber != none) {
             addLevel(currentLevel->upNumber);
             this->player->destTextureParams.y = 500;
-            //currentLevel = currentLevel->up;
         }
 
         this->player->destTextureParams.y += 20;
@@ -152,7 +93,6 @@ void Game::down(){
         if(currentLevel->downNumber != none) {
             addLevel(currentLevel->downNumber);
             this->player->destTextureParams.y = -10;
-            //currentLevel = currentLevel->down;
         } 
 
         this->player->destTextureParams.y -= 50;
@@ -170,7 +110,6 @@ void Game::right(){
         if(currentLevel->rightNumber != none) {
             addLevel(currentLevel->rightNumber);
             this->player->destTextureParams.x = -10;                            
-            //currentLevel = currentLevel->right;
         }
 
         this->player->destTextureParams.x -= 50;
@@ -188,7 +127,6 @@ void Game::left(){
         if(currentLevel->leftNumber != none) {
             addLevel(currentLevel->leftNumber);
             this->player->destTextureParams.x = 500;             
-            //currentLevel = currentLevel->left;
         }
 
         this->player->destTextureParams.x += 20;
@@ -204,9 +142,3 @@ void Game::attack(){
     SDL_Delay(this->loopDelay);
     this->player->position();
 }
-
-/*void Game::cleanup() {
-    SDL_DestroyRenderer(render);
-    SDL_DestroyWindow(window);
-	SDL_Quit();
-}*/

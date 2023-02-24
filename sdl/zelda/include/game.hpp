@@ -26,7 +26,7 @@ class Game {
         Level *currentLevel;
         
         //void init();
-        void addLevel(Levels level);
+        void addLevel(Worlds level);
         void displayDashboard();
         void renderView();
         void startLoop();

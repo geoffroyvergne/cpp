@@ -15,19 +15,19 @@ void Plateau::display() {
 }
 
 int Plateau::caseAlreadyUsed(Piece *piece) {
-     for (size_t i = 0; i < this->pieceList.size(); ++i) {
-         if(piece->destTextureParams.x == this->pieceList[i]->destTextureParams.x && piece->destTextureParams.y == this->pieceList[i]->destTextureParams.y) {
-             return true;
-         }
-     }
+    for(Piece* pieceInList : pieceList) {
+        if(piece->destTextureParams.x == pieceInList->destTextureParams.x && piece->destTextureParams.y == pieceInList->destTextureParams.y) {
+            return true;
+        }
+    }
 
-     return false;
+    return false;
 }
 
 void Plateau::displayPieces() {
-    for (size_t i = 0; i < this->pieceList.size(); ++i) {
-        this->pieceList[i]->display();
-	}
+    for(Piece* pieceInList : pieceList) {
+        pieceInList->display();
+    }
 }
 
 Piece *Plateau::addCurrentPiece(Piece *lastCurrentPiece, Player player) {
@@ -35,16 +35,7 @@ Piece *Plateau::addCurrentPiece(Piece *lastCurrentPiece, Player player) {
     if(player == cross) pieceType = red_cross;
     else if(player == circle) pieceType = red_circle;
 
-    //SDL_DestroyTexture(lastCurrentPiece->sdl_texture);
     lastCurrentPiece->togglePlayer(pieceType);
-
-    //Piece *piece = new Piece(render, pieceType);
-    //piece->textureParams.x = lastCurrentPiece->textureParams.x;
-    //piece->textureParams.y = lastCurrentPiece->textureParams.y;
-
-    //lastCurrentPiece->type = pieceType;
-
-    //delete piece;
 
     return lastCurrentPiece;
 }
@@ -57,72 +48,65 @@ Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
     Piece *piece = new Piece(pieceType);
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
     piece->destTextureParams.y = currentPiece->destTextureParams.y;
+
+    int caseNumber = getCaseNumberByTextureParams(piece);
     
-    //piece->setCaseNumberByTextureParams();
-    //SDL_Log("Case Number %d", piece->caseNumber);
-
-    //SDL_Log("Case Number %d", getCaseNumberByTextureParams(currentPiece));
-
-    //SDL_Log("srcTextureParams.x %d", piece->destTextureParams.x);
-    //SDL_Log("srcTextureParams.y %d", piece->destTextureParams.y);
-
-    int caseNumber = getCaseNumberByTextureParams(piece->destTextureParams.x, piece->destTextureParams.y);
     piece->caseNumber = caseNumber;
 
-    //SDL_Log("srcTextureParams.x %d", piece->destTextureParams.x);
-    //SDL_Log("srcTextureParams.y %d", piece->destTextureParams.y);
-    SDL_Log("caseNumber %d", caseNumber);
+    /*SDL_Log("caseNumber %d", caseNumber);
+    SDL_Log("currentPiece->destTextureParams.x %d", currentPiece->destTextureParams.x);
+    SDL_Log("currentPiece->destTextureParams.y %d", currentPiece->destTextureParams.y);*/
 
-    pieceList.push_back(piece);
+    if(pieceList.empty()){
+        pieceList.push_back(piece);    
+    } else {
+        pieceList.insert(pieceList.begin(), caseNumber+1, piece);
+    }
 
-    return this->lineDone();
+    //pieceList.push_back(piece);
+
+    return this->lineDone(player);
 }
 
-int Plateau::getCaseNumberByTextureParams(int x, int y) {
-    // 30 210 390
+int Plateau::getCaseNumberByTextureParams(Piece *piece) {
+    int caseNumber = 0;
+    int rowNumber = 0;
+    
+    /*{1,2,3},    
+    {4,5,6},
+    {7,8,9},*/
 
-    if(x == 30 && y == 30) {
-        return 0;
+    int rowArray[] = { 30, 210, 390 };
+    int lineArray[] = { 30, 210, 390 };
+
+    for(int row=0; row<3; row++) {
+        rowNumber ++;
+        int lineNumber = 0;
+        for(int line=0; line<3; line++) {
+            
+            caseNumber ++;
+            lineNumber ++;
+
+            if(piece->destTextureParams.x == lineArray[line] && piece->destTextureParams.y == rowArray[row]) {
+                //piece->position = { caseNumber, rowArray[row], lineArray[line] };
+
+                piece->position = { caseNumber, rowArray[row], lineArray[line] };
+                piece->caseNumber = caseNumber;
+
+                //SDL_Log("lineArray[line] %d rowArray[row] %d ", lineArray[line], rowArray[row]);
+                SDL_Log("caseNumber %d rowNumber %d lineNumber %d ", caseNumber, rowNumber, lineNumber);
+
+                return caseNumber;                
+            }
+        }
     }
 
-    else if(x == 210 && y == 30) {
-        return 1;
-    }
-
-    else if(x == 390 && y == 30) {
-        return 2;
-    }
-
-    else if(x == 30 && y == 210) {
-        return 3;
-    }
-
-    else if(x == 210 && y == 210) {
-        return 4;
-    }
-
-    else if(x == 390 && y == 210) {
-        return 5;
-    }
-
-    else if(x == 30 && y == 390) {
-        return 6;
-    }
-
-    else if(x == 210 && y == 390) {
-        return 7;
-    }
-
-    else if(x == 390 && y == 390) {
-        return 8;
-    }
-
-    else return 0;
+    return caseNumber;
 }
 
 int Plateau::vectorContains(int caseNumber, Player player) {
-    for (size_t i = 0; i < pieceList.size(); ++i) {
-        if(pieceList[i]->caseNumber == caseNumber && pieceList[i]->player == player) {
+    for(Piece* piece : pieceList) {
+        if(piece->caseNumber == (caseNumber+1) && piece->player == player) {
             return true;
         }
     }
@@ -130,42 +114,69 @@ int Plateau::vectorContains(int caseNumber, Player player) {
     return false;
 }
 
-Player Plateau::lineDone() {
-    // 0 - 1 - 2
-    // 3 - 4 - 5
-    // 6 - 7 - 8
+/*
 
-    //if pieces >= 3
+{1,2,3},
+{4,5,6},
+{7,8,9},
+
+{0-0,0-1,0-2},
+{1-0,1-1,1-2},
+{2-0,2-1,2-2},
+
+horizontal
+1 2 3
+4 5 6
+7 8 9
+
+verticale
+1 4 7
+2 5 8
+3 6 9
+
+diagonale
+1 3 9
+3 5 7
+
+1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+  1   2   3
+1 1 | 2 | 3
+2 4 | 5 | 6
+3 7 | 8 | 9
+
+X | 2 | 3
+4 | X | 6
+7 | 8 | X
+
+*/
+
+Player Plateau::lineDone(Player currentPlayer) {
+
+    /*
+    1 2 3
+    4 5 6
+    7 8 9
+
+    0 1 2
+    3 4 5
+    6 7 8
+    */
+
     if(pieceList.size() >= 3) {
-        // horirontals
-        // 0 && 1 && 2
-        if(vectorContains(0, circle) && vectorContains(1, circle) && vectorContains(2, circle)) return circle;
-        if(vectorContains(0, cross) && vectorContains(1, cross) && vectorContains(2, cross)) return cross;
-        // 3 && 4 && 5
-        if(vectorContains(3, circle) && vectorContains(4, circle) && vectorContains(5, circle)) return circle;
-        if(vectorContains(3, cross) && vectorContains(4, cross) && vectorContains(5, cross)) return cross;
-        // 6 && 7 && 8
-        if(vectorContains(6, circle) && vectorContains(7, circle) && vectorContains(8, circle)) return circle;
-        if(vectorContains(6, cross) && vectorContains(7, cross) && vectorContains(8, cross)) return cross;
-
-        // verticals
-        // 0 && 3 && 6
-        if(vectorContains(0, circle) && vectorContains(3, circle) && vectorContains(6, circle)) return circle;
-        if(vectorContains(0, cross) && vectorContains(3, cross) && vectorContains(6, cross)) return cross;
-        // 1 && 4 && 7
-        if(vectorContains(1, circle) && vectorContains(4, circle) && vectorContains(7, circle)) return circle;
-        if(vectorContains(1, cross) && vectorContains(4, cross) && vectorContains(7, cross)) return cross;
-        // 2 && 5 && 8
-        if(vectorContains(2, circle) && vectorContains(5, circle) && vectorContains(8, circle)) return circle;
-        if(vectorContains(2, cross) && vectorContains(5, cross) && vectorContains(8, cross)) return cross;
-
-        // diagonals
-        // 0 && 4 && 8
-        if(vectorContains(0, circle) && vectorContains(4, circle) && vectorContains(8, circle)) return circle;
-        if(vectorContains(0, cross) && vectorContains(4, cross) && vectorContains(8, cross)) return cross;
-        // 2 && 4 && 6
-        if(vectorContains(2, circle) && vectorContains(4, circle) && vectorContains(6, circle)) return circle;
-        if(vectorContains(2, cross) && vectorContains(4, cross) && vectorContains(6, cross)) return cross;
+        int linecheck[8][3] = {
+            {0,1,2}, {3,4,5}, {6,7,8}, // horizontales
+            {0,3,6}, {1,4,7}, {2,5,8}, // verticales
+            {0,4,8}, {2,4,6} // diagonales
+        };
+        
+        for (int i=0; i<8; i++) {
+            if(
+                vectorContains(linecheck[i][0], currentPlayer) && 
+                vectorContains(linecheck[i][1], currentPlayer) &&                 
+                vectorContains(linecheck[i][2], currentPlayer)
+            ) return currentPlayer;
+        }
     }
 
     return none;
