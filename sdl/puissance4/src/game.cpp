@@ -25,7 +25,9 @@ void Game::renderView() {
 void Game::startLoop() {
     int active = 1;
     SDL_Event e;
-    while (active) {       
+    while (active) {     
+
+        //validateRow();  
 
         /*if(winner != player_none) {
             //lastWinner = winner;
@@ -52,6 +54,7 @@ void Game::startLoop() {
                 newGame();
             }        
 
+            //validateRow();  
             renderView();
 
             switch( e.type ) {
@@ -100,10 +103,22 @@ void Game::togglePlayer() {
 }
 
 void Game::addPiece() {
+    int rowFull = plateau->addNewPiece(currentPiece);
+    if(!rowFull) togglePlayer();
 
+    validateRow();
 }
 
 void Game::validateRow() {
+    winner = plateau->lineDone(currentPlayer);
+    if(winner != player_none) {
+        if(winner == yellow) yellowScore ++;
+        if(winner == red) redScore ++;
+        //SDL_Delay(1000);
+        newGame();
+        //renderView();
+    } 
+
     /*winner = plateau->lineDone(currentPlayer);
     if(winner != player_none) {
         if(winner == yellow) yellowScore ++;

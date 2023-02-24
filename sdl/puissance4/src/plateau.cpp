@@ -29,16 +29,6 @@ int Plateau::addNewPiece(Piece *currentPiece) {
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
     piece->destTextureParams.y = 429;
 
-    
-
-    //int caseNumber = getCaseNumberByTextureParams(piece->destTextureParams.x, piece->destTextureParams.y);
-    //piece->caseNumber = caseNumber;
-
-    //first row : 69
-    //lastRow : 430
-    //SDL_Log("Case Number %d", piece->caseNumber);
-    //SDL_Log("piece->destTextureParams.y %d", piece->destTextureParams.y);
-
     int rowFull = false;
     
     while(caseAlreadyUsed(piece)) {
@@ -147,7 +137,6 @@ int Plateau::vectorContains(int caseNumber, Player player) {
     return false;
 }
 
-//TODO implement
 Player Plateau::lineDone(Player currentPlayer) {
     Player winner = player_none;
 
@@ -182,8 +171,12 @@ Player Plateau::lineDone(Player currentPlayer) {
                 vectorContains(linecheck[i][0], currentPlayer) && 
                 vectorContains(linecheck[i][1], currentPlayer) && 
                 vectorContains(linecheck[i][2], currentPlayer) && 
-                vectorContains(linecheck[i][3], currentPlayer)
-            ) return currentPlayer;
+                vectorContains(linecheck[i][3], currentPlayer)                
+            ) 
+            {
+                SDL_Log("Winner %u", currentPlayer);
+                return currentPlayer;
+            }
         }
     }
 
