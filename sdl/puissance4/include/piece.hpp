@@ -27,7 +27,7 @@ class Piece {
 
         void togglePlayer(PieceType pieceype);
         void toggleColor();
-        int moveUp();
+        bool moveUp();
         void moveDown();
         void moveRight();
         void moveLeft();

@@ -19,13 +19,14 @@ class Plateau {
         std::list<Piece*> pieceList;
 
         void displayPieces();
-        int addNewPiece(Piece *currentPiece);
+        bool addNewPiece(Piece *currentPiece);
         int caseAlreadyUsed(Piece *piece);
         int getCaseNumberByTextureParams(Piece *piece);
         int vectorContains(int caseNumber, Player player);
         Player lineDone(Player currentPlayer);
         void display();
         void cleanup();
+        int countRed();
 };
 
 #endif

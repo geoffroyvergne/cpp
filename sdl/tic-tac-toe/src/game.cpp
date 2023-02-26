@@ -116,9 +116,7 @@ void Game::startLoop() {
 }
 
 void Game::newGame() {    
-    this->plateau->pieceList.clear();
-
-    //this->plateau->pieceList.fill(nullptr);
+    this->plateau->clearPieceList();
     this->plateau->casesUsed = 0;
 
     renderView();
@@ -157,6 +155,7 @@ void Game::validate() {
         // Check if case already ised
         if(! plateau->caseAlreadyUsed(currentPiece)) {
             winner = plateau->addNewPiece(currentPiece, currentPlayer);
+            this->plateau->displayTable();
             togglePlayer();
             currentPiece = plateau->addCurrentPiece(currentPiece, currentPlayer);  
             this->plateau->casesUsed ++;                                                                               
@@ -168,6 +167,6 @@ void Game::validate() {
 
 void Game::destroyTextures() {
     /*for (size_t i = 0; i < this->plateau->pieceList.size(); ++i) {
-		SDL_DestroyTexture(this->plateau->pieceList[i]->sdl_texture);
+		//SDL_DestroyTexture(this->plateau->pieceList[i]->sdl_texture);
 	}*/
 }

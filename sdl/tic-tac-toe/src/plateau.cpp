@@ -8,26 +8,42 @@
 Plateau::Plateau() {
     srcTextureParams = { 87, 187,  512, 512 };
     destTextureParams = { 0, 0,  512, 512 };
+    clearPieceList();
+}
+
+void Plateau::clearPieceList() {    
+    piece2dList = {{
+        {nullptr, nullptr, nullptr},
+        {nullptr, nullptr, nullptr},
+        {nullptr, nullptr, nullptr}
+    }};
 }
 
 void Plateau::display() {
     SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
+void Plateau::displayPieces() {
+    for(std::array pieceList : piece2dList) {
+        for(Piece* pieceInList : pieceList) {
+            if(pieceInList == nullptr) continue;
+            pieceInList->display();
+        }
+    }
+}
+
 int Plateau::caseAlreadyUsed(Piece *piece) {
-    for(Piece* pieceInList : pieceList) {
-        if(piece->destTextureParams.x == pieceInList->destTextureParams.x && piece->destTextureParams.y == pieceInList->destTextureParams.y) {
-            return true;
+    for(std::array pieceList : piece2dList) {
+        for(Piece* pieceInList : pieceList) {
+            if(pieceInList == nullptr) continue;            
+
+            if(piece->position.caseNumber == pieceInList->position.caseNumber) {
+                return true;
+            }
         }
     }
 
     return false;
-}
-
-void Plateau::displayPieces() {
-    for(Piece* pieceInList : pieceList) {
-        pieceInList->display();
-    }
 }
 
 Piece *Plateau::addCurrentPiece(Piece *lastCurrentPiece, Player player) {
@@ -48,122 +64,112 @@ Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
     Piece *piece = new Piece(pieceType);
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
     piece->destTextureParams.y = currentPiece->destTextureParams.y;
+    piece->caseNumberByTextureParams();    
 
-    int caseNumber = getCaseNumberByTextureParams(piece);
-    
-    piece->caseNumber = caseNumber;
+    // add piece in 2d table at new position
+    this->piece2dList[piece->position.rowNumber-1][piece->position.lineNumber-1] = piece;
 
-    /*SDL_Log("caseNumber %d", caseNumber);
-    SDL_Log("currentPiece->destTextureParams.x %d", currentPiece->destTextureParams.x);
-    SDL_Log("currentPiece->destTextureParams.y %d", currentPiece->destTextureParams.y);*/
-
-    if(pieceList.empty()){
-        pieceList.push_back(piece);    
-    } else {
-        pieceList.insert(pieceList.begin(), caseNumber+1, piece);
-    }
-
-    //pieceList.push_back(piece);
-
-    return this->lineDone(player);
+    return this->checkWin(piece->player, piece->position.rowNumber -1, piece->position.lineNumber -1, 3);
 }
 
-int Plateau::getCaseNumberByTextureParams(Piece *piece) {
-    int caseNumber = 0;
-    int rowNumber = 0;
-    
-    /*{1,2,3},    
-    {4,5,6},
-    {7,8,9},*/
-
-    int rowArray[] = { 30, 210, 390 };
-    int lineArray[] = { 30, 210, 390 };
-
-    for(int row=0; row<3; row++) {
-        rowNumber ++;
-        int lineNumber = 0;
-        for(int line=0; line<3; line++) {
-            
-            caseNumber ++;
-            lineNumber ++;
-
-            if(piece->destTextureParams.x == lineArray[line] && piece->destTextureParams.y == rowArray[row]) {
-                //piece->position = { caseNumber, rowArray[row], lineArray[line] };
-
-                piece->position = { caseNumber, rowArray[row], lineArray[line] };
-                piece->caseNumber = caseNumber;
-
-                //SDL_Log("lineArray[line] %d rowArray[row] %d ", lineArray[line], rowArray[row]);
-                SDL_Log("caseNumber %d rowNumber %d lineNumber %d ", caseNumber, rowNumber, lineNumber);
-
-                return caseNumber;                
-            }
+void Plateau::displayTable() {
+    for(std::array pieceList : piece2dList) {
+        for(Piece* pieceInList : pieceList) {
+            if(pieceInList == nullptr) std::cout << " " << "0";
+            else std::cout << " " << pieceInList->player;
         }
+        std::cout << std::endl;
     }
-
-    return caseNumber;
+    std::cout << std::endl;
 }
 
-int Plateau::vectorContains(int caseNumber, Player player) {
-    for(Piece* piece : pieceList) {
-        if(piece->caseNumber == (caseNumber+1) && piece->player == player) {
-            return true;
+void Plateau::resetContainers(int boardSize) {
+    for(int i=0; i<2; i++) {
+        for(int j=0; j<boardSize; j++) {
+            rowContainer[i][j] = 0;
+            columnContainer[i][j] = 0;
+            regularDiagonalContainer[i][j] = 0;
+            oppositDiagonalContainer[i][j] = 0;
         }
     }
+}
 
-    return false;
+// https://jayeshkawli.ghost.io/tic-tac-toe/
+// tic tac toe win check algorithme
+Player Plateau::checkWin(Player player, int row, int column, int boardSize) {
+    int playerNumber = player;
+
+    rowContainer[playerNumber][row] +=1;
+    columnContainer[playerNumber][column] +=1;
+
+    if(row == column) {
+        regularDiagonalContainer[playerNumber][row] +=1;
+    }
+
+    if(row + column + 1 == boardSize) {
+        oppositDiagonalContainer[playerNumber][row] += 1;
+    }
+
+    if(rowContainer[playerNumber][row] == boardSize) {
+        SDL_Log("makeMove Win accross row !");
+        resetContainers(boardSize);
+        return player;
+    }
+
+    if(columnContainer[playerNumber][column] == boardSize) {
+        SDL_Log("makeMove Win accross column !");
+        resetContainers(boardSize);
+        return player;
+    }
+
+    int sumForRegularDiagonalElement = 0;
+    int sumForOppositDiagonalElement = 0;
+
+    for(int i=0; i<boardSize; i++) {
+        sumForRegularDiagonalElement += regularDiagonalContainer[playerNumber][i];
+        sumForOppositDiagonalElement += oppositDiagonalContainer[playerNumber][i]; 
+    }
+
+    if(sumForRegularDiagonalElement == boardSize) {
+        SDL_Log("makeMove Win accross regular diagonal !");
+        resetContainers(boardSize);
+        return player;
+    }
+
+    if(sumForOppositDiagonalElement == boardSize) {
+        SDL_Log("makeMove Win accross opposit diagonal !");
+        resetContainers(boardSize);
+        return player;
+    }
+
+    return none;
 }
 
 /*
 
-{1,2,3},
-{4,5,6},
-{7,8,9},
-
-{0-0,0-1,0-2},
-{1-0,1-1,1-2},
-{2-0,2-1,2-2},
-
-horizontal
 1 2 3
 4 5 6
 7 8 9
 
-verticale
-1 4 7
-2 5 8
-3 6 9
-
-diagonale
-1 3 9
-3 5 7
-
 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-
-  1   2   3
-1 1 | 2 | 3
-2 4 | 5 | 6
-3 7 | 8 | 9
-
-X | 2 | 3
-4 | X | 6
-7 | 8 | X
 
 */
 
-Player Plateau::lineDone(Player currentPlayer) {
+/*int Plateau::pieceListContains(int caseNumber, Player player) {
+    for(std::array pieceList : piece2dList) {
+        for(Piece* pieceInList : pieceList) {
+            if(pieceInList == nullptr) continue;
+            if(pieceInList->position.caseNumber == (caseNumber+1) && pieceInList->player == player) {
+                return true;
+            }
+        }
+    }
 
-    /*
-    1 2 3
-    4 5 6
-    7 8 9
+    return false;
+}*/
 
-    0 1 2
-    3 4 5
-    6 7 8
-    */
-
-    if(pieceList.size() >= 3) {
+/*Player Plateau::lineDone(Player currentPlayer) {
+    if(casesUsed >= 3) {
         int linecheck[8][3] = {
             {0,1,2}, {3,4,5}, {6,7,8}, // horizontales
             {0,3,6}, {1,4,7}, {2,5,8}, // verticales
@@ -172,12 +178,12 @@ Player Plateau::lineDone(Player currentPlayer) {
         
         for (int i=0; i<8; i++) {
             if(
-                vectorContains(linecheck[i][0], currentPlayer) && 
-                vectorContains(linecheck[i][1], currentPlayer) &&                 
-                vectorContains(linecheck[i][2], currentPlayer)
+                pieceListContains(linecheck[i][0], currentPlayer) && 
+                pieceListContains(linecheck[i][1], currentPlayer) &&                 
+                pieceListContains(linecheck[i][2], currentPlayer)
             ) return currentPlayer;
         }
     }
 
     return none;
-}
+}*/

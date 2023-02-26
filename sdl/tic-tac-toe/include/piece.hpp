@@ -8,9 +8,9 @@
 #define CIRCLE
 
 struct Position {
-    int caseNumber;
-    int rowNumber;
-    int lineNumber;
+    int caseNumber =0;
+    int rowNumber = 0;
+    int lineNumber = 0;
 };
 
 class Piece {
@@ -18,9 +18,8 @@ class Piece {
         Piece(PieceType type);
         ~Piece();
         Player player;       
-        SDL_Rect srcTextureParams; // Real texture size and placement
-        SDL_Rect destTextureParams = { 250, 250,  50, 50 }; // Texture seen in game
-        int caseNumber = 0;
+        SDL_Rect srcTextureParams;
+        SDL_Rect destTextureParams = { 250, 250,  50, 50 };
         Position position;
 
         void togglePlayer(PieceType pieceype);
@@ -31,6 +30,8 @@ class Piece {
         void moveRight();
         void moveLeft();
         void cleanup();
+
+        void caseNumberByTextureParams();
 };
 
 #endif

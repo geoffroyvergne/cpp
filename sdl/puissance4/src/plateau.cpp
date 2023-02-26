@@ -15,16 +15,12 @@ Plateau::~Plateau() {
 }
 
 void Plateau::displayPieces() {
-    /*for (size_t i = 0; i < this->pieceList.size(); ++i) {
-        this->pieceList[i]->display();
-	}*/
-
     for(Piece* piece : pieceList) {
         piece->display();
     }
 }
 
-int Plateau::addNewPiece(Piece *currentPiece) {    
+bool Plateau::addNewPiece(Piece *currentPiece) {    
     Piece *piece = new Piece(currentPiece->type);
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
     piece->destTextureParams.y = 429;
@@ -36,24 +32,25 @@ int Plateau::addNewPiece(Piece *currentPiece) {
         if(rowFull) break;
     }
 
-    int caseNumber = getCaseNumberByTextureParams(piece);
+   // SDL_Log("rowFull %d destTextureParams.y %d", rowFull, piece->destTextureParams.y);
 
     if(! rowFull) {
-        //pieceList.push_back(piece);
-        //pieceList.insert(pieceList.begin() + piece->caseNumber, piece); 
+        pieceList.push_back(piece);
+        int caseNumber = getCaseNumberByTextureParams(piece);
+    }
 
+    /*if(! rowFull) {
         if(pieceList.empty()){
-            pieceList.push_back(piece);    
+            pieceList.push_back(piece);
         } else {
             pieceList.insert(pieceList.begin(), caseNumber, piece);
         }
-    } 
+    }*/
 
     return rowFull;
 }
 
 int Plateau::caseAlreadyUsed(Piece *piece) {
-     //for (size_t i = 0; i < this->pieceList.size(); ++i) {
     for(Piece* pieceInList : pieceList) {        
          if(piece->destTextureParams.x == pieceInList->destTextureParams.x && piece->destTextureParams.y == pieceInList->destTextureParams.y) {
              return true;
@@ -76,19 +73,6 @@ lines   26   93   160  227  294  361  428
     5   35   36   37   38   39   40   41   429
         0    1    2    3    4    5    6   rows (+72)
     */
-    //00 = 26 69
-    //35 = 26 429
-    //36 = 93 429
-
-    //41 = 428 429
-
-    //lines x67
-    //first line : 69
-    //last line : 428
-
-    //rows x72
-    //first row : 26
-    //last row : 428
 
     int caseNumber = 0;
     int rowNumber = 0;
@@ -96,7 +80,6 @@ lines   26   93   160  227  294  361  428
 
     int rowArray[] = { 89, 157, 225, 293, 361, 429 };
     int lineArray[] = { 17, 84, 151, 218, 285, 352, 419 };
-    //int lineArray[] = { 26, 93, 160, 227, 294, 361, 428 };
 
     //SDL_Log("piece->destTextureParams.x %d piece->destTextureParams.y %d", piece->destTextureParams.x, piece->destTextureParams.y);
 
@@ -104,16 +87,14 @@ lines   26   93   160  227  294  361  428
         rowNumber ++;
         int lineNumber = 0;
 
-        for(int line=0; line<7; line++) {
-            //SDL_Log("lineArray[line] %d rowArray[row] %d ", lineArray[line], rowArray[row]);
-            
+        for(int line=0; line<7; line++) {            
             lineNumber ++;
 
             if(piece->destTextureParams.x == lineArray[line] && piece->destTextureParams.y == rowArray[row]) {
                 piece->position = { caseNumber, rowArray[row], lineArray[line] };
                 piece->caseNumber = caseNumber;
 
-                SDL_Log("caseNumber %d rowNumber %d lineNumber %d ", caseNumber, rowNumber, lineNumber);
+                //SDL_Log("caseNumber %d rowNumber %d lineNumber %d ", caseNumber, rowNumber, lineNumber);
 
                 return caseNumber;          
             }
@@ -122,9 +103,6 @@ lines   26   93   160  227  294  361  428
     }
 
     return caseNumber;
-
-    //SDL_Log("destTextureParams.x %d destTextureParams.y %d", piece->destTextureParams.x, piece->destTextureParams.y);
-    //SDL_Log("Case Number %d", piece->caseNumber);
 }
 
 int Plateau::vectorContains(int caseNumber, Player player) {
@@ -150,37 +128,40 @@ Player Plateau::lineDone(Player currentPlayer) {
         0    1    2    3    4    5    6   
     */
 
-   if(pieceList.size() >= 3) {
-        int linecheck[48][4] = {
-            {0,1,2,3}, {1,2,3,4}, {2,3,4,5}, {3,4,5,6}, // horizontale 1
-            {}, {}, {}, {}, // horizontale 2
-            {}, {}, {}, {}, // horizontale 3
-            {}, {}, {}, {}, // horizontale 4
-            {35,36,37,38}, {}, {}, {}, // horizontale 5
-            {0,7,14,21}, {7,14,21,28}, {14,21,28,35}, // verticale 1
-            {}, {}, {}, {}, // verticale 2
-            {}, {}, {}, {}, // verticale 3
-            {}, {}, {}, {}, // verticale 4
-            {}, {}, {}, {}, // verticale 5
-            {}, {}, {}, {}, // verticale 6
-            {}, {}, {}, {}, // verticale 7
-        };
-        
-        for (int i=0; i<48; i++) {
-            if(
-                vectorContains(linecheck[i][0], currentPlayer) && 
-                vectorContains(linecheck[i][1], currentPlayer) && 
-                vectorContains(linecheck[i][2], currentPlayer) && 
-                vectorContains(linecheck[i][3], currentPlayer)                
-            ) 
-            {
-                SDL_Log("Winner %u", currentPlayer);
-                return currentPlayer;
-            }
+   //SDL_Log("pieceList.size() %lu", pieceList.size());
+
+    int linecheck[8][4] = {
+        {0,7,14,21}, {7,14,21,28}, {14,21,28,35}, // verticale 0
+        {35,36,37,38}, {36,38,38,39}, {37,38,39,40}, {38,39,40,41}, // horizontale 5
+        {35, 29, 23, 17}, // diagonale 0
+    };
+
+    //SDL_Log("countRed %u", countRed());
+    
+    for (int i=0; i<sizeof(linecheck); i++) {
+        if(
+            vectorContains(linecheck[i][0], currentPlayer) && 
+            vectorContains(linecheck[i][1], currentPlayer) && 
+            vectorContains(linecheck[i][2], currentPlayer) && 
+            vectorContains(linecheck[i][3], currentPlayer)                
+        ) {
+            //SDL_Log("Winner %u", currentPlayer);
+            return currentPlayer;
         }
     }
 
     return winner;
+}
+
+int Plateau::countRed() {
+    int count = 0;
+    for(Piece* piece : pieceList) {
+        if(piece->player == red) {
+            count ++;
+        }
+    }
+
+    return count;
 }
 
 void Plateau::display() {

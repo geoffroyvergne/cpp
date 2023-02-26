@@ -56,21 +56,48 @@ void Piece::display() {
 
 void Piece::moveUp() {
     if(destTextureParams.y >30) destTextureParams.y -= 180;
+    caseNumberByTextureParams();
 }
 
 void Piece::moveDown() {
     if(destTextureParams.y <390) destTextureParams.y += 180;
+    caseNumberByTextureParams();
 }
 
 void Piece::moveRight() {
     if(destTextureParams.x <390) destTextureParams.x += 180;
+    caseNumberByTextureParams();
 }
 
 
 void Piece::moveLeft() {
     if(destTextureParams.x >30) destTextureParams.x -= 180;
+    caseNumberByTextureParams();
 }
 
 void Piece::cleanup() {
     SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
+}
+
+void Piece::caseNumberByTextureParams() {
+    int caseNumber = 0;
+    int rowNumber = 0;
+
+    int rowArray[] = { 30, 210, 390 };
+    int lineArray[] = { 30, 210, 390 };
+
+    for(int row=0; row<3; row++) {
+        rowNumber ++;
+        int lineNumber = 0;
+        for(int line=0; line<3; line++) {            
+            caseNumber ++;
+            lineNumber ++;
+
+            if(this->destTextureParams.x == lineArray[line] && this->destTextureParams.y == rowArray[row]) {
+                this->position = { caseNumber, rowNumber, lineNumber };
+                
+                return;         
+            }
+        }
+    }
 }

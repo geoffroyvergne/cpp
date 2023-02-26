@@ -13,29 +13,32 @@
 class Plateau {
     public:
         Plateau();        
-        SDL_Rect srcTextureParams; // Real texture size and placement
-        SDL_Rect destTextureParams; // Texture seen in game
+        SDL_Rect srcTextureParams;
+        SDL_Rect destTextureParams;
         int casesUsed = 0;
-        /*std::list<std::list<Piece*>> pieceList2D = {
-            {nullptr, nullptr, nullptr},
-            {nullptr, nullptr, nullptr},
-            {nullptr, nullptr, nullptr}
-        };*/
-        std::list<Piece*> pieceList;
-        //std::list<std::list<Piece*>> pieceList
+        std::array<std::array<Piece*, 3>, 3> piece2dList;
 
-        //std::array<Piece*, 10> pieceList;
-        //std::vector<std::vector<Piece*>> pieceList;
+        int rowContainer[2][3] = {{0,0,0}, {0,0,0}};
+        int columnContainer[2][3] = {{0,0,0}, {0,0,0}};
 
+        int regularDiagonalContainer[2][3] = {{0,0,0}, {0,0,0}};
+        int oppositDiagonalContainer[2][3] = {{0,0,0}, {0,0,0}};
+
+        void clearPieceList();
         void display();
-        void addCases();
-        int caseAlreadyUsed(Piece *piece);
         void displayPieces();
+        
         Piece* addCurrentPiece(Piece *lastCurrentPiece, Player player);
         Player addNewPiece(Piece *currentPiece, Player player);
-        int vectorContains(int caseNumber, Player player);
-        Player lineDone(Player currentPlayer);
-        int getCaseNumberByTextureParams(Piece *piece);
+        void displayTable();
+
+        int caseAlreadyUsed(Piece *piece);       
+        
+        Player checkWin(Player player, int row, int column, int boardSize);
+        void resetContainers(int boardSize);
+
+        //int pieceListContains(int caseNumber, Player player);
+        //Player lineDone(Player currentPlayer);
 };
 
 #endif

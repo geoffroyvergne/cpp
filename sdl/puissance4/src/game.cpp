@@ -63,9 +63,9 @@ void Game::startLoop() {
                     //SDL_Log("piece x %d piece y %d", currentPiece->textureParams.x, currentPiece->textureParams.y);
                     
                     if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {                        
-                        //validateRow();
                         //renderView();
                         addPiece();
+                        //validateRow();
                         break;
                     }
 
@@ -103,35 +103,31 @@ void Game::togglePlayer() {
 }
 
 void Game::addPiece() {
-    int rowFull = plateau->addNewPiece(currentPiece);
-    if(!rowFull) togglePlayer();
+    bool fullrow = plateau->addNewPiece(currentPiece);
+    if(!fullrow) validateRow();
 
-    validateRow();
+   //if(!rowFull) togglePlayer();
 }
 
 void Game::validateRow() {
     winner = plateau->lineDone(currentPlayer);
-    if(winner != player_none) {
-        if(winner == yellow) yellowScore ++;
-        if(winner == red) redScore ++;
-        //SDL_Delay(1000);
-        newGame();
-        //renderView();
-    } 
 
-    /*winner = plateau->lineDone(currentPlayer);
     if(winner != player_none) {
         if(winner == yellow) yellowScore ++;
         if(winner == red) redScore ++;
-        //SDL_Delay(1000);
+
+        renderView();
+        SDL_Delay(1000);
         newGame();
+        
+        SDL_Log("Winner is %u", currentPlayer);
     } else {
-        int rowFull = plateau->addNewPiece(currentPiece);
-        if(!rowFull) togglePlayer();
-    }*/
+        togglePlayer();
+    }    
 }
 
 void Game::newGame() {
     this->plateau->pieceList.clear();
-    this->plateau->casesUsed = 0;    
+    this->plateau->casesUsed = 0;  
+    winner = player_none;  
 }
