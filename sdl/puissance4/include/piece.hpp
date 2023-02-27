@@ -9,8 +9,8 @@
 
 struct Position {
     int caseNumber;
-    int rowNumber;
-    int lineNumber;
+    int x;
+    int y;
 };
 
 class Piece {
@@ -20,13 +20,12 @@ class Piece {
         PieceType type;
         Player player;
 
-        SDL_Rect srcTextureParams; // Real texture size and placement
-        SDL_Rect destTextureParams; // Texture seen in game
-        int caseNumber = 0;
+        SDL_Rect srcTextureParams;
+        SDL_Rect destTextureParams;
+
         Position position;
 
         void togglePlayer(PieceType pieceype);
-        void toggleColor();
         bool moveUp();
         void moveDown();
         void moveRight();

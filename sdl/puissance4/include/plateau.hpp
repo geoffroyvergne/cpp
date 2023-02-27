@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <vector>
 #include <list>
+#include <array>
 #include <piece.hpp>
 
 #ifndef PLATEAU
@@ -12,21 +13,23 @@ class Plateau {
     public:
         Plateau();
         ~Plateau();        
-        SDL_Rect srcTextureParams; // Real texture size and placement
-        SDL_Rect destTextureParams; // Texture seen in game
+        SDL_Rect srcTextureParams;
+        SDL_Rect destTextureParams;
         int casesUsed = 0;
-        //std::vector<Piece*> pieceList;
-        std::list<Piece*> pieceList;
-
+       
+        std::array<std::array<Piece*, 7>, 6> piece2dList;
+        
+        void clearPieceList();
         void displayPieces();
         bool addNewPiece(Piece *currentPiece);
+        void displayTable();
         int caseAlreadyUsed(Piece *piece);
-        int getCaseNumberByTextureParams(Piece *piece);
-        int vectorContains(int caseNumber, Player player);
-        Player lineDone(Player currentPlayer);
+        void caseNumber(Piece *piece);
+        Player lineDone(Piece *piece);
         void display();
         void cleanup();
         int countRed();
+        int countpiece();
 };
 
 #endif

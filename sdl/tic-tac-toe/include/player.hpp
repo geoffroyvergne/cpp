@@ -2,9 +2,9 @@
 #define PLAYER
 
 enum Player {    
+    none,
     circle,
-    cross,
-    none
+    cross
 };
 
 #endif

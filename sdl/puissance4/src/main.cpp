@@ -12,6 +12,9 @@ int main(int argc, char** argv) {
 
     game->plateau = new Plateau();
     game->currentPiece = new Piece(red_circle);
+    game->currentPiece->position.x = 3;
+    game->currentPiece->position.y = 0;
+
     game->startLoop();
 
     return EXIT_SUCCESS;

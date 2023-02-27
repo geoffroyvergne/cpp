@@ -32,7 +32,9 @@ class Plateau {
         Player addNewPiece(Piece *currentPiece, Player player);
         void displayTable();
 
-        int caseAlreadyUsed(Piece *piece);       
+        int caseAlreadyUsed(Piece *piece);
+        void caseNumber(Piece *piece);
+        int countpiece();   
         
         Player checkWin(Player player, int row, int column, int boardSize);
         void resetContainers(int boardSize);

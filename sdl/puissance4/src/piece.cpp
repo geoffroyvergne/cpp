@@ -6,12 +6,9 @@
 
 Piece::Piece(PieceType pieceType) {
     this->type = pieceType;
-    //{ 26, 2,  55, 55 } initial position case
-
-    //{ 26, 69,  55, 55 } first case
-    //textureParams = { 26, -3,  55, 55 };
-    srcTextureParams = { 151, 17,  90, 90 };
-    destTextureParams = { 151, 17,  55, 55 };
+    
+    srcTextureParams = { 151, 17, 90, 90 };
+    destTextureParams = { 151, 17, 55, 55 };
 
     this->togglePlayer(pieceType);
 }
@@ -37,34 +34,37 @@ void Piece::togglePlayer(PieceType pieceType) {
     this->type = pieceType;
 }
 
-void Piece::toggleColor() {
-    //TODO Implement
-}
-
 void Piece::display() {
     SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Piece::moveRight() {
-    if(destTextureParams.x <360) destTextureParams.x += 67;
+    if(position.x <7) {
+        destTextureParams.x += 67;
+        position.x++;
+    }
 }
 
-
 void Piece::moveLeft() {
-    if(destTextureParams.x >26) destTextureParams.x -= 67;
+    if(position.x >1) {
+        destTextureParams.x -= 67;
+        position.x--;
+    }
 }
 
 bool Piece::moveUp() {
-    if(destTextureParams.y >89) {
-        destTextureParams.y -= 68;
-        return false;
-    }
+    if(position.y == 0) return true;
+    destTextureParams.y -= 67;
+    position.y--;
 
-    return true;
+    return false;
 }
 
 void Piece::moveDown() {
-    if(destTextureParams.y <429) destTextureParams.y += 72;
+    if(position.y >1) {
+        destTextureParams.y += 67;
+        position.y++;
+    }
 }
 
 void Piece::cleanup() {

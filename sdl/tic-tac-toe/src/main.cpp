@@ -19,6 +19,8 @@ int main(int argc, char** argv) {
     game->currentPiece = new Piece(red_circle);
     game->currentPiece->destTextureParams.x = 210;
     game->currentPiece->destTextureParams.y = 210;
+    game->currentPiece->position.x = 2;
+    game->currentPiece->position.y = 2;
 
     game->currentPiece = plateau->addCurrentPiece(game->currentPiece, game->currentPlayer);
 

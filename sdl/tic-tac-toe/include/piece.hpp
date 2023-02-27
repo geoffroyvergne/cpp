@@ -9,8 +9,8 @@
 
 struct Position {
     int caseNumber =0;
-    int rowNumber = 0;
-    int lineNumber = 0;
+    int x = 0;
+    int y = 0;
 };
 
 class Piece {
@@ -23,7 +23,6 @@ class Piece {
         Position position;
 
         void togglePlayer(PieceType pieceype);
-        void toggleColor();
         void display();
         void moveUp();
         void moveDown();

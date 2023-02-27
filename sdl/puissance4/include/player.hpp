@@ -2,9 +2,9 @@
 #define PLAYER
 
 enum Player {    
+    player_none,
     yellow,
-    red,
-    player_none
+    red
 };
 
 #endif
