@@ -4,19 +4,20 @@
 #include <piece.hpp>
 #include <core.hpp>
 
-Piece::Piece(PieceType pieceype) {
+Piece::Piece(PieceType pieceType) {
     srcTextureParams = { 30, 30, 90, 90 };
     destTextureParams = { 30, 30, 90, 90 };
 
-    this->togglePlayer(pieceype);
+    this->togglePlayer(pieceType);
+    this->pieceType = pieceType;
 }
 
 Piece::~Piece() { 
     cleanup();
 }
 
-void Piece::togglePlayer(PieceType pieceype) {
-    switch(pieceype) {
+void Piece::togglePlayer(PieceType pieceType) {
+    switch(pieceType) {
         case black_circle : 
             srcTextureParams.x = 30;
             srcTextureParams.y = 22;
@@ -42,6 +43,7 @@ void Piece::togglePlayer(PieceType pieceype) {
             break;
 
         case piece_none :
+            player = none;
             break;
     }
 }

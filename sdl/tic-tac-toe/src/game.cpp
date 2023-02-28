@@ -158,7 +158,7 @@ void Game::validate() {
             this->plateau->displayTable();
             togglePlayer();
             currentPiece = plateau->addCurrentPiece(currentPiece, currentPlayer);  
-            this->plateau->casesUsed ++;                                                                               
+            this->plateau->casesUsed ++;
         } else {                            
             SDL_Log("Case already used");
         }

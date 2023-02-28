@@ -9,12 +9,13 @@ Plateau::Plateau() {
     srcTextureParams = { 87, 187,  512, 512 };
     destTextureParams = { 0, 0,  512, 512 };
     clearPieceList();
+    resetContainers(3);
 }
 
 void Plateau::clearPieceList() {    
     for(int i=0; i<6; i++) {
         for(int j=0; j<7; j++) {
-            piece2dList[i][j] = nullptr;
+            piece2dList[i][j] = new Piece(piece_none);
         }
     }
 }
@@ -51,28 +52,32 @@ Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
 
     SDL_Log("piece->position.rowNumber %d piece->position.lineNumber %d countpiece %d caseNumber %d", piece->position.y -1, piece->position.x -1, countpiece(), piece->position.caseNumber);
 
-    return this->checkWin(piece->player, piece->position.x -1, piece->position.y -1, 3);
+    return this->checkWin(piece, 3);
 }
 
 void Plateau::displayPieces() {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList == nullptr) continue;
+            //if(pieceInList == nullptr) continue;
+            if(pieceInList->pieceType == piece_none) continue;
             pieceInList->display();
         }
     }
 }
 
 int Plateau::caseAlreadyUsed(Piece *piece) {
-    for(std::array pieceList : piece2dList) {
+    /*for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList == nullptr) continue;            
+            //if(pieceInList == nullptr) continue;
+            if(pieceInList->pieceType == piece_none) continue;
 
             if(piece->position.caseNumber == pieceInList->position.caseNumber) {
                 return true;
             }
         }
-    }
+    }*/
+
+    if(piece2dList[piece->position.y-1][piece->position.x-1]->pieceType != piece_none) return true;
 
     return false;
 }
@@ -81,7 +86,8 @@ void Plateau::caseNumber(Piece *piece) {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
             piece->position.caseNumber++; 
-            if(pieceInList == nullptr) continue;    
+            //if(pieceInList == nullptr) continue;
+            if(pieceInList->pieceType == piece_none) continue;
             if(pieceInList->position.x == piece->position.x && pieceInList->position.y == piece->position.y) return;
         }
     }
@@ -90,8 +96,8 @@ void Plateau::caseNumber(Piece *piece) {
 void Plateau::displayTable() {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList == nullptr) std::cout << " " << "0";
-            else std::cout << " " << pieceInList->player;
+            //if(pieceInList == nullptr) std::cout << " " << "0";
+            std::cout << " " << pieceInList->pieceType;
         }
         std::cout << std::endl;
     }
@@ -102,7 +108,8 @@ int Plateau::countpiece() {
     int count = 0;
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList != nullptr) {
+            //if(pieceInList != nullptr) {
+            if(pieceInList->pieceType != piece_none) {
                 count ++;
             }
         }
@@ -112,39 +119,43 @@ int Plateau::countpiece() {
 }
 
 void Plateau::resetContainers(int boardSize) {
-    for(int i=0; i<2; i++) {
+    for(int i=0; i<boardSize; i++) {
         for(int j=0; j<boardSize; j++) {
             rowContainer[i][j] = 0;
             columnContainer[i][j] = 0;
             regularDiagonalContainer[i][j] = 0;
             oppositDiagonalContainer[i][j] = 0;
         }
-    }
+    }    
 }
 
 // https://jayeshkawli.ghost.io/tic-tac-toe/
 // tic tac toe win check algorithme
-Player Plateau::checkWin(Player player, int row, int column, int boardSize) {
-    int playerNumber = player;
+Player Plateau::checkWin(Piece *piece, int boardSize) {
+    int row = piece->position.x;
+    int column = piece->position.y;
+    Player player = piece->player;
 
-    rowContainer[playerNumber][row] +=1;
-    columnContainer[playerNumber][column] +=1;
+    SDL_Log("player %d row %d column %d", player, row, column);    
+    
+    rowContainer[player][row] +=1;
+    columnContainer[player][column] +=1;        
 
     if(row == column) {
-        regularDiagonalContainer[playerNumber][row] +=1;
+        regularDiagonalContainer[player][row] ++;
     }
 
     if(row + column + 1 == boardSize) {
-        oppositDiagonalContainer[playerNumber][row] += 1;
+        oppositDiagonalContainer[player][row] ++;
     }
 
-    if(rowContainer[playerNumber][row] == boardSize) {
+    if(rowContainer[player][row] == boardSize) {
         SDL_Log("Win accross row !");
         resetContainers(boardSize);
         return player;
     }
 
-    if(columnContainer[playerNumber][column] == boardSize) {
+    if(columnContainer[player][column] == boardSize) {
         SDL_Log("Win accross column !");
         resetContainers(boardSize);
         return player;
@@ -154,8 +165,8 @@ Player Plateau::checkWin(Player player, int row, int column, int boardSize) {
     int sumForOppositDiagonalElement = 0;
 
     for(int i=0; i<boardSize; i++) {
-        sumForRegularDiagonalElement += regularDiagonalContainer[playerNumber][i];
-        sumForOppositDiagonalElement += oppositDiagonalContainer[playerNumber][i]; 
+        sumForRegularDiagonalElement += regularDiagonalContainer[player][i];
+        sumForOppositDiagonalElement += oppositDiagonalContainer[player][i]; 
     }
 
     if(sumForRegularDiagonalElement == boardSize) {

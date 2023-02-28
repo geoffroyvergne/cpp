@@ -18,11 +18,11 @@ class Plateau {
         int casesUsed = 0;
         std::array<std::array<Piece*, 3>, 3> piece2dList;
 
-        int rowContainer[2][3] = {{0,0,0}, {0,0,0}};
-        int columnContainer[2][3] = {{0,0,0}, {0,0,0}};
+        int rowContainer[3][3];
+        int columnContainer[3][3];
 
-        int regularDiagonalContainer[2][3] = {{0,0,0}, {0,0,0}};
-        int oppositDiagonalContainer[2][3] = {{0,0,0}, {0,0,0}};
+        int regularDiagonalContainer[3][3];
+        int oppositDiagonalContainer[3][3];
 
         void clearPieceList();
         void display();
@@ -36,7 +36,7 @@ class Plateau {
         void caseNumber(Piece *piece);
         int countpiece();   
         
-        Player checkWin(Player player, int row, int column, int boardSize);
+        Player checkWin(Piece *piece, int boardSize);
         void resetContainers(int boardSize);
 
         //int pieceListContains(int caseNumber, Player player);

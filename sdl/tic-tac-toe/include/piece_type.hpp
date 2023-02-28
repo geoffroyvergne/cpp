@@ -2,11 +2,11 @@
 #define PIECE_TYPE
 
 enum PieceType {
+    piece_none, 
     black_circle,
     black_cross,
     red_circle,
-    red_cross,
-    piece_none
+    red_cross
 };
 
 #endif

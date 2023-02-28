@@ -21,8 +21,9 @@ class Piece {
         SDL_Rect srcTextureParams;
         SDL_Rect destTextureParams = { 250, 250,  50, 50 };
         Position position;
+        PieceType pieceType;
 
-        void togglePlayer(PieceType pieceype);
+        void togglePlayer(PieceType pieceType);
         void display();
         void moveUp();
         void moveDown();
