@@ -19,6 +19,11 @@ class Plateau {
        
         std::array<std::array<Piece*, 7>, 6> piece2dList;
         
+        int columnCount = 0;
+        int rowCount = 0;
+        int regularDiagonalCount = 0;
+        int reverseDiagonalCount = 0;
+
         void clearPieceList();
         void displayPieces();
         bool addNewPiece(Piece *currentPiece);
@@ -30,6 +35,7 @@ class Plateau {
         void cleanup();
         int countRed();
         int countpiece();
+        void resetContainers();
 };
 
 #endif
