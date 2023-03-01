@@ -3,10 +3,12 @@
 #include <SDL_image.h>
 #include <piece.hpp>
 #include <core.hpp>
+#include <player.hpp>
 
 Piece::Piece(PieceType pieceType) {
     this->type = pieceType;
-    
+    this->player = player_none;
+
     srcTextureParams = { 151, 17, 90, 90 };
     destTextureParams = { 151, 17, 55, 55 };
 
@@ -29,6 +31,10 @@ void Piece::togglePlayer(PieceType pieceType) {
             srcTextureParams.x = 150;
             srcTextureParams.y = 14;
             player = red;
+            break;
+        
+        case piece_none :
+            player = player_none;
             break;
     }
     this->type = pieceType;
@@ -53,7 +59,7 @@ void Piece::moveLeft() {
 }
 
 bool Piece::moveUp() {
-    if(position.y == 0) return true;
+    if(position.y == 1) return true;
     destTextureParams.y -= 67;
     position.y--;
 
@@ -69,4 +75,8 @@ void Piece::moveDown() {
 
 void Piece::cleanup() {
     //SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
+}
+
+Player Piece::getPlayer() {
+    return this->player;
 }

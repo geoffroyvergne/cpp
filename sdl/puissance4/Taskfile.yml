@@ -12,6 +12,11 @@ tasks:
     cmds:
       - ./build/puissance4
 
+  debug:
+    desc: Debug application.
+    cmds:
+      - lldb -o run ./build/puissance4
+
   clean:
     desc: Clean.
     cmds:

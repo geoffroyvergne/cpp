@@ -1,10 +1,10 @@
 #ifndef PLAYER
 #define PLAYER
 
-enum Player {    
-    player_none,
+enum Player {        
     yellow,
-    red
+    red, 
+    player_none
 };
 
 #endif

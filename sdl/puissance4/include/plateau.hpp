@@ -5,6 +5,7 @@
 #include <list>
 #include <array>
 #include <piece.hpp>
+#include <player.hpp>
 
 #ifndef PLATEAU
 #define PLATEAU

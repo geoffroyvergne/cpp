@@ -110,7 +110,7 @@ void Game::validateRow() {
 
 void Game::newGame() {
     this->plateau->clearPieceList();
-    this->plateau->resetContainers();
+    //this->plateau->resetContainers();
     this->plateau->casesUsed = 0;  
     winner = player_none;  
 }
