@@ -14,13 +14,13 @@ struct Position {
 };
 
 class Piece {
-    private:
-        Player player;
+    //private:
+    //    Player player;
     public:
         Piece(PieceType type);
         ~Piece();
         PieceType type;
-        //Player player;
+        Player player = Player::player_none;
 
         SDL_Rect srcTextureParams;
         SDL_Rect destTextureParams;
@@ -34,7 +34,8 @@ class Piece {
         void moveLeft();
         void display();
         void cleanup();
-        Player getPlayer();
+        //Player getPlayer();
+        int getPlayer(Player player);
 };
 
 #endif

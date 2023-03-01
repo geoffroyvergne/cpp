@@ -1,7 +1,13 @@
 #ifndef PLAYER
 #define PLAYER
 
-enum Player {        
+/*enum Player {        
+    yellow,
+    red, 
+    player_none
+};*/
+
+enum class Player {
     yellow,
     red, 
     player_none

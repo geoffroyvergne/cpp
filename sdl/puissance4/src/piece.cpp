@@ -7,7 +7,7 @@
 
 Piece::Piece(PieceType pieceType) {
     this->type = pieceType;
-    this->player = player_none;
+    this->player = Player::player_none;
 
     srcTextureParams = { 151, 17, 90, 90 };
     destTextureParams = { 151, 17, 55, 55 };
@@ -16,7 +16,9 @@ Piece::Piece(PieceType pieceType) {
 }
 
 Piece::~Piece() { 
-    cleanup();
+    //cleanup();
+
+    SDL_Log("Piece destructed");
 }
 
 void Piece::togglePlayer(PieceType pieceType) {
@@ -24,20 +26,36 @@ void Piece::togglePlayer(PieceType pieceType) {
         case yellow_circle : 
             srcTextureParams.x = 365;
             srcTextureParams.y = 17;
-            player = yellow;
+            player = Player::yellow;
             break;
 
         case red_circle : 
             srcTextureParams.x = 150;
             srcTextureParams.y = 14;
-            player = red;
+            player = Player::red;
             break;
         
         case piece_none :
-            player = player_none;
+            player = Player::player_none;
             break;
     }
     this->type = pieceType;
+}
+
+int Piece::getPlayer(Player player) {
+    switch(player) {
+        case Player::player_none : 
+            return 0;
+        break;
+
+        case Player::yellow : 
+            return 1;
+        break;
+
+        case Player::red : 
+            return 2;
+        break;
+    }
 }
 
 void Piece::display() {
@@ -77,6 +95,6 @@ void Piece::cleanup() {
     //SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
 }
 
-Player Piece::getPlayer() {
+/*Player Piece::getPlayer() {    
     return this->player;
-}
+}*/

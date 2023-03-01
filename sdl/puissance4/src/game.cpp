@@ -72,11 +72,11 @@ void Game::startLoop() {
 
 void Game::togglePlayer() {
     PieceType pieceType;
-    if(currentPlayer == red) {
-        currentPlayer = yellow;
+    if(currentPlayer == Player::red) {
+        currentPlayer = Player::yellow;
         pieceType = yellow_circle;
-    } else if(currentPlayer == yellow) {
-        currentPlayer = red;
+    } else if(currentPlayer == Player::yellow) {
+        currentPlayer = Player::red;
         pieceType = red_circle;       
     }
 
@@ -112,5 +112,5 @@ void Game::newGame() {
     this->plateau->clearPieceList();
     //this->plateau->resetContainers();
     this->plateau->casesUsed = 0;  
-    winner = player_none;  
+    winner = Player::player_none;  
 }

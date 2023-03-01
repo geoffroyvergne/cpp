@@ -18,8 +18,8 @@ class Game {
         int loopDelay = 10;
         int partyNumber = 0;        
 
-        Player currentPlayer = red;
-        Player winner = player_none;
+        Player currentPlayer = Player::red;
+        Player winner = Player::player_none;
         Piece *currentPiece;
         Plateau *plateau;
 
