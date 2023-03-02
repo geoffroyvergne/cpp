@@ -2,9 +2,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "core.hpp"
+#include <sdl-core.hpp>
 
-void Core::init() { 
+void SdlCore::init() { 
 
     SDL_Log("Core init");
 
@@ -36,39 +36,39 @@ void Core::init() {
     TTF_Init();
 }
 
-void Core::displayMessage(int fontSize, SDL_Color color, SDL_Rect textureParams, std::string message) {
+void SdlCore::displayMessage(int fontSize, SDL_Color color, SDL_Rect textureParams, std::string message) {
     //SDL_Log("Display message");
 
     font = TTF_OpenFont(fontPath.c_str(), fontSize);
     //sdlSurface = TTF_RenderText_Blended(font, message.c_str(), color);
     sdlSurface = TTF_RenderText_Blended(font, message.c_str(), color);
-    sdlTexture = SDL_CreateTextureFromSurface(Core::getInstance()->getRender(), sdlSurface);
-    SDL_RenderCopy(Core::getInstance()->getRender(), sdlTexture, NULL, &textureParams);  
+    sdlTexture = SDL_CreateTextureFromSurface(SdlCore::getInstance()->getRender(), sdlSurface);
+    SDL_RenderCopy(SdlCore::getInstance()->getRender(), sdlTexture, NULL, &textureParams);  
 
     //SDL_DestroyTexture(sdlTexture);
     //SDL_FreeSurface(sdlSurface);
 }
 
-Core* Core::getInstance() {
-    if(!Core::instance) {
-        Core::instance = new Core();
+SdlCore* SdlCore::getInstance() {
+    if(!SdlCore::instance) {
+        SdlCore::instance = new SdlCore();
     }
     return instance;
 }
 
-SDL_Window* Core::getWindow() {
+SDL_Window* SdlCore::getWindow() {
     return window;
 }
 
-SDL_Texture* Core::getSdlTexture() {
+SDL_Texture* SdlCore::getSdlTexture() {
     return sdl_texture;
 }
 
-SDL_Renderer* Core::getRender() {
+SDL_Renderer* SdlCore::getRender() {
     return render;
 }
 
-void Core::cleanup() {
+void SdlCore::cleanup() {
     SDL_DestroyTexture(sdlTexture);
     SDL_FreeSurface(sdlSurface);
 
@@ -80,4 +80,4 @@ void Core::cleanup() {
 	SDL_Quit();
 }
 
-Core* Core::instance = nullptr;
+SdlCore* SdlCore::instance = nullptr;

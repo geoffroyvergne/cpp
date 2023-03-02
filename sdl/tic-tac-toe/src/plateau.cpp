@@ -3,7 +3,8 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <plateau.hpp>
-#include <core.hpp>
+#include <sdl-core.hpp>
+//#include <util.hpp>
 
 Plateau::Plateau() {
     srcTextureParams = { 87, 187,  512, 512 };
@@ -15,19 +16,19 @@ Plateau::Plateau() {
 void Plateau::clearPieceList() {    
     for(int i=0; i<6; i++) {
         for(int j=0; j<7; j++) {
-            piece2dList[i][j] = new Piece(piece_none);
+            piece2dList[i][j] = new Piece(PieceType::none);
         }
     }
 }
 
 void Plateau::display() {
-    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 Piece *Plateau::addCurrentPiece(Piece *lastCurrentPiece, Player player) {
     PieceType pieceType;
-    if(player == cross) pieceType = red_cross;
-    else if(player == circle) pieceType = red_circle;
+    if(player == Player::cross) pieceType = PieceType::red_cross;
+    else if(player == Player::circle) pieceType = PieceType::red_circle;
 
     lastCurrentPiece->togglePlayer(pieceType);
 
@@ -36,8 +37,8 @@ Piece *Plateau::addCurrentPiece(Piece *lastCurrentPiece, Player player) {
 
 Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
     PieceType pieceType;
-    if(player == cross) pieceType = black_cross;
-    else if(player == circle) pieceType = black_circle;
+    if(player == Player::cross) pieceType = PieceType::black_cross;
+    else if(player == Player::circle) pieceType = PieceType::black_circle;
 
     Piece *piece = new Piece(pieceType);
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
@@ -58,14 +59,14 @@ Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
 void Plateau::displayPieces() {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList->pieceType == piece_none) continue;
+            if(pieceInList->pieceType == PieceType::none) continue;
             pieceInList->display();
         }
     }
 }
 
 int Plateau::caseAlreadyUsed(Piece *piece) {
-    if(piece2dList[piece->position.y-1][piece->position.x-1]->pieceType != piece_none) return true;
+    if(piece2dList[piece->position.y-1][piece->position.x-1]->pieceType != PieceType::none) return true;
 
     return false;
 }
@@ -74,7 +75,7 @@ void Plateau::caseNumber(Piece *piece) {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
             piece->position.caseNumber++; 
-            if(pieceInList->pieceType == piece_none) continue;
+            if(pieceInList->pieceType == PieceType::none) continue;
             if(pieceInList->position.x == piece->position.x && pieceInList->position.y == piece->position.y) return;
         }
     }
@@ -83,7 +84,8 @@ void Plateau::caseNumber(Piece *piece) {
 void Plateau::displayTable() {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            std::cout << " " << pieceInList->pieceType;
+            //std::cout << " " << pieceInList->pieceType;
+            //std::cout << " " << Util::getPieceTypeInt(pieceInList->pieceType);
         }
         std::cout << std::endl;
     }
@@ -94,7 +96,7 @@ int Plateau::countpiece() {
     int count = 0;
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList->pieceType != piece_none) {
+            if(pieceInList->pieceType != PieceType::none) {
                 count ++;
             }
         }
@@ -178,7 +180,7 @@ Player Plateau::checkWin(Piece *piece) {
     SDL_Log("rowCount %d columnCount %d regularDiagonalCount %d reverseDiagonalCount %d", rowCount, columnCount, regularDiagonalCount, reverseDiagonalCount);    
 
     if(rowCount == 3 || columnCount == 3 || regularDiagonalCount == 3 || reverseDiagonalCount == 3) return player;
-    else return none;
+    else return Player::none;
 }
 
 // https://jayeshkawli.ghost.io/tic-tac-toe/

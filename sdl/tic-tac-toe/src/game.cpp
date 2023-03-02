@@ -5,14 +5,14 @@
 #include <game.hpp>
 #include <plateau.hpp>
 #include <piece.hpp>
-#include <core.hpp>
+#include <sdl-core.hpp>
 
 Game::~Game() { 
-    Core::getInstance()->cleanup();
+    SdlCore::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(Core::getInstance()->getRender());
+    SDL_RenderClear(SdlCore::getInstance()->getRender());
 
     plateau->display();
     plateau->displayPieces();
@@ -20,10 +20,10 @@ void Game::renderView() {
     
     std::string message = getScore() + " winner : " + getPlayer(lastWinner);
 
-    Core::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, Core::getInstance()->name);
-    Core::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, message);
+    SdlCore::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, SdlCore::getInstance()->name);
+    SdlCore::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, message);
 
-    SDL_RenderPresent(Core::getInstance()->getRender());
+    SDL_RenderPresent(SdlCore::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -32,14 +32,14 @@ void Game::startLoop() {
     SDL_Event e;
     while (active) { 
         // if winner is none, start a new game
-        if(winner != none) {
+        if(winner != Player::none) {
             lastWinner = winner;
             // Increase score to the right player
             increaseScore(winner);
             SDL_Log("Game over Winner is %s score : %s", getPlayer(winner).c_str(), getScore().c_str());
 
             newGame();
-            winner = none;
+            winner = Player::none;
             //SDL_Delay(1000);
             continue;            
         }
@@ -124,9 +124,9 @@ void Game::newGame() {
 }
 
 void Game::increaseScore(Player player) {
-    if(player == circle) {
+    if(player == Player::circle) {
         circleScore ++;
-    } else if(player == cross) {
+    } else if(player == Player::cross) {
         crossScore ++;
     }
 }
@@ -136,9 +136,9 @@ std::string Game::getScore() {
 }
 
 std::string Game::getPlayer(Player player) {
-    if(player == circle) {
+    if(player == Player::circle) {
         return "circle";
-    } else if(player == cross) {
+    } else if(player == Player::cross) {
         return "cross";
     }
     
@@ -146,13 +146,13 @@ std::string Game::getPlayer(Player player) {
 }
 
 void Game::togglePlayer() {
-    if(currentPlayer == cross) currentPlayer = circle;
-    else if(currentPlayer == circle) currentPlayer = cross;
+    if(currentPlayer == Player::cross) currentPlayer = Player::circle;
+    else if(currentPlayer == Player::circle) currentPlayer = Player::cross;
 }
 
 void Game::validate() {
     // Check if there is a winner                        
-    if(winner == none) {
+    if(winner == Player::none) {
         // Check if case already ised
         if(! plateau->caseAlreadyUsed(currentPiece)) {
             winner = plateau->addNewPiece(currentPiece, currentPlayer);

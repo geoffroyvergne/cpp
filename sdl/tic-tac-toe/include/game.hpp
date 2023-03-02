@@ -18,11 +18,11 @@ class Game {
         int circleScore = 0;
         int crossScore = 0;
         
-        Player currentPlayer = circle;
+        Player currentPlayer = Player::circle;
         Piece *currentPiece;
         Plateau *plateau;
-        Player winner = none;
-        Player lastWinner = none;
+        Player winner = Player::none;
+        Player lastWinner = Player::none;
         //Message *message;
         
         void renderView();

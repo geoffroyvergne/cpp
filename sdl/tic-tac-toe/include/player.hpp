@@ -1,7 +1,7 @@
 #ifndef PLAYER
 #define PLAYER
 
-enum Player {    
+enum class Player {    
     none,
     circle,
     cross

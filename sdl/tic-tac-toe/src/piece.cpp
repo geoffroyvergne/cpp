@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <piece.hpp>
-#include <core.hpp>
+#include <sdl-core.hpp>
 
 Piece::Piece(PieceType pieceType) {
     srcTextureParams = { 30, 30, 90, 90 };
@@ -18,38 +18,38 @@ Piece::~Piece() {
 
 void Piece::togglePlayer(PieceType pieceType) {
     switch(pieceType) {
-        case black_circle : 
+        case PieceType::black_circle : 
             srcTextureParams.x = 30;
             srcTextureParams.y = 22;
-            player = circle;
+            player = Player::circle;
             break;
 
-        case black_cross : 
+        case PieceType::black_cross : 
             srcTextureParams.x = 140;
             srcTextureParams.y = 20;
-            player = cross;
+            player = Player::cross;
             break;
 
-        case red_circle : 
+        case PieceType::red_circle : 
             srcTextureParams.x = 268;
             srcTextureParams.y = 19;
-            player = circle;
+            player = Player::circle;
             break;
 
-        case red_cross : 
+        case PieceType::red_cross : 
             srcTextureParams.x = 395;
             srcTextureParams.y = 20;
-            player = cross;
+            player = Player::cross;
             break;
 
-        case piece_none :
-            player = none;
+        case PieceType::none :
+            player = Player::none;
             break;
     }
 }
 
 void Piece::display() {
-    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Piece::moveUp() {
@@ -81,5 +81,5 @@ void Piece::moveLeft() {
 }
 
 void Piece::cleanup() {
-    SDL_DestroyTexture(Core::getInstance()->getSdlTexture());
+    SDL_DestroyTexture(SdlCore::getInstance()->getSdlTexture());
 }

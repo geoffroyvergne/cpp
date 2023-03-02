@@ -12,6 +12,11 @@ tasks:
     cmds:
       - ./build/tic-tac-toe
 
+  debug:
+      desc: Debug application.
+      cmds:
+        - lldb -o run ./build/tic-tac-toe
+
   clean:
     desc: Clean.
     cmds:
