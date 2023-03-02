@@ -4,7 +4,7 @@
 #include <SDL_ttf.h>
 #include <plateau.hpp>
 #include <sdl-core.hpp>
-//#include <util.hpp>
+#include <util.hpp>
 
 Plateau::Plateau() {
     srcTextureParams = { 87, 187,  512, 512 };
@@ -84,8 +84,7 @@ void Plateau::caseNumber(Piece *piece) {
 void Plateau::displayTable() {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            //std::cout << " " << pieceInList->pieceType;
-            //std::cout << " " << Util::getPieceTypeInt(pieceInList->pieceType);
+            std::cout << " " << Util::getPieceTypeInt(pieceInList->pieceType);
         }
         std::cout << std::endl;
     }
