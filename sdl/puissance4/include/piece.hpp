@@ -13,19 +13,18 @@ struct Position {
     int y;
 };
 
-class Piece {
-    //private:
-    //    Player player;
+class Piece {    
     public:
-        Piece(PieceType type);
+        Piece(PieceType pieceType);
         ~Piece();
-        PieceType type;
-        Player player = Player::player_none;
+        PieceType pieceType = PieceType::none;
+        Player player = Player::none;
 
         SDL_Rect srcTextureParams;
         SDL_Rect destTextureParams;
 
         Position position;
+        bool rowFull = false;
 
         void togglePlayer(PieceType pieceype);
         bool moveUp();
@@ -34,8 +33,6 @@ class Piece {
         void moveLeft();
         void display();
         void cleanup();
-        //Player getPlayer();
-        int getPlayer(Player player);
 };
 
 #endif

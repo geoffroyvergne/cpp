@@ -3,7 +3,7 @@
 
 #include <plateau.hpp>
 
-#include <core.hpp>
+#include <sdl-core.hpp>
 
 #ifndef GAME
 #define GAME
@@ -16,10 +16,10 @@ class Game {
         int width = 512;
         int height = 512;
         int loopDelay = 10;
-        int partyNumber = 0;        
+        int partyNumber = 0;
 
         Player currentPlayer = Player::red;
-        Player winner = Player::player_none;
+        Player winner = Player::none;
         Piece *currentPiece;
         Plateau *plateau;
 
@@ -32,6 +32,12 @@ class Game {
         void validateRow();
         void addPiece();
         void newGame();
+
+        /*int getPlayerInt(Player player);
+        std::string getPlayerString(Player player);
+
+        int getPieceTypeInt(PieceType pieceype);
+        std::string getPieceTypeString(PieceType pieceype);*/
 };
 
 #endif

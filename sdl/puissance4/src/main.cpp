@@ -1,17 +1,17 @@
 #include <iostream>
 #include <SDL.h>
 #include <game.hpp>
-#include <core.hpp>
+#include <sdl-core.hpp>
 
 int main(int argc, char** argv) {
 
-    Core::getInstance()->init();
+    SdlCore::getInstance()->init();
 
     Game *game = new Game();
-    SDL_Log("%s", Core::getInstance()->name.c_str());
+    SDL_Log("%s", SdlCore::getInstance()->name.c_str());
 
     game->plateau = new Plateau();
-    game->currentPiece = new Piece(red_circle);
+    game->currentPiece = new Piece(PieceType::red_circle);
     game->currentPiece->position.x = 3;
     game->currentPiece->position.y = 0;
 

@@ -27,7 +27,7 @@ class Plateau {
 
         void clearPieceList();
         void displayPieces();
-        bool addNewPiece(Piece *currentPiece);
+        Piece* addNewPiece(Piece *currentPiece);
         void displayTable();
         int caseAlreadyUsed(Piece *piece);
         void caseNumber(Piece *piece);

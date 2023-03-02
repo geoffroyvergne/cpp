@@ -1,14 +1,15 @@
 #include <iostream>
 #include <SDL.h>
 #include <game.hpp>
-#include <core.hpp>
+#include <sdl-core.hpp>
+#include <util.hpp>
 
 Game::~Game() { 
-    Core::getInstance()->cleanup();
+    SdlCore::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(Core::getInstance()->getRender());
+    SDL_RenderClear(SdlCore::getInstance()->getRender());
 
     plateau->display();
     plateau->displayPieces();
@@ -16,10 +17,10 @@ void Game::renderView() {
     
     std::string message = this->name + " red : " + std::to_string(this->redScore) + " yellow : " + std::to_string(this->yellowScore);
 
-    Core::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, Core::getInstance()->name);
-    Core::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, message);
+    SdlCore::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, SdlCore::getInstance()->name);
+    SdlCore::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, message);
 
-    SDL_RenderPresent(Core::getInstance()->getRender());
+    SDL_RenderPresent(SdlCore::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -42,9 +43,8 @@ void Game::startLoop() {
 
             switch( e.type ) {
                 case SDL_KEYDOWN:
-
-                    //SDL_Log("piece x %d piece y %d", currentPiece->textureParams.x, currentPiece->textureParams.y);
                     
+                    // Return
                     if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {                        
                         addPiece();                        
                         break;
@@ -74,43 +74,41 @@ void Game::togglePlayer() {
     PieceType pieceType;
     if(currentPlayer == Player::red) {
         currentPlayer = Player::yellow;
-        pieceType = yellow_circle;
+        pieceType = PieceType::yellow_circle;
     } else if(currentPlayer == Player::yellow) {
         currentPlayer = Player::red;
-        pieceType = red_circle;       
+        pieceType = PieceType::red_circle;       
     }
 
     this->currentPiece->togglePlayer(pieceType);
 }
 
 void Game::addPiece() {
-    bool fullrow = plateau->addNewPiece(currentPiece);
-
-    if(!fullrow) {
+    Piece* newPiece = plateau->addNewPiece(currentPiece);
+    if(!newPiece->rowFull) {
         togglePlayer();
-        //plateau->displayTable();
-        //validateRow();
+        winner = plateau->lineDone(newPiece);    
+        validateRow();
     }
 }
 
 void Game::validateRow() {
-    /*winner = plateau->lineDone(currentPlayer);
-
-    if(winner != player_none) {
-        if(winner == yellow) yellowScore ++;
-        if(winner == red) redScore ++;
+    if(winner != Player::none) {
+        if(winner == Player::yellow) yellowScore ++;
+        if(winner == Player::red) redScore ++;
+        plateau->resetContainers();
 
         renderView();
-        SDL_Delay(1000);
+        SDL_Delay(100);
         newGame();
         
-        SDL_Log("Winner is %u", currentPlayer);
-    }*/
+        SDL_Log("Winner is %s", Util::getPlayerString(currentPlayer).c_str());
+    }
 }
 
 void Game::newGame() {
     this->plateau->clearPieceList();
-    //this->plateau->resetContainers();
+    this->plateau->resetContainers();
     this->plateau->casesUsed = 0;  
-    winner = Player::player_none;  
+    winner = Player::none;
 }

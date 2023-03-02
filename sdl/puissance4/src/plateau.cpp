@@ -3,7 +3,9 @@
 #include <SDL_image.h>
 
 #include <plateau.hpp>
-#include <core.hpp>
+#include <sdl-core.hpp>
+
+#include <util.hpp>
 
 Plateau::Plateau() {
     srcTextureParams = { 70, 139,  512, 460 };
@@ -17,49 +19,42 @@ Plateau::~Plateau() {
 }
 
 void Plateau::clearPieceList() {    
-    //Piece *piece = new Piece(piece_none);
-    //piece->player = player_none;
     for(int i=0; i<6; i++) {
         for(int j=0; j<7; j++) {
-            piece2dList[i][j] = new Piece(piece_none);
+            piece2dList[i][j] = new Piece(PieceType::none);
         }
     }
 }
 
-bool Plateau::addNewPiece(Piece *currentPiece) {    
-    Piece *piece = new Piece(currentPiece->type);
+Piece* Plateau::addNewPiece(Piece *currentPiece) {    
+    Piece *piece = new Piece(currentPiece->pieceType);
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
     piece->destTextureParams.y = 429;
     piece->position.x = currentPiece->position.x;
     piece->position.y = 6;
 
-    int rowFull = false;    
-
-    while(piece2dList[piece->position.y -1][piece->position.x -1]->player != Player::player_none) {
-        rowFull = piece->moveUp();
-        if(rowFull) break;
+    while(piece2dList[piece->position.y -1][piece->position.x -1]->player != Player::none) {
+        piece->rowFull = piece->moveUp();
+        if(piece->rowFull) break;
     }
 
-    if(! rowFull) {
+    if(! piece->rowFull) {
         // add piece in 2d table at new position       
         this->piece2dList[piece->position.y -1][piece->position.x -1] = piece;
         this->displayTable();
         this->caseNumber(piece);       
 
-        SDL_Log("piece->position.rowNumber %d piece->position.lineNumber %d countpiece %d caseNumber %d", piece->position.y -1, piece->position.x -1, countpiece(), piece->position.caseNumber);
-
-        this->lineDone(piece);
-        this->resetContainers();
+        SDL_Log("piece->position.rowNumber %d piece->position.lineNumber %d countpiece %d caseNumber %d", piece->position.y -1, piece->position.x -1, countpiece(), piece->position.caseNumber);        
     }
 
-    return rowFull;
+    return piece;
 }
 
 void Plateau::displayPieces() {
     int pieceNumber = 0;
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList->type == piece_none) continue;
+            if(pieceInList->pieceType == PieceType::none) continue;
             pieceInList->display();
             pieceNumber++;
         }
@@ -67,7 +62,7 @@ void Plateau::displayPieces() {
 }
 
 int Plateau::caseAlreadyUsed(Piece *piece) {    
-    if(piece2dList[piece->position.y-1][piece->position.x-1]->type != piece_none) return true;
+    if(piece2dList[piece->position.y-1][piece->position.x-1]->pieceType != PieceType::none) return true;
 
     return false;
 }
@@ -76,7 +71,7 @@ void Plateau::caseNumber(Piece *piece) {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
             piece->position.caseNumber++; 
-            if(pieceInList->type == piece_none) continue;
+            if(pieceInList->pieceType == PieceType::none) continue;
             if(pieceInList->position.x == piece->position.x && pieceInList->position.y == piece->position.y) return;
         }
     }
@@ -99,7 +94,7 @@ int Plateau::countpiece() {
     int count = 0;
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList->type != piece_none) {
+            if(pieceInList->pieceType != PieceType::none) {
                 count ++;
             }
         }
@@ -111,7 +106,7 @@ int Plateau::countpiece() {
 void Plateau::displayTable() {
      for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            std::cout << " " << pieceInList->getPlayer(pieceInList->player);
+            std::cout << " " << Util::getPlayerInt(pieceInList->player);
         }
         std::cout << std::endl;
     }
@@ -127,12 +122,6 @@ void Plateau::displayTable() {
 4 0 0 0 0 0 0 0
 5 0 0 0 0 0 0 0
 6 0 0 0 0 0 0 0
-
-
-      0
-    0 0 0 0
-      0
-      0
 
 */
 
@@ -161,12 +150,9 @@ Player Plateau::lineDone(Piece *piece) {
 
     // lines Y
     // down : y+1q
-    //if(y <maxCase) if(piece2dList[y+1][x]->player == player) columnCount ++;
-    //x = piece->position.x -1;
-    //y = piece->position.y -1;
+    //if(y <maxCase) if(piece2dList[y+1][x]->player == player) columnCount ++;    
     for(int i=1; i<checkNumber; i++) {
         if(y+i > ymaxCase) break;
-        if(piece2dList[y+i][x] == nullptr) break;
         if(piece2dList[y+i][x]->player == piece->player) { 
             columnCount ++;            
         } else break;
@@ -174,24 +160,18 @@ Player Plateau::lineDone(Piece *piece) {
 
     // rows X
     // left : x-1
-    //if(x >0) if(piece2dList[y][x-1]->player == player) rowCount ++;
-    //x = piece->position.x -1;
-    //y = piece->position.y -1;
+    //if(x >0) if(piece2dList[y][x-1]->player == player) rowCount ++;    
     for(int i=1; i<checkNumber; i++) {
         if(x-i <0) break;
-        if(piece2dList[y][x-i] == nullptr) break;
         if(piece2dList[y][x-i]->player == piece->player) {
             rowCount ++;
         } else break;
     }
 
     // right : x+1
-    //if(x <ymaxCase) if(piece2dList[y][x+1]->player == player) rowCount ++;
-    //x = piece->position.x -1;
-    //y = piece->position.y -1;
+    //if(x <ymaxCase) if(piece2dList[y][x+1]->player == player) rowCount ++;    
     for(int i=1; i<checkNumber; i++) {
         if(x+i >xmaxCase) break;
-        if(piece2dList[y][x+i] == nullptr) break;
         if(piece2dList[y][x+i]->player == piece->player) {
             rowCount ++;
         } else break;
@@ -199,24 +179,18 @@ Player Plateau::lineDone(Piece *piece) {
 
     // regular diagonal
     // up -> right : y-1 -> x+1
-    /*if(y >0 && x <maxCase) {
-        if(piece2dList[y-1][x+1]->player == player) regularDiagonalCount ++;
-    }*/
+    //if(y >0 && x <maxCase) { if(piece2dList[y-1][x+1]->player == player) regularDiagonalCount ++; }
     for(int i=1; i<checkNumber; i++) {
         if(y-i <0 || x+i >xmaxCase) break;
-        if(piece2dList[y-i][x+i] == nullptr) break;
         if(piece2dList[y-i][x+i]->player == piece->player) {
             regularDiagonalCount ++;
         } else break;
     }
 
     // down -> left : y+1 -> x-1
-    /* if(y <maxCase && x >0) {
-        if(piece2dList[y+1][x-1]->player == player) regularDiagonalCount ++;
-    } */
+    //if(y <maxCase && x >0) { if(piece2dList[y+1][x-1]->player == player) regularDiagonalCount ++; }
     for(int i=1; i<checkNumber; i++) {
         if(y+i >ymaxCase || x-i <0) break;
-        if(piece2dList[y+i][x-i] == nullptr) break;
         if(piece2dList[y+i][x-i]->player == piece->player) {
             regularDiagonalCount ++;
         } else break;
@@ -230,7 +204,6 @@ Player Plateau::lineDone(Piece *piece) {
     }*/
     for(int i=1; i<checkNumber; i++) {        
         if(y-i <0 || x-i <0) break;
-        if(piece2dList[y-i][x-i] == nullptr) break;
         if(piece2dList[y-i][x-i]->player == piece->player) {
             reverseDiagonalCount ++;
         } else break;
@@ -242,7 +215,6 @@ Player Plateau::lineDone(Piece *piece) {
     }*/
     for(int i=1; i<checkNumber; i++) {        
         if(y+i >ymaxCase || x+i >xmaxCase) break;
-        if(piece2dList[y+i][x+i] == nullptr) break;
         if(piece2dList[y+i][x+i]->player == piece->player) {
             reverseDiagonalCount ++;
         } else break;
@@ -250,7 +222,10 @@ Player Plateau::lineDone(Piece *piece) {
 
     SDL_Log("player %d rowCount x %d columnCount y %d regularDiagonalCount %d reverseDiagonalCount %d", piece->player, rowCount, columnCount, regularDiagonalCount, reverseDiagonalCount);    
 
-    if(rowCount == checkNumber) {
+    if(rowCount == checkNumber || columnCount == checkNumber || regularDiagonalCount == checkNumber || reverseDiagonalCount == checkNumber)
+    return piece->player;
+
+    /*if(rowCount == checkNumber) {
         SDL_Log("player %d win on row", piece->player);
         return piece->player;
     }
@@ -268,14 +243,13 @@ Player Plateau::lineDone(Piece *piece) {
     if(reverseDiagonalCount == checkNumber) {
         SDL_Log("player %d win on reverse diagonal", piece->player);
         return piece->player;
-    }
-    
+    }*/
 
-    return Player::player_none;
+    return Player::none;
 }
 
 void Plateau::display() {
-    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Plateau::cleanup() {
