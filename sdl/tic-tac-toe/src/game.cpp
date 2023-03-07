@@ -23,6 +23,7 @@ void Game::renderView() {
     SdlCore::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, SdlCore::getInstance()->name);
     SdlCore::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, message);
 
+    SDL_SetRenderDrawColor(SdlCore::getInstance()->getRender(), 255, 255, 255, 255);
     SDL_RenderPresent(SdlCore::getInstance()->getRender());
 }
 
@@ -30,6 +31,9 @@ void Game::startLoop() {
     
     int active = 1;
     SDL_Event e;
+
+    renderView();
+
     while (active) { 
         // if winner is none, start a new game
         if(winner != Player::none) {
@@ -72,8 +76,7 @@ void Game::startLoop() {
                     // reset key
                     if (e.key.keysym.sym == SDLK_r) {
                         SDL_Log("New Game\n");
-                        circleScore = 0;
-                        crossScore = 0;
+                        
                         newGame();
                     }
 
@@ -104,7 +107,7 @@ void Game::startLoop() {
 
                         break;
                     }
-
+                
                 break;
             }
 		}
@@ -120,7 +123,8 @@ void Game::newGame() {
     this->plateau->resetContainers();
     this->plateau->casesUsed = 0;
 
-    renderView();
+    circleScore = 0;
+    crossScore = 0;
 }
 
 void Game::increaseScore(Player player) {

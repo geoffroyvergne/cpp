@@ -9,22 +9,19 @@ Game::Game() {
 }
 
 Game::~Game() { 
-    Core::getInstance()->cleanup();
+    SdlCore::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(Core::getInstance()->getRender());
+    SDL_RenderClear(SdlCore::getInstance()->getRender());
 
-    //SDL_Color color = { 128, 128, 128 };
-    //SDL_Rect textureParams = { 128, 30,  256, 45 };
-
-    Core::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, Core::getInstance()->name);
-    Core::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, getScore());
+    SdlCore::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, SdlCore::getInstance()->name);
+    SdlCore::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, getScore());
     
     this->player1->piece->display();
     this->player2->piece->display();
 
-    SDL_RenderPresent(Core::getInstance()->getRender());
+    SDL_RenderPresent(SdlCore::getInstance()->getRender());
 }
 
 void Game::startLoop() {
@@ -33,7 +30,7 @@ void Game::startLoop() {
     while (active) {
         
         while (SDL_PollEvent(&e)) {
-            //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
+
             if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
 				SDL_Log("Quit");
@@ -44,7 +41,7 @@ void Game::startLoop() {
             switch( e.type ) {
                 case SDL_KEYDOWN:
                     if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE) {
-                        if(this->player1->piece->pieceype == none) break;
+                        if(this->player1->piece->pieceype == PieceType::none) break;
                         
                         // Player 2 play random
                         this->player2->piece->randomPiece();
@@ -87,38 +84,38 @@ void Game::startLoop() {
 }
 
 void Game::result() {
-    if(player1->piece->pieceype == none && player2->piece->pieceype == none) winner = playerNoneType;
+    if(player1->piece->pieceype == PieceType::none && player2->piece->pieceype == PieceType::none) winner = PlayerType::none;
 
-    else if(player1->piece->pieceype == rock && player2->piece->pieceype == rock) winner = playerNoneType;
-    else if(player1->piece->pieceype == rock && player2->piece->pieceype == paper) winner = player2Type;
-    else if(player1->piece->pieceype == rock && player2->piece->pieceype == sissors) winner = player1Type;
+    else if(player1->piece->pieceype == PieceType::rock && player2->piece->pieceype == PieceType::rock) winner = PlayerType::none;
+    else if(player1->piece->pieceype == PieceType::rock && player2->piece->pieceype == PieceType::paper) winner = PlayerType::p2;
+    else if(player1->piece->pieceype == PieceType::rock && player2->piece->pieceype == PieceType::sissors) winner = PlayerType::p1;
 
-    else if(player1->piece->pieceype == paper && player2->piece->pieceype == rock) winner = player1Type;
-    else if(player1->piece->pieceype == paper && player2->piece->pieceype == paper) winner = playerNoneType;
-    else if(player1->piece->pieceype == paper && player2->piece->pieceype == sissors) winner = player2Type;
+    else if(player1->piece->pieceype == PieceType::paper && player2->piece->pieceype == PieceType::rock) winner = PlayerType::p1;
+    else if(player1->piece->pieceype == PieceType::paper && player2->piece->pieceype == PieceType::paper) winner = PlayerType::none;
+    else if(player1->piece->pieceype == PieceType::paper && player2->piece->pieceype == PieceType::sissors) winner = PlayerType::p2;
 
-    else if(player1->piece->pieceype == sissors && player2->piece->pieceype == rock) winner = player2Type;
-    else if(player1->piece->pieceype == sissors && player2->piece->pieceype == paper) winner = player1Type;
-    else if(player1->piece->pieceype == sissors && player2->piece->pieceype == sissors) winner = playerNoneType;
+    else if(player1->piece->pieceype == PieceType::sissors && player2->piece->pieceype == PieceType::rock) winner = PlayerType::p2;
+    else if(player1->piece->pieceype == PieceType::sissors && player2->piece->pieceype == PieceType::paper) winner = PlayerType::p1;
+    else if(player1->piece->pieceype == PieceType::sissors && player2->piece->pieceype == PieceType::sissors) winner = PlayerType::none;
 
-    else winner = playerNoneType;
+    else winner = PlayerType::none;
 }
 
 void Game::setWinner(PlayerType type) {    
-    if(type == player1Type) {
+    if(type == PlayerType::p1) {
         player1->winner = 1;
         player1->score ++;
     }
 
-    else if(type == player2Type) {
+    else if(type == PlayerType::p2) {
         player2->winner = 1;
         player2->score ++;
     }
 }
 
 Player* Game::getWinner(PlayerType type) {
-    if(type == player1Type) return player1;
-    if(type == player2Type) return player2;
+    if(type == PlayerType::p1) return player1;
+    if(type == PlayerType::p2) return player2;
     return playerNone;
 }
 
@@ -128,11 +125,11 @@ std::string Game::getScore() {
 
 void Game::newGame() {
     partyNumber ++;
-    this->player1->piece->togglePieceType(none);
+    this->player1->piece->togglePieceType(PieceType::none);
     this->player1->winner = 0;
 
-    this->player2->piece->togglePieceType(none);
+    this->player2->piece->togglePieceType(PieceType::none);
     this->player2->winner = 0;
 
-    winner = playerNoneType;
+    winner = PlayerType::none;
 }

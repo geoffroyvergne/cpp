@@ -4,17 +4,16 @@
 #ifndef PLAYER
 #define PLAYER
 
-enum PlayerType {
-    player1Type,
-    player2Type,
-    playerNoneType
+enum class PlayerType {
+    none,
+    p1,
+    p2
 };
 
 class Player {
     public:
         Player(std::string name, PlayerType type);
         ~Player();
-        //SDL_Texture *sdl_texture;
         PlayerType type;
         std::string name;
         int score;

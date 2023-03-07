@@ -3,7 +3,7 @@
 #include <list>
 #include <array>
 #include <SDL.h>
-#include <SDL_image.h>
+//#include <SDL_image.h>
 #include <piece.hpp>
 #include <player.hpp>
 
@@ -31,6 +31,9 @@ class Plateau {
         void clearPieceList();
         void display();
         void displayPieces();
+        void drawLineDone();
+        void drawPlateau();
+        //void drawRect(SDL_Rect rect, SDL_Color color);
         
         Piece* addCurrentPiece(Piece *lastCurrentPiece, Player player);
         Player addNewPiece(Piece *currentPiece, Player player);

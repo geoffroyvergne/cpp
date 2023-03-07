@@ -1,11 +1,11 @@
 #ifndef PIECE_TYPE
 #define PIECE_TYPE
 
-enum PieceType {
+enum class PieceType {
+    none,
     rock,
     paper,
-    sissors, 
-    none
+    sissors
 };
 
 #endif

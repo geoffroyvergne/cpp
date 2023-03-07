@@ -17,15 +17,19 @@ int main(int argc, char** argv) {
     
     // Init lastCurrentPiece
     game->currentPiece = new Piece(PieceType::red_circle);
-    game->currentPiece->destTextureParams.x = 210;
-    game->currentPiece->destTextureParams.y = 210;
+
     game->currentPiece->position.x = 2;
     game->currentPiece->position.y = 2;
+
+    game->currentPiece->texture.x = 250;
+    game->currentPiece->texture.y = 350;
+    
+    game->currentPlayer = Player::circle;
 
     game->currentPiece = plateau->addCurrentPiece(game->currentPiece, game->currentPlayer);
 
     game->startLoop();
 
-    //delete game;
+    delete game;
     return EXIT_SUCCESS;
 }

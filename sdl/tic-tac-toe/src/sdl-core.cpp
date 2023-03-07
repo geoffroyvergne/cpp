@@ -1,6 +1,6 @@
 #include <iostream>
 #include <SDL.h>
-#include <SDL_image.h>
+//#include <SDL_image.h>
 
 #include <sdl-core.hpp>
 
@@ -26,11 +26,11 @@ void SdlCore::init() {
     SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
 
     // init texture
-    sdl_texture = IMG_LoadTexture(this->render, this->imagePath.c_str());
+    //sdl_texture = IMG_LoadTexture(this->render, this->imagePath.c_str());
 
-    if(sdl_texture == NULL) {
+    /*if(sdl_texture == NULL) {
         SDL_Log("sdl_texture NULL");
-    }
+    }*/
 
     // init TTF messages
     TTF_Init();
@@ -60,9 +60,9 @@ SDL_Window* SdlCore::getWindow() {
     return window;
 }
 
-SDL_Texture* SdlCore::getSdlTexture() {
+/*SDL_Texture* SdlCore::getSdlTexture() {
     return sdl_texture;
-}
+}*/
 
 SDL_Renderer* SdlCore::getRender() {
     return render;

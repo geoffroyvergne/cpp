@@ -17,7 +17,7 @@ int Util::getPlayerInt(Player player) {
 }
 
 std::string Util::getPlayerString(Player player) {
-    /*switch(player) {
+    switch(player) {
         case Player::none :
             return "none";
         break;
@@ -29,9 +29,7 @@ std::string Util::getPlayerString(Player player) {
         case Player::cross : 
             return "red";
         break;         
-    }*/
-
-    return "";
+    }
 }
 
 int Util::getPieceTypeInt(PieceType pieceype) {
@@ -59,7 +57,7 @@ int Util::getPieceTypeInt(PieceType pieceype) {
 }
 
 std::string Util::getPieceTypeString(PieceType pieceype) {
-    /*switch(pieceype) {
+    switch(pieceype) {
          case PieceType::none :
             return "none";
         break;       
@@ -79,7 +77,5 @@ std::string Util::getPieceTypeString(PieceType pieceype) {
         case PieceType::red_cross :
             return "red cross";
         break;
-    }*/
-
-    return "";
+    }
 }

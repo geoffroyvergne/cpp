@@ -6,7 +6,6 @@ Player::Player(std::string name, PlayerType type) {
     this->name = name;
     this->score = 0;
     this->winner = 0;
-    //this->sdl_texture = sdl_texture;
 }
 
 //Player::~Player() {}

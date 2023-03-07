@@ -1,17 +1,10 @@
 #include <iostream>
 #include <piece.hpp>
 
-#include "core.hpp"
+#include <sdl-core.hpp>
 
 Piece::Piece(PieceType pieceype) {
-    //this->render = render;
-    //this->sdl_texture = sdl_texture;
-
-    //textureParams = { 120, 120,  90, 90 };
-    //srcTextureParams = { 0, 0,  90, 90 };
-
     this->togglePieceType(pieceype);
-
     destTextureParams = { 120, 150,  90, 90 };
 }
 
@@ -21,7 +14,7 @@ Piece::~Piece() {
 
 void Piece::togglePieceType(PieceType pieceype) {
     switch(pieceype) {
-        case none : 
+        case PieceType::none : 
             srcTextureParams.x = 120;
             srcTextureParams.y = 89;
             srcTextureParams.w = 90;
@@ -31,7 +24,7 @@ void Piece::togglePieceType(PieceType pieceype) {
             this->name = "none";
             break;
 
-        case rock : 
+        case PieceType::rock : 
             srcTextureParams.x = 0;
             srcTextureParams.y = 97;
             srcTextureParams.w = 120;
@@ -41,7 +34,7 @@ void Piece::togglePieceType(PieceType pieceype) {
             this->name = "rock";
             break;
 
-        case paper : 
+        case PieceType::paper : 
             srcTextureParams.x = 0;
             srcTextureParams.y = 0;
             srcTextureParams.w = 100;
@@ -51,7 +44,7 @@ void Piece::togglePieceType(PieceType pieceype) {
             this->name = "paper";
             break;
 
-        case sissors : 
+        case PieceType::sissors : 
             srcTextureParams.x = 100;
             srcTextureParams.y = 0;
             srcTextureParams.w = 120;
@@ -61,29 +54,24 @@ void Piece::togglePieceType(PieceType pieceype) {
             this->name = "sissors";
             break;
     }
-
-    //std::string imagePath = "../assets/images-set.png";
-
-    //if(sdl_texture != NULL) SDL_DestroyTexture(sdl_texture);
-    //sdl_texture = IMG_LoadTexture(render, imagePath.c_str());
 }
 
 void Piece::nextPiece() {
     switch(pieceype) {
-        case none : 
-            togglePieceType(rock);             
+        case PieceType::none : 
+            togglePieceType(PieceType::rock);             
             break;
 
-        case rock : 
-            togglePieceType(paper);             
+        case PieceType::rock : 
+            togglePieceType(PieceType::paper);             
             break;
 
-        case paper : 
-            togglePieceType(sissors);             
+        case PieceType::paper : 
+            togglePieceType(PieceType::sissors);             
             break;
 
-        case sissors : 
-            togglePieceType(rock);             
+        case PieceType::sissors : 
+            togglePieceType(PieceType::rock);             
             break;
     }
 }
@@ -93,21 +81,21 @@ void Piece::randomPiece() {
 
     switch(piece) {
         case 1 : 
-            togglePieceType(rock);             
+            togglePieceType(PieceType::rock);             
             break;
 
         case 2 : 
-            togglePieceType(paper);             
+            togglePieceType(PieceType::paper);             
             break;
 
         case 3 : 
-            togglePieceType(sissors);             
+            togglePieceType(PieceType::sissors);             
             break;
     }
 }
 
 void Piece::display() {
-    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+    SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Piece::cleanup() {

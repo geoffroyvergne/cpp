@@ -3,7 +3,7 @@
 
 #include <player.hpp>
 
-#include "core.hpp"
+#include <sdl-core.hpp>
 
 #ifndef GAME
 #define GAME

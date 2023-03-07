@@ -3,10 +3,11 @@
 #include <SDL_image.h>
 #include <piece.hpp>
 #include <sdl-core.hpp>
+#include <SDL2_gfxPrimitives.h>
 
 Piece::Piece(PieceType pieceType) {
-    srcTextureParams = { 30, 30, 90, 90 };
-    destTextureParams = { 30, 30, 90, 90 };
+    //position.x=250;
+    //position.y=250;
 
     this->togglePlayer(pieceType);
     this->pieceType = pieceType;
@@ -19,26 +20,26 @@ Piece::~Piece() {
 void Piece::togglePlayer(PieceType pieceType) {
     switch(pieceType) {
         case PieceType::black_circle : 
-            srcTextureParams.x = 30;
-            srcTextureParams.y = 22;
+            color={0, 0, 0, 255};
+            
             player = Player::circle;
             break;
 
         case PieceType::black_cross : 
-            srcTextureParams.x = 140;
-            srcTextureParams.y = 20;
+            color={0, 0, 0, 255};
+
             player = Player::cross;
             break;
 
         case PieceType::red_circle : 
-            srcTextureParams.x = 268;
-            srcTextureParams.y = 19;
+            color={255, 0, 0, 255};
+
             player = Player::circle;
             break;
 
         case PieceType::red_cross : 
-            srcTextureParams.x = 395;
-            srcTextureParams.y = 20;
+            color={255, 0, 0, 255};
+
             player = Player::cross;
             break;
 
@@ -49,37 +50,56 @@ void Piece::togglePlayer(PieceType pieceType) {
 }
 
 void Piece::display() {
-    SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+    switch(player) {
+        case Player::circle:
+            displayCircle(color);
+        break;
+
+        case Player::cross:
+            displayCross(color);
+        break;
+
+        case Player::none:
+        break;
+    }
+}
+
+void Piece::displayCross(SDL_Color color) {
+    //SDL_Log("display piece cross texture.x %d texture.y %d texture.x %d texture.y %d", texture.x-size, texture.y-size, texture.x+size, texture.y+size);
+    thickLineRGBA(SdlCore::getInstance()->getRender(), texture.x-size, texture.y-size, texture.x+size, texture.y+size, thick, color.r, color.g, color.b, color.a);
+    thickLineRGBA(SdlCore::getInstance()->getRender(),  texture.x-size, texture.y+size, texture.x+size, texture.y-size, thick, color.r, color.g, color.b, color.a);
+}
+
+void Piece::displayCircle(SDL_Color color) {
+    //SDL_Log("display piece circle texture.x %d texture.y %d", texture.x, texture.y);
+    filledCircleRGBA(SdlCore::getInstance()->getRender(), texture.x, texture.y, 50, color.r, color.g, color.b, color.a);
+    filledCircleRGBA(SdlCore::getInstance()->getRender(), texture.x, texture.y, size -thick, 255, 255, 255, 255);
 }
 
 void Piece::moveUp() {
-    if(position.y >1) {
-        destTextureParams.y -= 180;
-        position.y--;
-    }
+    if(this->position.y == 1) return;
+    this->position.y --;
+    this->texture.y -=150;
 }
 
 void Piece::moveDown() {
-    if(position.y <3) {
-        destTextureParams.y += 180;
-        position.y++;
-    }
+    if(this->position.y == 3) return;
+    this->position.y ++;
+    this->texture.y +=150;
 }
 
 void Piece::moveRight() {
-    if(position.x <3) {
-        destTextureParams.x += 180;
-        position.x++;
-    }
+    if(this->position.x == 3) return;
+    this->position.x ++;
+    this->texture.x +=150;
 }
 
 void Piece::moveLeft() {
-    if(position.x >1) {
-        destTextureParams.x -= 180;
-        position.x--;
-    }
+    if(this->position.x == 1) return;
+    this->position.x --;
+    this->texture.x -=150;
 }
 
 void Piece::cleanup() {
-    SDL_DestroyTexture(SdlCore::getInstance()->getSdlTexture());
+    //SDL_DestroyTexture(SdlCore::getInstance()->getSdlTexture());
 }

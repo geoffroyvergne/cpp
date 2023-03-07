@@ -1,28 +1,61 @@
 #include <iostream>
 #include <SDL.h>
-#include <SDL_image.h>
+//#include <SDL_image.h>
 #include <SDL_ttf.h>
+
 #include <plateau.hpp>
 #include <sdl-core.hpp>
 #include <util.hpp>
 
+#include <SDL2/SDL2_rotozoom.h>
+#include <SDL2_gfxPrimitives.h>
+
 Plateau::Plateau() {
-    srcTextureParams = { 87, 187,  512, 512 };
-    destTextureParams = { 0, 0,  512, 512 };
+    //srcTextureParams = { 87, 187,  512, 512 };
+    //destTextureParams = { 0, 0,  512, 512 };
     clearPieceList();
-    resetContainers();
+    resetContainers();    
 }
 
 void Plateau::clearPieceList() {    
-    for(int i=0; i<6; i++) {
-        for(int j=0; j<7; j++) {
+    for(int i=0; i<3; i++) {
+        for(int j=0; j<3; j++) {
             piece2dList[i][j] = new Piece(PieceType::none);
         }
     }
 }
 
+//https://www.ferzkopp.net/Software/SDL2_gfx/Docs/html/index.html
 void Plateau::display() {
-    SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+    //SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+
+    drawPlateau();
+    drawLineDone();    
+}
+
+void Plateau::drawLineDone() {
+    //SDL_Color color = {255, 0, 0, 0};   
+    //drawRect({90, 30, 10, 440}, color);
+
+    // vertical
+    //thickLineRGBA (SdlCore::getInstance()->getRender(), 100, 30, 100, 450, 10, 255, 0, 0, 255);
+
+    // regular diagonal
+    //thickLineRGBA (SdlCore::getInstance()->getRender(), 450, 30, 50, 450, 10, 255, 0, 0, 255);
+    
+    // reverse diagonal
+    //thickLineRGBA (SdlCore::getInstance()->getRender(), 50, 30, 450, 450, 10, 255, 0, 0, 255);
+}
+
+void Plateau::drawPlateau() {
+
+    //Y
+    thickLineRGBA (SdlCore::getInstance()->getRender(), 160, 130, 160, 550, 10, 0, 0, 0, 255);
+    thickLineRGBA (SdlCore::getInstance()->getRender(), 340, 130, 340, 550, 10, 0, 0, 0, 255);
+
+    // X
+    thickLineRGBA (SdlCore::getInstance()->getRender(), 40, 260, 460, 260, 10, 0, 0, 0, 255);
+    thickLineRGBA (SdlCore::getInstance()->getRender(), 40, 440, 460, 440, 10, 0, 0, 0, 255);
 }
 
 Piece *Plateau::addCurrentPiece(Piece *lastCurrentPiece, Player player) {
@@ -43,8 +76,12 @@ Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
     Piece *piece = new Piece(pieceType);
     piece->destTextureParams.x = currentPiece->destTextureParams.x;
     piece->destTextureParams.y = currentPiece->destTextureParams.y;
+    
     piece->position.x = currentPiece->position.x;
     piece->position.y = currentPiece->position.y;
+
+    piece->texture.x = currentPiece->texture.x;
+    piece->texture.y = currentPiece->texture.y;
 
     // add piece in 2d table at new position
     this->piece2dList[piece->position.y-1][piece->position.x-1] = piece;
@@ -59,7 +96,6 @@ Player Plateau::addNewPiece(Piece *currentPiece, Player player) {
 void Plateau::displayPieces() {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList->pieceType == PieceType::none) continue;
             pieceInList->display();
         }
     }
@@ -84,7 +120,8 @@ void Plateau::caseNumber(Piece *piece) {
 void Plateau::displayTable() {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            std::cout << " " << Util::getPieceTypeInt(pieceInList->pieceType);
+           std::cout << " " << Util::getPieceTypeInt(pieceInList->pieceType);
+           //std::cout << " " << int(pieceInList->pieceType);
         }
         std::cout << std::endl;
     }

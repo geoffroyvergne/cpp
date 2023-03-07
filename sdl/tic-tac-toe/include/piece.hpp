@@ -8,9 +8,14 @@
 #define CIRCLE
 
 struct Position {
-    int caseNumber =0;
-    int x = 0;
-    int y = 0;
+    int caseNumber = 0;
+    int x;
+    int y;
+};
+
+struct Texture {
+    int x;
+    int y;
 };
 
 class Piece {
@@ -21,7 +26,14 @@ class Piece {
         SDL_Rect srcTextureParams;
         SDL_Rect destTextureParams = { 250, 250,  50, 50 };
         Position position;
+        Texture texture;
         PieceType pieceType;
+
+        /*int x;
+        int y;*/
+        SDL_Color color;
+        int size = 50;
+        int thick = 10;
 
         void togglePlayer(PieceType pieceType);
         void display();
@@ -32,6 +44,9 @@ class Piece {
         void cleanup();
 
         void caseNumberByTextureParams();
+
+        void displayCross(SDL_Color color);
+        void displayCircle(SDL_Color color);
 };
 
 #endif

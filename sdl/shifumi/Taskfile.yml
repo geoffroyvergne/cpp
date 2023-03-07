@@ -12,6 +12,11 @@ tasks:
     cmds:
       - ./build/shifumi
 
+  debug:
+      desc: Debug application.
+      cmds:
+        - lldb -o run ./build/shifumi
+
   clean:
     desc: Clean.
     cmds:
