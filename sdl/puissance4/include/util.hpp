@@ -1,5 +1,5 @@
 #include <iostream>
-#include <piece_type.hpp>
+#include <piece.hpp>
 #include <player.hpp>
 
 #ifndef UTIL
@@ -12,6 +12,8 @@ class Util {
 
         static int getPieceTypeInt(PieceType pieceype);
         static std::string getPieceTypeString(PieceType pieceype);
+
+        static std::string getPieceTypeSimpleString(PieceType pieceype);
 };
 
 #endif

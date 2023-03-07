@@ -1,7 +1,7 @@
 #include <iostream>
 #include <piece.hpp>
-
 #include <sdl-core.hpp>
+#include <SDL2_gfxPrimitives.h>
 
 Piece::Piece(PieceType pieceype) {
     this->togglePieceType(pieceype);

@@ -4,75 +4,66 @@
 #include <piece.hpp>
 #include <sdl-core.hpp>
 #include <player.hpp>
+#include <SDL2_gfxPrimitives.h>
 
-Piece::Piece(PieceType pieceType) {
-    this->pieceType = pieceType;
+Piece::Piece(PieceType type) {
+    this->type = type;
     this->player = Player::none;
 
-    srcTextureParams = { 151, 17, 90, 90 };
-    destTextureParams = { 151, 17, 55, 55 };
-
-    this->togglePlayer(pieceType);
+    this->togglePlayer(type);
 }
 
 Piece::~Piece() { 
     //cleanup();
-
-    SDL_Log("Piece destructed");
 }
 
-void Piece::togglePlayer(PieceType pieceType) {
-    switch(pieceType) {
-        case PieceType::yellow_circle : 
-            srcTextureParams.x = 365;
-            srcTextureParams.y = 17;
+void Piece::togglePlayer(PieceType type) {
+    switch(type) {
+        case PieceType::yellow : 
             player = Player::yellow;
+            color = {255,240,0,255};
             break;
 
-        case PieceType::red_circle : 
-            srcTextureParams.x = 150;
-            srcTextureParams.y = 14;
+        case PieceType::red : 
             player = Player::red;
+            color = {255,0,0,255};
             break;
         
         case PieceType::none :
             player = Player::none;
             break;
     }
-    this->pieceType = pieceType;
+    this->type = type;
 }
 
 void Piece::display() {
-    SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+    filledCircleRGBA(SdlCore::getInstance()->getRender(), texture.x, texture.y, 30, color.r, color.g, color.b, color.a);
 }
 
 void Piece::moveRight() {
-    if(position.x <7) {
-        destTextureParams.x += 67;
-        position.x++;
-    }
+    if(position.x >=7) return;
+    texture.x += 67;
+    position.x++;
 }
 
 void Piece::moveLeft() {
-    if(position.x >1) {
-        destTextureParams.x -= 67;
-        position.x--;
-    }
+    if(position.x <=1) return;
+    texture.x -= 67;
+    position.x--;
 }
 
 bool Piece::moveUp() {
     if(position.y == 1) return true;
-    destTextureParams.y -= 67;
+    texture.y  -= 73;
     position.y--;
 
     return false;
 }
 
 void Piece::moveDown() {
-    if(position.y >1) {
-        destTextureParams.y += 67;
-        position.y++;
-    }
+    if(position.y >5) return;
+    texture.y += 73;
+    position.y++;
 }
 
 void Piece::cleanup() {

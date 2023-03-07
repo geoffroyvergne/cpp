@@ -1,7 +1,6 @@
 #include <iostream>
 #include <SDL.h>
 
-#include <piece_type.hpp>
 #include <player.hpp>
 
 #ifndef PIECE
@@ -13,17 +12,29 @@ struct Position {
     int y;
 };
 
+struct Texture {
+    int x;
+    int y;
+};
+
+enum class PieceType {
+    none,
+    yellow,
+    red
+};
+
 class Piece {    
     public:
         Piece(PieceType pieceType);
         ~Piece();
-        PieceType pieceType = PieceType::none;
+        PieceType type = PieceType::none;
         Player player = Player::none;
 
-        SDL_Rect srcTextureParams;
-        SDL_Rect destTextureParams;
-
         Position position;
+        Texture texture;
+
+        SDL_Color color;
+
         bool rowFull = false;
 
         void togglePlayer(PieceType pieceype);

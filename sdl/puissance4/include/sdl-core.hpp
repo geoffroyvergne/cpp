@@ -27,8 +27,8 @@ class SdlCore {
 
     public:
         std::string name = "Puissance 4";
-        int width = 512;
-        int height = 512;
+        int width = 500;
+        int height = 650;
         int loopDelay = 200;
 
         static SdlCore* getInstance();

@@ -20,6 +20,7 @@ void Game::renderView() {
     SdlCore::getInstance()->displayMessage(40, { 255, 165, 0 }, { 128, 20,  256, 35 }, SdlCore::getInstance()->name);
     SdlCore::getInstance()->displayMessage(20, { 128, 128, 128 }, { 120, 55,  260, 60 }, message);
 
+    SDL_SetRenderDrawColor(SdlCore::getInstance()->getRender(), 255, 255, 255, 255);
     SDL_RenderPresent(SdlCore::getInstance()->getRender());
 }
 
@@ -74,10 +75,10 @@ void Game::togglePlayer() {
     PieceType pieceType;
     if(currentPlayer == Player::red) {
         currentPlayer = Player::yellow;
-        pieceType = PieceType::yellow_circle;
+        pieceType = PieceType::yellow;
     } else if(currentPlayer == Player::yellow) {
         currentPlayer = Player::red;
-        pieceType = PieceType::red_circle;       
+        pieceType = PieceType::red;       
     }
 
     this->currentPiece->togglePlayer(pieceType);

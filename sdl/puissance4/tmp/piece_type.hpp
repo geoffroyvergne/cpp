@@ -3,8 +3,8 @@
 
 enum class PieceType {
     none,
-    yellow_circle,
-    red_circle
+    yellow,
+    red
 };
 
 #endif

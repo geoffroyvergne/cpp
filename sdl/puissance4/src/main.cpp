@@ -11,9 +11,12 @@ int main(int argc, char** argv) {
     SDL_Log("%s", SdlCore::getInstance()->name.c_str());
 
     game->plateau = new Plateau();
-    game->currentPiece = new Piece(PieceType::red_circle);
-    game->currentPiece->position.x = 3;
-    game->currentPiece->position.y = 0;
+    game->currentPiece = new Piece(PieceType::red);
+    game->currentPiece->position.x = 4;
+    game->currentPiece->position.y = 1;
+
+    game->currentPiece->texture.x = 247;
+    game->currentPiece->texture.y = 140;
 
     game->startLoop();
 

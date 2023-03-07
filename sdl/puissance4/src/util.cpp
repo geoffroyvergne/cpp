@@ -38,11 +38,11 @@ int Util::getPieceTypeInt(PieceType pieceype) {
             return 0;
         break;
 
-        case PieceType::yellow_circle :
+        case PieceType::yellow :
             return 1;
         break;
 
-        case PieceType::red_circle :
+        case PieceType::red :
             return 2;
         break;
     }
@@ -54,12 +54,28 @@ std::string Util::getPieceTypeString(PieceType pieceype) {
             return "none";
         break;
 
-        case PieceType::yellow_circle :
-            return "yellow circle";
+        case PieceType::yellow :
+            return "yellow";
         break;
 
-        case PieceType::red_circle :
-            return "red circle";
+        case PieceType::red :
+            return "red";
+        break;
+    }
+}
+
+std::string Util::getPieceTypeSimpleString(PieceType pieceype) {
+    switch(pieceype) {
+        case PieceType::none :
+            return "n";
+        break;
+
+        case PieceType::yellow :
+            return "y";
+        break;
+
+        case PieceType::red :
+            return "r";
         break;
     }
 }

@@ -9,7 +9,7 @@
 
 Plateau::Plateau() {
     srcTextureParams = { 70, 139,  512, 460 };
-    destTextureParams = { 11, 85,  512, 460 };
+    destTextureParams = { 11, 170,  512, 500 };
 
     clearPieceList();
 }
@@ -27,11 +27,13 @@ void Plateau::clearPieceList() {
 }
 
 Piece* Plateau::addNewPiece(Piece *currentPiece) {    
-    Piece *piece = new Piece(currentPiece->pieceType);
-    piece->destTextureParams.x = currentPiece->destTextureParams.x;
-    piece->destTextureParams.y = 429;
+    Piece *piece = new Piece(currentPiece->type);
+    
     piece->position.x = currentPiece->position.x;
     piece->position.y = 6;
+
+    piece->texture.x = currentPiece->texture.x;
+    piece->texture.y = 572;
 
     while(piece2dList[piece->position.y -1][piece->position.x -1]->player != Player::none) {
         piece->rowFull = piece->moveUp();
@@ -54,7 +56,7 @@ void Plateau::displayPieces() {
     int pieceNumber = 0;
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList->pieceType == PieceType::none) continue;
+            if(pieceInList->type == PieceType::none) continue;
             pieceInList->display();
             pieceNumber++;
         }
@@ -62,7 +64,7 @@ void Plateau::displayPieces() {
 }
 
 int Plateau::caseAlreadyUsed(Piece *piece) {    
-    if(piece2dList[piece->position.y-1][piece->position.x-1]->pieceType != PieceType::none) return true;
+    if(piece2dList[piece->position.y-1][piece->position.x-1]->type != PieceType::none) return true;
 
     return false;
 }
@@ -71,7 +73,7 @@ void Plateau::caseNumber(Piece *piece) {
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
             piece->position.caseNumber++; 
-            if(pieceInList->pieceType == PieceType::none) continue;
+            if(pieceInList->type == PieceType::none) continue;
             if(pieceInList->position.x == piece->position.x && pieceInList->position.y == piece->position.y) return;
         }
     }
@@ -94,7 +96,7 @@ int Plateau::countpiece() {
     int count = 0;
     for(std::array pieceList : piece2dList) {
         for(Piece* pieceInList : pieceList) {
-            if(pieceInList->pieceType != PieceType::none) {
+            if(pieceInList->type != PieceType::none) {
                 count ++;
             }
         }
