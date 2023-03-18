@@ -1,0 +1,23 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build binary.
+    cmds:
+      - cmake . -B build/
+      - cmake --build build/
+
+  run:
+    desc: Run binary.
+    cmds:
+      - ./build/game-of-life
+
+  debug:
+    desc: Debug application.
+    cmds:
+      - lldb -o run ./build/game-of-life
+
+  clean:
+    desc: Clean.
+    cmds:
+      - rm -Rf build/
