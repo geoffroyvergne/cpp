@@ -4,11 +4,6 @@
 #ifndef CELL
 #define CELL
 
-/*enum class State {
-    dead,
-    alive,
-};*/
-
 enum class Color {
     black
 };
@@ -19,10 +14,11 @@ struct Position {
     int y;
 };
 
-/*struct Texture {
+struct NewCell {
+    int state;
     int x;
     int y;
-};*/
+};
 
 class Cell {    
     public:
@@ -31,11 +27,8 @@ class Cell {
 
         int state = 0;
         Position position;
-        //Texture texture;
 
         SDL_Color color;
-        //Color color;
-        //int size  = 10;
 
         void display();
         void setColor();

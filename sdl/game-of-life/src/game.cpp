@@ -10,9 +10,9 @@ Game::~Game() {
 void Game::renderView() {
     SDL_RenderClear(SdlCore::getInstance()->getRender());
 
-    plateau->displayCells();
-    plateau->display();
-    plateau->cellsEnvironment();
+    board->displayCells();
+    board->display();
+    board->cellsEnvironment();
 
     SDL_SetRenderDrawColor(SdlCore::getInstance()->getRender(), 255, 255, 255, 255);
     SDL_RenderPresent(SdlCore::getInstance()->getRender());
@@ -28,7 +28,7 @@ void Game::startLoop() {
 
         SDL_Delay(SdlCore::getInstance()->loopDelay);       
         iterations++;
-        if(iterations == 2) active = 0;
+        if(iterations == 10) active = 0;
 
         while (SDL_PollEvent(&e)) {	            
             if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
@@ -60,6 +60,6 @@ void Game::startLoop() {
 
 void Game::newGame() {
     SDL_Log("New Game");
-    plateau->clearCellTable();
+    //board->updateCellTable();
     //plateau->fillTable();
 }

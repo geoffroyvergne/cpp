@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <sdl-core.hpp>
-#include <plateau.hpp>
+#include <board.hpp>
 
 #ifndef GAME
 #define GAME
@@ -11,14 +11,9 @@ class Game {
         //Game();
         ~Game();
 
-        /*int width = 1000;
-        int height = 1000;
-        int loopDelay = 1000;*/
-
-        //int period = 10;
         bool pause = true;
 
-        Plateau *plateau;
+        Board *board;
 
         void renderView();
         void startLoop();

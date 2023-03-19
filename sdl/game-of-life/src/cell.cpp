@@ -17,6 +17,8 @@ void Cell::display() {
     setColor();
     SDL_SetRenderDrawColor(SdlCore::getInstance()->getRender(), color.r, color.g, color.b, color.a);
 
+    //SDL_Log("position.caseNumber %d position.x %d position.y %d", position.caseNumber, position.x, position.y);
+
     int x1 = position.x * SdlCore::getInstance()->size;
     int y1 = position.y * SdlCore::getInstance()->size;
     int x2 = SdlCore::getInstance()->size;

@@ -18,9 +18,9 @@ class SdlCore {
 
     public:
         std::string name = "Game of life";
-        int width = 500;
-        int height = 500;
-        int loopDelay = 1000;
+        int width = 300;
+        int height = 300;
+        int loopDelay = 500;
         int cellSize  = 10;
         int nbCells = 5;
         int size = 50;

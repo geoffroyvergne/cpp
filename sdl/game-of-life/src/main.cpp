@@ -8,7 +8,8 @@ int main(int argc, char** argv) {
     SDL_Log("%s", SdlCore::getInstance()->name.c_str());
 
     Game *game = new Game();
-    game->plateau = new Plateau();
+    game->board = new Board();
+    game->board->initTable(Pattern::glider);
     game->newGame();
     game->startLoop();
 
