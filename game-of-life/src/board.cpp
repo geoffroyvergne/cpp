@@ -8,45 +8,6 @@ Board::~Board() {
 
 }
 
-std::vector<std::vector<int>> Board::setPattern(Type type) {
-    std::vector<std::vector<int>> boardData;
-    
-    switch(type) {
-        case Type::ship:
-            boardData = {
-                {0,0,0,1,0},
-                {0,0,1,0,0},
-                {0,0,1,1,1},
-                {0,0,0,0,0},
-                {0,0,0,0,0}
-            };
-            break;
-
-        case Type::blinker:
-            boardData = {
-                {0,0,0,0,0},
-                {0,0,1,0,0},
-                {0,0,1,0,0},
-                {0,0,1,0,0},
-                {0,0,0,0,0}
-            };
-            
-            break;
-
-        default:
-            boardData = {
-                {0,0,0,0,0},
-                {0,0,0,0,0},
-                {0,0,0,0,0},
-                {0,0,0,0,0},
-                {0,0,0,0,0}
-            };
-            break;
-    }
-    
-    return boardData;
-}
-
 void Board::initTable(Type type) {
     boardData = setPattern(type);
 }
@@ -97,7 +58,7 @@ void Board::cellsEnvironment() {
             /*c.state = newCellValue;
             c.x = i;
             c.y = j;*/
-            newCellBoard.push_back({newCellValue, i, j});
+            newCellBoard.push_back({ newCellValue, i, j });
             //std::cout << "i" << i << " j" << j << " : " << boardData[i][j] << " -> " << newCellValue << std::endl;     
             //if(newCellValue > -1) boardData[i][j] = newCellValue;
         }
@@ -178,4 +139,84 @@ int Board::checkCellEnvironment(int x, int y) {
     if(aliveCount < 2 || aliveCount >3) return 0;
 
     return -1;
+}
+
+std::vector<std::vector<int>> Board::setPattern(Type type) {
+    std::vector<std::vector<int>> boardData;
+    
+    switch(type) {
+        case Type::full:
+            boardData = {
+                {1,1,1,1,1},
+                {1,1,1,1,1},
+                {1,1,1,1,1},
+                {1,1,1,1,1},
+                {1,1,1,1,1}
+            };
+            break;
+
+        case Type::glider:
+            boardData = {
+                {0,0,0,0,0},
+                {0,0,1,0,0},
+                {0,0,0,1,0},
+                {0,1,1,1,0},
+                {0,0,0,0,0}
+            };
+            break;
+
+        case Type::light_ship:
+            boardData = {
+                {0,0,0,0,0,0},
+                {0,0,1,0,0,1},
+                {0,0,0,0,0,0},
+                {0,0,1,0,0,0},
+                {0,0,0,1,1,1},
+                {0,0,0,0,0,0},
+                {0,0,0,0,0,0}
+            };
+            break;
+
+        case Type::blinker:
+            boardData = {
+                {0,0,0,0,0},
+                {0,0,1,0,0},
+                {0,0,1,0,0},
+                {0,0,1,0,0},
+                {0,0,0,0,0}
+            };
+            
+            break;
+
+        case Type::bloc:
+            boardData = {
+                {0,0,0,0},
+                {0,1,1,0},
+                {0,1,1,0},
+                {0,0,0,0}
+            };
+            break;
+
+        case Type::frog:
+            boardData = {
+                {0,0,0,0,0},
+                {0,1,1,1,0},
+                {1,1,1,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0}
+            };
+            break;
+
+        default:
+            boardData = {
+                {0,0,0,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0}
+            };
+            break;
+    }
+    
+    return boardData;
 }

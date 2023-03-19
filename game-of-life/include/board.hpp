@@ -17,7 +17,11 @@ enum class Type {
     full,
     stable,
     blinker,
-    ship,
+    glider,
+    bloc,
+    frog,
+    boat,
+    light_ship
 };
 
 class Board {

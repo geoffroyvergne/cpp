@@ -6,8 +6,8 @@ int main(int argc, char** argv) {
     std::cout << "Game of life" << std::endl;
     Board* board = new Board();
 
-    int iterations=10;
-    board->initTable(Type::ship);
+    int iterations=20;
+    board->initTable(Type::frog);
 
     for(int i=0; i<iterations; i++) {        
         board->display();
