@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
 
     Game *game = new Game();
     game->board = new Board();
-    game->board->initTable(Pattern::glider);
+    game->board->initTable(Pattern::ship);
     game->newGame();
     game->startLoop();
 

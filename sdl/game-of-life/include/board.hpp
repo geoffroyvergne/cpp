@@ -13,10 +13,13 @@ enum class Pattern {
     stable,
     blinker,
     glider,
+    light_glider_rocket,
+    glider_rocket,
     bloc,
     frog,
     boat,
-    light_ship
+    light_ship,
+    ship
 };
 
 class Board {
@@ -25,10 +28,9 @@ class Board {
         ~Board();
 
         std::vector<std::vector<Cell>> boardData;
-        std::vector<std::vector<Cell>> setPattern(Pattern pattern);
 
+        std::vector<std::vector<int>> setPattern(Pattern pattern);
         void initTable(Pattern pattern);
-
         void display();
         void displayCells();
         void cellsEnvironment();
