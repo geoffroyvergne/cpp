@@ -18,14 +18,14 @@ class SdlCore {
 
     public:
         std::string name = "Game of life";
-        int width = 600;
-        int height = 600;
-        
+        //int width = 800;
+        //int height = 600;
+
         int loopDelay = 100;        
         int size = 10;
 
         static SdlCore* getInstance();
-        void init();
+        void init(int width, int height);
 
         SDL_Window* getWindow();
         SDL_Renderer* getRender();

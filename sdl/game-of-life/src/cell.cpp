@@ -35,7 +35,7 @@ void Cell::setColor() {
         break;*/
 
         case 0:
-            color = {255,255,255,255};
+            color = {200,200,200,255};
         break;
 
         case 1:

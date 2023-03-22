@@ -4,7 +4,7 @@
 
 #include "sdl-core.hpp"
 
-void SdlCore::init() { 
+void SdlCore::init(int width, int height) { 
 
     SDL_Log("Core init");
 
@@ -16,7 +16,7 @@ void SdlCore::init() {
 	}
     
     // init window
-    window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->height, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(this->name.c_str(), 100, 100, width*size, height*size, SDL_WINDOW_RESIZABLE);
     if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
 
     // init render

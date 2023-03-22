@@ -24,42 +24,54 @@ void Game::startLoop() {
     SDL_Event e;
     while (active) {
 
-        renderView();
+        if(!pause) renderView();
 
         SDL_Delay(SdlCore::getInstance()->loopDelay);       
         iterations++;
-        if(iterations == 1000) active = 0;
+        
+        //if(iterations == 1000) active = 0;
 
         while (SDL_PollEvent(&e)) {	            
             if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
 				SDL_Log("Quit");
                 break;
-			}
+			}                    
 
-            // reset new game
-            if (e.key.keysym.sym == SDLK_r) {
-                newGame();
-            }
-
-            // pause game
-            if (e.key.keysym.sym == SDLK_p) {
-                SDL_Log("Pause");
-                if(pause) pause = false;
-                else pause = true;
-            }
-
-            /*switch( e.type ) {
+            switch( e.type ) {
                 case SDL_KEYDOWN:
+
+                    // reset new game
+                    if (e.key.keysym.sym == SDLK_r) {
+                        newGame();
+                        break;
+                    }
+
+                    // pause game
+                    if (e.key.keysym.sym == SDLK_p) {
+                        //SDL_Log("Pause");
+                        if(pause) pause = false;
+                        else pause = true;
+                        break;
+                    }   
+
+                    if (e.key.keysym.sym == SDLK_KP_PLUS) {
+                        //SDL_Log("SDLK_KP_PLUS");
+                        SdlCore::getInstance()->size ++;
+                    }
+
+                    if (e.key.keysym.sym == SDLK_KP_MINUS) {
+                        //SDL_Log("SDLK_KP_MINUS");
+                        if(SdlCore::getInstance()->size > 0) SdlCore::getInstance()->size --;
+                    }
+
                 break;
-            }*/           
+            }       
         }
-        
     }
 }
 
 void Game::newGame() {
     SDL_Log("New Game");
-    //board->updateCellTable();
-    //plateau->fillTable();
+    board->initTable();
 }

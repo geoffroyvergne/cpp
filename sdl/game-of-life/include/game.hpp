@@ -11,7 +11,7 @@ class Game {
         //Game();
         ~Game();
 
-        bool pause = true;
+        bool pause = false;
 
         Board *board;
 

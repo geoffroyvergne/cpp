@@ -8,6 +8,7 @@
 
 enum class Pattern {
     none,
+    random,
     empty,
     full,
     stable,
@@ -22,15 +23,23 @@ enum class Pattern {
     ship
 };
 
+struct BoardSize {
+    int x;
+    int y;
+};
+
 class Board {
     public:
-        Board();
+        Board(Pattern pattern);
         ~Board();
+
+        Pattern pattern;
 
         std::vector<std::vector<Cell>> boardData;
 
-        std::vector<std::vector<int>> setPattern(Pattern pattern);
-        void initTable(Pattern pattern);
+        std::vector<std::vector<int>> setPattern();
+        BoardSize initTable();
+        std::vector<std::vector<int>> initRandomTable();
         void display();
         void displayCells();
         void cellsEnvironment();
