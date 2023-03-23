@@ -2,11 +2,9 @@
 #include <SDL.h>
 #include <piece.hpp>
 #include <color.hpp>
-#include <core.hpp>
+#include <sdl-core.hpp>
 
-Piece::Piece(PieceType type, Color color, int width, int border) {
-    this->width = width;
-    this->border = border;
+Piece::Piece(PieceType type, Color color) {    
     this->color = color;
     this->type = type;
 
@@ -68,7 +66,7 @@ void Piece::init() {
             break;
     }
 
-    destTextureParams = { 50, 50,  width, width };
+    destTextureParams = { SdlCore::getInstance()->size, SdlCore::getInstance()->size,  SdlCore::getInstance()->size, SdlCore::getInstance()->size };
 }
  
 Piece::~Piece() { 
@@ -80,20 +78,20 @@ bool Piece::validateMove(int currentId, int newId) {
     return true;
 }
 
-int Piece::calculateNewId() {
-    int x = (destTextureParams.x / border) -1;
-    int y = (destTextureParams.y / border) -1;
+/*int Piece::calculateNewId() {
+    int x = (destTextureParams.x / SdlCore::getInstance()->size) -1;
+    int y = (destTextureParams.y / SdlCore::getInstance()->size) -1;
 
     //SDL_Log("x : %d y : %d", x, y);
 
     return x + (y*8);
-}
+}*/
 
-void Piece::setId(int id) {
+/*void Piece::setId(int id) {
     this->id = id;
-}
+}*/
 
-void Piece::setDestTextureParam(int id) {
+/*void Piece::setDestTextureParam(int id) {
 
     int x=0;
     int y=0;
@@ -111,30 +109,36 @@ void Piece::setDestTextureParam(int id) {
 
     SDL_Log("id : %d x: %d y: %d", id, x, y);
 
-    destTextureParams.x = (x+1) * border;
-    destTextureParams.y = (y+1) * border;
+    destTextureParams.x = (x+1) * SdlCore::getInstance()->size;
+    destTextureParams.y = (y+1) * SdlCore::getInstance()->size;
+}*/
+
+void Piece::setDestTextureParam() {
+    destTextureParams.x = (x) * SdlCore::getInstance()->size;
+    destTextureParams.y = (y) * SdlCore::getInstance()->size;
 }
 
 void Piece::up() {
-    if(destTextureParams.y > border) destTextureParams.y -=width;
+    if(y >0) y--;
 }
 
 void Piece::down() {
-    if(destTextureParams.y < border*9) destTextureParams.y +=width;
+    if(y <7) y++;
 }
 
 void Piece::left() {
-    if(destTextureParams.x > border) destTextureParams.x -=width;
+    if(x >0) x--;
 }
 
 void Piece::right() {
-    if(destTextureParams.x < border*9) destTextureParams.x +=width;
+    if(x <7) x++;
 }
 
 void Piece::display() {
-    SDL_RenderCopy(Core::getInstance()->getRender(), Core::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
+    setDestTextureParam();
+    SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
 }
 
 void Piece::cleanup() {
-    //SDL_DestroyTexture(Core::getInstance()->->getSdlTexture());
+    //SDL_DestroyTexture(SdlCore::getInstance()->->getSdlTexture());
 }

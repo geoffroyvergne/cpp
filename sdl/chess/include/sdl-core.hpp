@@ -6,13 +6,13 @@
 #ifndef CORE
 #define CORE
 
-class Core {
+class SdlCore {
     private:
-        static Core* instance;
-        Core() {} //private constructor
+        static SdlCore* instance;
+        SdlCore() {} //private constructor
         //Core();
-        Core(const Core&) = delete; // copy constructor
-        Core& operator=(const Core&) = delete; // assignment operator
+        SdlCore(const SdlCore&) = delete; // copy constructor
+        SdlCore& operator=(const SdlCore&) = delete; // assignment operator
 
         std::string imagePath = "../assets/symbols-v4.png";
         std::string fontPath = "../assets/arial.ttf";
@@ -29,10 +29,11 @@ class Core {
         std::string name = "Chess";
         int width = 600;
         int height = 600;
-        int loopDelay = 200;
-        int border = 50;
+        int loopDelay = 100;
+        //int border = 50;
+        int size=100;
 
-        static Core* getInstance();
+        static SdlCore* getInstance();
         void init();
 
         SDL_Window* getWindow();

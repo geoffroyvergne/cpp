@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include <plateau.hpp>
+#include <board.hpp>
 #include <cursor.hpp>
 
 #ifndef GAME
@@ -13,7 +13,7 @@ class Game {
         Game();
         ~Game();
 
-        Plateau* plateau;
+        Board* board;
         Cursor* cursor;
        
         void reset();

@@ -9,11 +9,13 @@
 
 class Piece {
     public:
-        Piece(PieceType type, Color color, int width, int border);
+        Piece(PieceType type, Color color);
         ~Piece();
-        int width;
-        int border;
+        //int width;
+        //int border;
         int id;
+        int x;
+        int y;
         PieceType type;
         std::string name;
         Color color;
@@ -24,9 +26,10 @@ class Piece {
         SDL_Rect destTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
 
         bool validateMove(int currentId, int newId);
-        int calculateNewId();
+        //int calculateNewId();
         void setId(int id);
-        void setDestTextureParam(int id);
+        //void setDestTextureParam(int id);
+        void setDestTextureParam();
 
         void up();
         void down();

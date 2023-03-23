@@ -11,21 +11,24 @@
 
 class Square {
     public:
-        Square(Color color, int width, int id);
+        Square(Color color, int id);
         ~Square();
-        int width;
+        //int width;
         int id;
+        int x;
+        int y;
         Color color;
+        SDL_Color sdlColor;
+
         std::string colorStr;
         SquarePosition position;
         bool selected = false;
         Piece *piece = NULL;
         
-        SDL_Rect srcTextureParams; // Real texture size and placement
-        SDL_Rect destTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
+        //SDL_Rect srcTextureParams; 
+        //SDL_Rect destTextureParams;
 
-        SDL_Rect srcSelectedTextureParams; // Real texture size and placement
-        //SDL_Rect destSelectedTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
+        //SDL_Rect srcSelectedTextureParams; 
 
         Square* up();
         Square* down();

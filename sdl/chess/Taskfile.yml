@@ -12,6 +12,11 @@ tasks:
     cmds:
       - ./build/chess
 
+  debug:
+    desc: Debug application.
+    cmds:
+      - lldb -o run ./build/chess
+
   clean:
     desc: Clean.
     cmds:

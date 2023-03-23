@@ -3,25 +3,22 @@
 #include <SDL_image.h>
 #include <game.hpp>
 #include <cursor.hpp>
-#include <core.hpp>
+#include <sdl-core.hpp>
 
 int main(int argc, char** argv) {
 
-    Core::getInstance()->init();
+    SdlCore::getInstance()->size = 50;
+
+    SdlCore::getInstance()->width = SdlCore::getInstance()->size*8;
+    SdlCore::getInstance()->height = SdlCore::getInstance()->size*8;
+
+    SdlCore::getInstance()->init();
 
     Game *game = new Game();
-    SDL_Log("%s", Core::getInstance()->name.c_str());
+    SDL_Log("%s", SdlCore::getInstance()->name.c_str());
 
-    Core::getInstance()->border = 50;
-    Core::getInstance()->width = Core::getInstance()->border*10;
-
-    int squareWidth = (Core::getInstance()->width -(Core::getInstance()->border*2)) / 8;
-    SDL_Log("squareWidth %d", squareWidth);
-    SDL_Log("game->width %d", Core::getInstance()->width);
-    SDL_Log("game->border %d", Core::getInstance()->border);
-
-    game->plateau = new Plateau(squareWidth, Core::getInstance()->border);
-    game->cursor = new Cursor(squareWidth, Core::getInstance()->border);
+    game->board = new Board();
+    game->cursor = new Cursor();
 
     game->startLoop();
     

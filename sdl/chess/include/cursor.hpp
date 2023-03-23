@@ -8,28 +8,32 @@
 
 class Cursor {
     public:
-        Cursor(int width, int border);
+        Cursor();
         ~Cursor();
         int id;
-        int width;
-        int border;
+        //int width;
+        //int border;
+        int x=0;
+        int y=0;
 
-        SDL_Rect srcTextureParams; // Real texture size and placement
-        SDL_Rect destTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
+        int origx=0;
+        int origy=0;
 
-        //Square* sourceSquare = NULL;
+        SDL_Color sdlColor = {128,0,0,50};
+
+        //SDL_Rect srcTextureParams; 
+        //SDL_Rect destTextureParams; 
+
         Piece *currentPiece = NULL;
-        //Square* targetSquare = NULL;
 
         int sourceSquareId = 0;
-        //int targetId = 0;
 
         void up();
         void down();
         void left();
         void right();
 
-        int getId();
+        //int getId();
 
         void display();
         void cleanup();

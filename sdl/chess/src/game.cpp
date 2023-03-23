@@ -4,69 +4,43 @@
 #include <cursor.hpp>
 #include <piece.hpp>
 #include <square.hpp>
-#include <core.hpp>
+#include <sdl-core.hpp>
 
 Game::Game() { 
     
 }
 
 Game::~Game() { 
-   Core::getInstance()->cleanup();
-}
-
-/*void Game::init() {
-    //Start up SDL, and make sure it went ok
-	if (SDL_Init(SDL_INIT_VIDEO) != 0){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
-        
-		exit(EXIT_FAILURE);
-	}
-
-	// Create window
-	window = SDL_CreateWindow(this->name.c_str(), 100, 100, this->width, this->width, SDL_WINDOW_SHOWN);
-	if (window == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-	// Create render
-	//render = SDL_CreateRenderer(window, -1, 0);
-	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-	if (render == NULL) {cleanup(); exit(EXIT_FAILURE);}
-
-    //TTF_Init();
-
-    SDL_SetRenderDrawColor(render, 4, 156, 216, 255);
-}*/
-
-void Game::reset() {
-    SDL_Log("New game");
-    this->plateau->reset();
+   //Core::getInstance()->cleanup();
 }
 
 void Game::renderView() {
-    SDL_RenderClear(Core::getInstance()->getRender());        
-    this->plateau->display();
+    SDL_RenderClear(SdlCore::getInstance()->getRender());
+    this->board->displayBoard();
+    this->board->display();
     this->cursor->display();
-    SDL_RenderPresent(Core::getInstance()->getRender());
+
+    SDL_SetRenderDrawColor(SdlCore::getInstance()->getRender(), 255, 255, 255, 255);
+    SDL_RenderPresent(SdlCore::getInstance()->getRender());
+    SDL_SetRenderDrawBlendMode(SdlCore::getInstance()->getRender(), SDL_BLENDMODE_BLEND);
 }
 
 void Game::startLoop() {
     int active = 1;
     SDL_Event e;
-    //const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-    while (active) {
+    while (active) {        
         while (SDL_PollEvent(&e)) {          
-            //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
             if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
                 active = 0;
                 SDL_Log("Quit");
                 break;
-            }
+            }        
 
-            renderView();
+            renderView();            
 
-            switch( e.type ) {
-                case SDL_KEYDOWN:
+            switch( e.type ) {                
+                case SDL_KEYDOWN:                
                     if (e.key.keysym.sym == SDLK_ESCAPE) {    
                         this->cancelSelectPiece();                        
                     }
@@ -108,70 +82,57 @@ void Game::startLoop() {
             }
         }
         
-        SDL_Delay(Core::getInstance()->loopDelay);
+        SDL_Delay(SdlCore::getInstance()->loopDelay);
     }
+}
+
+void Game::reset() {
+    SDL_Log("New game");
+    this->board->reset();
 }
 
 void Game::deletePiece() {
-    if(this->cursor->currentPiece == NULL) {
-        int cursorId = this->cursor->getId();
-        Piece *piece = this->plateau->getPieceById(cursorId);
-
-        this->plateau->deletePieceById(cursorId);
-        //SDL_Log("Deleted piece id : %d %s %s", piece->id, piece->name.c_str(), piece->colorStr.c_str());
+    selectPiece();
+    if(this->cursor->currentPiece != NULL) {        
+        this->board->pieceList[this->cursor->origy][this->cursor->origx] = *this->board->getNonePiece();
+        this->board->logBoard();
     }
+    cancelSelectPiece();
 }
 
 void Game::selectPiece() {
+    SDL_Log("Select");
+    SDL_Log("x %d y %d", cursor->x, cursor->y);
     if(this->cursor->currentPiece == NULL) {
-        int cursorId = this->cursor->getId();
-        Piece *piece = this->plateau->getPieceById(cursorId);
-
-        if(piece != NULL) {
-            //SDL_Log("Selected piece id : %d %s %s", piece->id, piece->name.c_str(), piece->colorStr.c_str());
-            this->cursor->currentPiece = piece;
-        }
+        this->cursor->origx = cursor->x;
+        this->cursor->origy = cursor->y;
+        
+        this->cursor->currentPiece = &board->pieceList[cursor->y][cursor->x];
     }
 }
 
 void Game::validatePiece() {
+    SDL_Log("Validate");
     if(this->cursor->currentPiece != NULL) {
-        int currentId = this->cursor->currentPiece->id;
-        Piece *currentPiece = this->plateau->getPieceById(currentId);
-
-        int newId = this->cursor->currentPiece->calculateNewId();
-
-        if(this->cursor->currentPiece->validateMove(currentId, newId)) {
-            if(this->plateau->caseAlreadyUsed(this->cursor->getId())) {
-                Piece *deletedPiece = this->plateau->getPieceById(newId);
-                
-                this->plateau->deletePieceById(this->cursor->getId());
-                //SDL_Log("Deleted piece id : %d %s %s", deletedPiece->id, deletedPiece->name.c_str(), deletedPiece->colorStr.c_str());
-                SDL_Log("%s %s take %s %s in %s", 
-                    this->cursor->currentPiece->name.c_str(), 
-                    this->cursor->currentPiece->colorStr.c_str(),
-                    deletedPiece->name.c_str(), 
-                    deletedPiece->colorStr.c_str(),
-                    this->plateau->getSquarePositionById(deletedPiece->id).c_str()
-                );
-            }
-
-            //SDL_Log("Validated selected piece from id : %d to id %d %s %s", currentId, newId, this->cursor->currentPiece->name.c_str(), this->cursor->currentPiece->colorStr.c_str());
-            
-            this->cursor->currentPiece->setId(newId);
+        if(!this->board->caseAlreadyUsed(this->cursor->currentPiece)) {
+            this->board->pieceList[cursor->y][cursor->x] = *this->cursor->currentPiece;
+            this->board->pieceList[this->cursor->origy][this->cursor->origx] = *this->board->getNonePiece();
             this->cursor->currentPiece = NULL;
-        }
+
+            this->board->logBoard();
+        } else SDL_Log("case already used");
     }
 }
 
 void Game::cancelSelectPiece() {
-    if(this->cursor->currentPiece != NULL) {
-        this->cursor->currentPiece->setDestTextureParam(this->cursor->currentPiece->id);
+    SDL_Log("Cancel");
+    this->board->pieceList[this->cursor->origy][this->cursor->origx] = *this->cursor->currentPiece;
+    this->board->pieceList[this->cursor->origy][this->cursor->origx].x = this->cursor->origx;
+    this->board->pieceList[this->cursor->origy][this->cursor->origx].y = this->cursor->origy;
 
-        SDL_Log("Cancel selected piece id %d %s %s", this->cursor->currentPiece->id, this->cursor->currentPiece->name.c_str(), this->cursor->currentPiece->colorStr.c_str());
-        
-        this->cursor->currentPiece = NULL;
-    }
+    this->cursor->currentPiece = NULL;
+
+    this->board->logBoard();
 }
 
 void Game::cursorUp() {
