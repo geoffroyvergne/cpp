@@ -11,8 +11,6 @@ class Piece {
     public:
         Piece(PieceType type, Color color);
         ~Piece();
-        //int width;
-        //int border;
         int id;
         int x;
         int y;
@@ -20,15 +18,11 @@ class Piece {
         std::string name;
         Color color;
         std::string colorStr;
-        //bool selected = false;
                 
-        SDL_Rect srcTextureParams; // Real texture size and placement
-        SDL_Rect destTextureParams; //= { 250, 250,  50, 50 }; // Texture seen in game
-
-        bool validateMove(int currentId, int newId);
-        //int calculateNewId();
+        SDL_Rect srcTextureParams;
+        SDL_Rect destTextureParams;
+        
         void setId(int id);
-        //void setDestTextureParam(int id);
         void setDestTextureParam();
 
         void up();

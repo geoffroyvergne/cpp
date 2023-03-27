@@ -2,7 +2,10 @@
 #define PIECECOLOR
 
 enum Color {
-    transparent, black, white, red
+    transparent, 
+    black, 
+    white, 
+    red
 };
 
 #endif

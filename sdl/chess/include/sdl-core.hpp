@@ -30,7 +30,6 @@ class SdlCore {
         int width = 600;
         int height = 600;
         int loopDelay = 100;
-        //int border = 50;
         int size=100;
 
         static SdlCore* getInstance();

@@ -23,13 +23,16 @@ class Board {
 
         void init();
         void addPieces();
-        //void resetPieces();
+        //void deletePiece(int x, int y);
+        void deletePiece(Piece* piece);
+
         Color toggleColor(Color color);
 
-        void deletePiece(Piece* piece);
         bool caseAlreadyUsed(Piece* piece);
         void reset();
         Piece* getNonePiece();
+        bool validateMove(PieceType type, int origx, int origy, int x, int y);
+        void showMove(PieceType type, int x, int y);
 
         void display();
         void displayBoard();

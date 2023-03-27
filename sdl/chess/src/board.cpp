@@ -33,8 +33,7 @@ void Board::init() {
             square->y = i;
 
             if(i == 3 && j == 3) square->selected = true;
-            //square->destTextureParams.x += i *SdlCore::getInstance()->width; 
-            //square->destTextureParams.y += j *SdlCore::getInstance()->width; 
+            
             v1.push_back(*square);
 
             squareId++;
@@ -51,20 +50,6 @@ Color Board::toggleColor(Color color) {
 
 void Board::addPieces() {
     std::vector<std::vector<int>> plateauPiecesDef;
-    
-    /*if(empty) {
-        plateauPiecesDef = {
-            {
-                { 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 0, 0 },
-            }
-        };*/
    
     plateauPiecesDef = {
         {
@@ -87,10 +72,6 @@ void Board::addPieces() {
         std::vector<Piece> v1;
         for (int j = 0; j < plateauPiecesDef[i].size(); ++j) {
 
-            /*if(plateauPiecesDef[i][j] == 0) {                
-                continue;
-            }*/
-
             if(i <= 2) pieceColor = black;
             else if(i >= 6) pieceColor = white;
             else pieceColor = transparent;
@@ -100,7 +81,6 @@ void Board::addPieces() {
             piece->id = pieceId;
             piece->destTextureParams.x += (j-1) *SdlCore::getInstance()->size; 
             piece->destTextureParams.y += (i-1) *SdlCore::getInstance()->size; 
-            //squareList.at(pieceId)->piece = piece;
 
             piece->x = j;
             piece->y = i;
@@ -161,6 +141,28 @@ void Board::logBoard() {
 
 void Board::cleanup() {
     
+}
+
+bool Board::validateMove(PieceType type, int origx, int origy, int x, int y) {
+    // TODO implement
+    switch(type) {
+        case none:
+            return true;
+        break;
+        case paw:
+            return true;
+        break;
+
+        default:
+            return true;
+        break;
+    }
+
+    return true;
+}
+
+void Board::showMove(PieceType type, int x, int y) {
+
 }
 
 /*

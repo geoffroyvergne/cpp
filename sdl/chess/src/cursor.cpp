@@ -2,13 +2,28 @@
 #include <SDL.h>
 #include <cursor.hpp>
 #include <sdl-core.hpp>
+#include <piece-type.hpp>
 
 Cursor::Cursor() {
-    
+    setColor();
 }
 
 Cursor::~Cursor() { 
     cleanup();
+}
+
+void Cursor::setColor() {
+    switch(color) {
+        case black:
+            sdlColor = {5,5,5,100};
+        break;
+        case white:
+            sdlColor = {200,200,200,100};
+        break;
+        default:
+            //sdlColor = {128,0,0,50};
+        break;
+    }
 }
 
 void Cursor::up() {
@@ -41,3 +56,4 @@ void Cursor::display() {
 
 void Cursor::cleanup() {
 }
+

@@ -12,8 +12,6 @@ Piece::Piece(PieceType type, Color color) {
 }
 
 void Piece::init() {
-    //srcTextureParams = { 514, 17, 70, 70 };
-
     switch(type) {
         case none : 
             srcTextureParams = { 0, 0, 10, 10 };
@@ -61,6 +59,10 @@ void Piece::init() {
             this->colorStr = "black";
             break;
 
+         case red : 
+            this->colorStr = "red";
+            break;
+
         case transparent : 
             this-> colorStr = "transparent";
             break;
@@ -73,49 +75,9 @@ Piece::~Piece() {
     cleanup();
 }
 
-bool Piece::validateMove(int currentId, int newId) {
-    //TODO implement
-    return true;
-}
-
-/*int Piece::calculateNewId() {
-    int x = (destTextureParams.x / SdlCore::getInstance()->size) -1;
-    int y = (destTextureParams.y / SdlCore::getInstance()->size) -1;
-
-    //SDL_Log("x : %d y : %d", x, y);
-
-    return x + (y*8);
-}*/
-
-/*void Piece::setId(int id) {
-    this->id = id;
-}*/
-
-/*void Piece::setDestTextureParam(int id) {
-
-    int x=0;
-    int y=0;
-    
-    int i=0;
-    while(i<id) {
-        
-        if(x>7) {
-            y++; x=0;
-        }
-
-        x++;
-        i++;
-    }
-
-    SDL_Log("id : %d x: %d y: %d", id, x, y);
-
-    destTextureParams.x = (x+1) * SdlCore::getInstance()->size;
-    destTextureParams.y = (y+1) * SdlCore::getInstance()->size;
-}*/
-
 void Piece::setDestTextureParam() {
-    destTextureParams.x = (x) * SdlCore::getInstance()->size;
-    destTextureParams.y = (y) * SdlCore::getInstance()->size;
+    destTextureParams.x = x * SdlCore::getInstance()->size;
+    destTextureParams.y = y * SdlCore::getInstance()->size;
 }
 
 void Piece::up() {

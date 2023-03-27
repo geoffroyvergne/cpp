@@ -7,7 +7,15 @@
 #include <sdl-core.hpp>
 
 Game::Game() { 
-    
+    player1.id = 1;
+    player1.name = "player1";
+    player1.color = black;
+
+    player2.id = 2;
+    player2.name = "player2";
+    player2.color = white;
+
+    currentPlayer = player1;
 }
 
 Game::~Game() { 
@@ -94,7 +102,7 @@ void Game::reset() {
 void Game::deletePiece() {
     selectPiece();
     if(this->cursor->currentPiece != NULL) {        
-        this->board->pieceList[this->cursor->origy][this->cursor->origx] = *this->board->getNonePiece();
+        this->board->deletePiece(&this->board->pieceList[this->cursor->origy][this->cursor->origx]);
         this->board->logBoard();
     }
     cancelSelectPiece();
@@ -102,26 +110,50 @@ void Game::deletePiece() {
 
 void Game::selectPiece() {
     SDL_Log("Select");
+    SDL_Log("Color : %d", this->cursor->color);
     SDL_Log("x %d y %d", cursor->x, cursor->y);
     if(this->cursor->currentPiece == NULL) {
+        if(board->pieceList[cursor->y][cursor->x].type == none) return; 
+        if(board->pieceList[cursor->y][cursor->x].color != this->cursor->color) {
+            SDL_Log("Not your color");            
+            return;
+        }
         this->cursor->origx = cursor->x;
         this->cursor->origy = cursor->y;
         
         this->cursor->currentPiece = &board->pieceList[cursor->y][cursor->x];
+
+        // TODO color possible positions
+        this->board->showMove(board->pieceList[cursor->y][cursor->x].type, cursor->x, cursor->y);
     }
 }
 
 void Game::validatePiece() {
     SDL_Log("Validate");
-    if(this->cursor->currentPiece != NULL) {
-        if(!this->board->caseAlreadyUsed(this->cursor->currentPiece)) {
-            this->board->pieceList[cursor->y][cursor->x] = *this->cursor->currentPiece;
-            this->board->pieceList[this->cursor->origy][this->cursor->origx] = *this->board->getNonePiece();
-            this->cursor->currentPiece = NULL;
+    
+    if(this->cursor->currentPiece == NULL) return;
 
-            this->board->logBoard();
-        } else SDL_Log("case already used");
+    if(this->board->caseAlreadyUsed(this->cursor->currentPiece)) {
+        SDL_Log("case already used");
+        return;
     }
+
+    // TODO validate move
+    if(! this->board->validateMove(this->board->pieceList[cursor->y][cursor->x].type, this->cursor->x, this->cursor->y, this->cursor->origx, this->cursor->origy)) {
+        SDL_Log("move not allowed");
+        return;
+    }
+
+    // TODO delete challenger piece if any
+
+    this->board->pieceList[cursor->y][cursor->x] = *this->cursor->currentPiece;
+    this->board->pieceList[this->cursor->origy][this->cursor->origx] = *this->board->getNonePiece();
+    this->cursor->currentPiece = NULL;
+
+    this->togglePlayer();
+    this->cursor->setColor();
+
+    this->board->logBoard();
 }
 
 void Game::cancelSelectPiece() {
@@ -165,4 +197,12 @@ void Game::cursorRight() {
     if(this->cursor->currentPiece != NULL) {
         this->cursor->currentPiece->right();
     }
+}
+
+void Game::togglePlayer() {
+    if(currentPlayer.id == 1) currentPlayer = player2;
+    else currentPlayer = player1;
+
+    cursor->color = currentPlayer.color;
+    cursor->setColor();
 }

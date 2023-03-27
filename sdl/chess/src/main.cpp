@@ -19,6 +19,8 @@ int main(int argc, char** argv) {
 
     game->board = new Board();
     game->cursor = new Cursor();
+    game->cursor->color = game->currentPlayer.color;
+    game->cursor->setColor();
 
     game->startLoop();
     

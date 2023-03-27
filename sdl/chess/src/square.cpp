@@ -11,19 +11,16 @@ Square::Square(Color color, int id) {
 
     switch(color) {
         case transparent : 
-            //srcTextureParams = { 0, 0, 10, 10 };
             colorStr = "transparent";
             sdlColor = {0,0,0,0};
             break;
 
         case white : 
-            //srcTextureParams = { 100, 370, 10, 10 };
             colorStr = "white";
             sdlColor = {255,255,255,255};
             break;
 
         case black :            
-            //srcTextureParams = { 40, 370, 10, 10 };
             colorStr = "black";
             sdlColor = {100,100,100,255};
             break;
@@ -33,10 +30,6 @@ Square::Square(Color color, int id) {
             sdlColor = {128,0,0,100};
             break;
     }
-
-    //srcSelectedTextureParams = { 158, 360, 36, 33 };
-
-    //destTextureParams = { 0, 0,  SdlCore::getInstance()->width, SdlCore::getInstance()->width };
 }
 
 Square::~Square() { 
@@ -54,11 +47,6 @@ void Square::display() {
 
     SDL_Rect rect = {x1, y1, x2, y2};
     SDL_RenderFillRect(SdlCore::getInstance()->getRender(), &rect);
-
-    //SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcTextureParams, &destTextureParams);
-    /*if(this->selected) {
-        SDL_RenderCopy(SdlCore::getInstance()->getRender(), SdlCore::getInstance()->getSdlTexture(), &srcSelectedTextureParams, &destTextureParams);
-    }*/
 }
 
 void Square::cleanup() {

@@ -4,9 +4,18 @@
 
 #include <board.hpp>
 #include <cursor.hpp>
+#include <color.hpp>
 
 #ifndef GAME
 #define GAME
+
+struct Player {
+    int id;
+    std::string name;
+    int score = 0;
+    bool winner = false;
+    Color color;
+};
 
 class Game {
     public:
@@ -15,6 +24,9 @@ class Game {
 
         Board* board;
         Cursor* cursor;
+        Player player1;
+        Player player2;
+        Player currentPlayer;
        
         void reset();
 
@@ -27,6 +39,7 @@ class Game {
         void selectPiece();
         void validatePiece();
         void cancelSelectPiece();
+        void togglePlayer();
 
         void renderView();
         void startLoop();        
