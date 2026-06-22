@@ -1,0 +1,40 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build binary.
+    cmds:
+      - cmake -S . -B build/
+      - cmake --build build/
+    deps:
+      - create-bin
+  
+  run:
+    desc: Run binary.
+    cmds:
+      - build/main
+    deps:
+      - build
+
+  create-bin:
+    cmds:
+      - mkdir build
+    status:
+      - test -d build/
+
+  clean:
+    desc: Clean binary directory.
+    cmds:
+      - rm -Rf build/
+
+  clean-build:    
+    desc: Clean build the go binary.
+    deps:
+      - clean
+      - build
+      
+  clean-screen:
+    cmds:
+      - stty -raw # Réutilise le mode RAW pour l'interception des signaux et autres
+      - stty echo # Remise en place de l'echo
+      - stty onlcr # Remise en place du retour chariot
