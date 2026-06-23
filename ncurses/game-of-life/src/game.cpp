@@ -22,7 +22,7 @@ void Game::run() {
 
     bool exit_requested = false;
 
-    plateau->fill_plateau();
+    plateau->init_plateau();
 
     while(1) {
         in_char = wgetch(NcursesCore::getInstance()->getWindow());
