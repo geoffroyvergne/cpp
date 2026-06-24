@@ -18,40 +18,63 @@ Game::~Game() {
 
 void Game::run() {        
 
-    int in_char;
-
-    bool exit_requested = false;
-
-    plateau->init_plateau();
+    int in_char;    
 
     while(1) {
-        in_char = wgetch(NcursesCore::getInstance()->getWindow());
-
-        clear();
         
-        plateau->update_plateau();
+        in_char = wgetch(NcursesCore::getInstance()->getWindow());        
         
-        switch(in_char) {
-            case 'q':
-                exit_requested = true;
-                break;
-            default:
-                break;
+        if (in_char != ERR) {
+            handleInput(in_char);
         }
-                    
-        setTitle("Game of life");
-
+        
         if(exit_requested) break;
 
-        usleep(100000); // 100 ms
+        board->update();
+        board->display();        
+
+        setTitle("Game of life");        
+
+        //usleep(100000); // 100 ms
 
         refresh();
-        
+        napms(100);        
     }
 }
 
+void Game::handleInput(int key) {
+    switch(key) {
+            case 'q':
+                exit_requested = true;
+                break;
+            case 'c':
+                board->clear();                
+                break;
+            case 'r':
+                board->randomize();
+                break;
+            case 'b':
+                board->addBlinker();
+                break;            
+            case 'g':
+                board->addGlider(0, 0);
+                break;            
+            case 'u':
+                board->addPulsar();
+                break;      
+            default:
+                break;
+        }
+}
+
 void Game::setTitle(std::string title) {
-    mvaddstr(0, COLS /2 - title.size()/2, title.c_str());
+    //mvaddstr(0, COLS /2 - title.size()/2, title.c_str());
+
+    mvprintw(0, 
+        COLS /2 - title.size()/2,
+        "Generation: %ld Alive: %d",
+        board->iterations,
+        board->aliveCount());
 }
 
 void Game::close() {

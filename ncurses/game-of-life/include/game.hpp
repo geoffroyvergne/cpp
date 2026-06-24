@@ -3,20 +3,23 @@
 
 #include <array>
 #include <ncurses.h>
-#include <plateau.hpp>
+#include <board.hpp>
 
 class Game {
     public :
         Game();
         ~Game(); 
 
-        Plateau* plateau;
+        Board* board;
         
+        void handleInput(int key);
         void setTitle(std::string title);
         
         void run();
         void close();
        
+    private:
+        bool exit_requested = false;
 };
 
 #endif

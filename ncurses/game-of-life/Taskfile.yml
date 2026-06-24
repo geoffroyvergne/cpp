@@ -12,7 +12,7 @@ tasks:
   run:
     desc: Run binary.
     cmds:
-      - build/main
+      - build/GameOfLife
     deps:
       - build
 

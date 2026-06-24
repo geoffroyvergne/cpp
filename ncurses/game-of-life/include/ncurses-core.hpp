@@ -18,7 +18,7 @@ class NcursesCore {
         void init();
         static NcursesCore* getInstance();
 
-        std::string getStr(int state);
+        //std::string getStr(int state);
 
         WINDOW* getWindow();
 };

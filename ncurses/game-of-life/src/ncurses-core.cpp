@@ -46,7 +46,7 @@ NcursesCore* NcursesCore::getInstance() {
     return instance;
 }
 
-std::string NcursesCore::getStr(int state) {
+/*std::string NcursesCore::getStr(int state) {
     switch(state) {
         case 0:
             return " ";
@@ -58,7 +58,7 @@ std::string NcursesCore::getStr(int state) {
             return "O";
             break;
     }
-}
+}*/
 
 WINDOW* NcursesCore::getWindow() {
     return NcursesCore::window;
