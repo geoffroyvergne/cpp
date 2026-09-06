@@ -7,6 +7,7 @@
 Piece::Piece(PieceType type, Color color) {    
     this->color = color;
     this->type = type;
+    this->nbMove = 0;
 
     init();
 }

@@ -1,0 +1,23 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build binary.
+    cmds:
+      - cmake . -B build/
+      - cmake --build build/
+
+  run:
+    desc: Run binary.
+    cmds:
+      - ./build/imgui-test
+
+  debug:
+    desc: Debug application.
+    cmds:
+      - lldb -o run ./build/imgui-test
+
+  clean:
+    desc: Clean.
+    cmds:
+      - rm -Rf build/

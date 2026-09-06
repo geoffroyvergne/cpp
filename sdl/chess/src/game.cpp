@@ -144,9 +144,10 @@ void Game::validatePiece() {
         return;
     }
 
-    // TODO delete challenger piece if any
+    // TODO delete challenger piece 
 
     this->board->pieceList[cursor->y][cursor->x] = *this->cursor->currentPiece;
+    this->board->pieceList[cursor->y][cursor->x].nbMove++;
     this->board->pieceList[this->cursor->origy][this->cursor->origx] = *this->board->getNonePiece();
     this->cursor->currentPiece = NULL;
 

@@ -14,6 +14,7 @@ class Piece {
         int id;
         int x;
         int y;
+        int nbMove=0;
         PieceType type;
         std::string name;
         Color color;

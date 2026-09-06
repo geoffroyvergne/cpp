@@ -2,13 +2,44 @@
 #include <ncurses.h>
 #include <ncurses-core.hpp>
 
-Board::Board()
-: current(LINES, std::vector<int>(COLS, 0)),
-      next(LINES, std::vector<int>(COLS, 0)) {
+//Board::Board(): current(LINES, std::vector<int>(COLS, 0)), next(LINES, std::vector<int>(COLS, 0)) {}
+
+Board::Board() {
+    rows = LINES;
+    cols = COLS;
+
+    current.assign(LINES, std::vector<int>(COLS, 0));
+    next.assign(LINES, std::vector<int>(COLS, 0));
 }
 
 Board::~Board() {
 
+}
+
+void Board::handle_resize() {
+    iterations = 0;
+
+    current.assign(LINES, std::vector<int>(COLS, 0));
+    next.assign(LINES, std::vector<int>(COLS, 0));
+}
+
+void Board::handle_resize(int newRows, int newCols) {
+    std::vector<std::vector<int>> newCurrent(newRows, std::vector<int>(newCols, 0));
+
+    int copyRows = std::min(rows, newRows);
+    int copyCols = std::min(cols, newCols);
+
+    for (int x = 0; x < copyRows; ++x) {
+        for (int y = 0; y < copyCols; ++y) {
+            newCurrent[x][y] = current[x][y];
+        }
+    }
+
+    rows = newRows;
+    cols = newCols;
+
+    current = std::move(newCurrent);
+    next.assign(rows, std::vector<int>(cols, 0));
 }
 
 void Board::clear() {
@@ -32,9 +63,22 @@ void Board::randomize(int density) {
     }
 }
 
+std::string Board::boardHash() const {
+    std::string hash;
+
+    for (const auto& row : current) {
+        for (int cell : row) {
+            hash += (cell ? '1' : '0');
+        }
+    }
+
+    return hash;
+}
+
 void Board::update() {
 
     if (aliveCount() == 0) return;
+    if(current == next) return;
     
     for (int x = 0; x < LINES; x++) {
         for (int y = 0; y < COLS; y++) {
@@ -42,11 +86,20 @@ void Board::update() {
         }
     }
 
-    if(current == next) {
+    /*if(current == next) {
         running = 0;        
-    } else running = 1;
+    } else running = 1;*/
 
-    if (running == 0) return;
+    /*std::string state = boardHash();
+
+    if (history.contains(state)) {
+        running = false;
+        return;
+    }*/
+
+    //if (running == 0) return;
+
+    //history.insert(state);
 
     iterations ++;
 

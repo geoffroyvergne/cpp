@@ -35,8 +35,6 @@ void Game::run() {
 
         setTitle("Game of life");        
 
-        //usleep(100000); // 100 ms
-
         refresh();
         napms(100);        
     }
@@ -61,20 +59,29 @@ void Game::handleInput(int key) {
                 break;            
             case 'u':
                 board->addPulsar();
-                break;      
+                break;     
+                
+            case KEY_RESIZE: // if terminal resize
+                int newRows, newCols;
+                getmaxyx(stdscr, newRows, newCols);
+
+                board->handle_resize(newRows, newCols);
+                break;
             default:
                 break;
         }
 }
 
 void Game::setTitle(std::string title) {
-    //mvaddstr(0, COLS /2 - title.size()/2, title.c_str());
-
     mvprintw(0, 
         COLS /2 - title.size()/2,
-        "Generation: %ld Alive: %d",
+        "%s Generation: %ld Alive: %d lines : %d cols %d",
+        title.c_str(),
         board->iterations,
-        board->aliveCount());
+        board->aliveCount(),
+        board->rows,
+        board->cols
+    );
 }
 
 void Game::close() {

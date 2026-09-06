@@ -32,6 +32,7 @@ class Board {
         void reset();
         Piece* getNonePiece();
         bool validateMove(PieceType type, int origx, int origy, int x, int y);
+        bool validatePaw(int origx, int origy, int x, int y);
         void showMove(PieceType type, int x, int y);
 
         void display();

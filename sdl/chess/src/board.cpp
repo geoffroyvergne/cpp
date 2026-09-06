@@ -144,19 +144,23 @@ void Board::cleanup() {
 }
 
 bool Board::validateMove(PieceType type, int origx, int origy, int x, int y) {
-    // TODO implement
     switch(type) {
         case none:
             return true;
         break;
         case paw:
-            return true;
+            return validatePaw(origx, origy, x, y);
         break;
 
         default:
             return true;
         break;
     }
+
+    return true;
+}
+
+bool Board::validatePaw(int origx, int origy, int x, int y) {
 
     return true;
 }
