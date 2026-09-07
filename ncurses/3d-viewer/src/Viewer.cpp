@@ -1,3 +1,4 @@
+#include <locale.h>
 #include "Viewer.h"
 
 #include <ncurses.h>
@@ -27,20 +28,34 @@ void Viewer::resize()
     int height;
     int width;
 
-    getmaxyx(stdscr, height, width);
+    getmaxyx(
+        stdscr,
+        height,
+        width
+    );
 
+    /*
+     * Reserve two terminal lines for the interface.
+     */
     renderer_.resize(
         width,
-        std::max(1, height - 2)
+        std::max(
+            1,
+            height - 2
+        )
     );
 }
 
 void Viewer::handleInput(int key)
 {
-    constexpr float rotationStep = 0.10f;
+    constexpr float rotationStep =
+        0.10f;
 
     switch (key)
     {
+        /*
+         * X rotation.
+         */
         case 'x':
             rotationX_ -= rotationStep;
             break;
@@ -49,6 +64,9 @@ void Viewer::handleInput(int key)
             rotationX_ += rotationStep;
             break;
 
+        /*
+         * Y rotation.
+         */
         case 'y':
             rotationY_ -= rotationStep;
             break;
@@ -57,6 +75,9 @@ void Viewer::handleInput(int key)
             rotationY_ += rotationStep;
             break;
 
+        /*
+         * Z rotation.
+         */
         case 'z':
             rotationZ_ -= rotationStep;
             break;
@@ -65,23 +86,69 @@ void Viewer::handleInput(int key)
             rotationZ_ += rotationStep;
             break;
 
+        /*
+         * Zoom.
+         */
         case '+':
         case '=':
             zoom_ *= 1.1f;
+
             zoom_ =
-                std::min(zoom_, 20.0f);
+                std::min(
+                    zoom_,
+                    20.0f
+                );
+
             break;
 
         case '-':
         case '_':
             zoom_ /= 1.1f;
+
             zoom_ =
-                std::max(zoom_, 0.05f);
+                std::max(
+                    zoom_,
+                    0.05f
+                );
+
             break;
 
+        /*
+         * Reset.
+         */
         case 'r':
         case 'R':
             reset();
+            break;
+
+        /*
+         * Solid ASCII.
+         */
+        case 's':
+        case 'S':
+            renderer_.setMode(
+                Renderer::Mode::Solid
+            );
+            break;
+
+        /*
+         * Wireframe.
+         */
+        case 'w':
+        case 'W':
+            renderer_.setMode(
+                Renderer::Mode::Wireframe
+            );
+            break;
+
+        /*
+         * Unicode half-block.
+         */
+        case 'u':
+        case 'U':
+            renderer_.setMode(
+                Renderer::Mode::HalfBlock
+            );
             break;
 
         default:
@@ -89,14 +156,41 @@ void Viewer::handleInput(int key)
     }
 }
 
+const char* Viewer::modeName() const
+{
+    switch (renderer_.mode())
+    {
+        case Renderer::Mode::Solid:
+            return "SOLID";
+
+        case Renderer::Mode::Wireframe:
+            return "WIREFRAME";
+
+        case Renderer::Mode::HalfBlock:
+            return "HALF-BLOCK";
+    }
+
+    return "UNKNOWN";
+}
+
 void Viewer::drawInterface()
 {
     int height;
     int width;
 
-    getmaxyx(stdscr, height, width);
+    getmaxyx(
+        stdscr,
+        height,
+        width
+    );
 
-    move(height - 2, 0);
+    /*
+     * First status line.
+     */
+    move(
+        height - 2,
+        0
+    );
 
     clrtoeol();
 
@@ -106,15 +200,23 @@ void Viewer::drawInterface()
         "X/x: rotate X   Y/y: rotate Y   Z/z: rotate Z"
     );
 
-    move(height - 1, 0);
+    /*
+     * Second status line.
+     */
+    move(
+        height - 1,
+        0
+    );
 
     clrtoeol();
 
     mvprintw(
         height - 1,
         0,
-        "+/-: zoom   R: reset   Q: quit   Zoom: %.2f",
-        zoom_
+        "+/-: zoom   S: solid   W: wireframe   U: half-block   "
+        "R: reset   Q: quit   Zoom: %.2f   Mode: %s",
+        zoom_,
+        modeName()
     );
 
     (void)width;
@@ -122,20 +224,31 @@ void Viewer::drawInterface()
 
 void Viewer::run()
 {
+    setlocale(LC_ALL, "");
+
     initscr();
 
     cbreak();
     noecho();
 
-    keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
+    keypad(
+        stdscr,
+        TRUE
+    );
+
+    nodelay(
+        stdscr,
+        TRUE
+    );
 
     curs_set(0);
 
-    // Hide terminal cursor and clear screen.
-    //printw("\033[2J");
-    //printw("\033[H");
-
+    /*
+     * Use ncurses exclusively.
+     *
+     * Do not mix std::cout or ANSI cursor manipulation
+     * with ncurses.
+     */
     clear();
 
     resize();
@@ -144,7 +257,8 @@ void Viewer::run()
 
     while (running)
     {
-        const int key = getch();
+        const int key =
+            getch();
 
         if (key == 'q' ||
             key == 'Q')
@@ -155,8 +269,8 @@ void Viewer::run()
 
         if (key == KEY_RESIZE)
         {
-            resize();
             clear();
+            resize();
         }
 
         if (key != ERR)
@@ -180,6 +294,9 @@ void Viewer::run()
 
         refresh();
 
+        /*
+         * Approximately 60 FPS.
+         */
         napms(16);
     }
 

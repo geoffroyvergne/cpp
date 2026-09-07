@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include "Mesh.h"
 #include "Renderer.h"
 
@@ -30,4 +28,6 @@ private:
     void drawInterface();
 
     void resize();
+
+    const char* modeName() const;
 };
