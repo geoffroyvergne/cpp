@@ -18,22 +18,26 @@ public:
     void render(
         const AVFrame* frame,
         int sourceWidth,
-        int sourceHeight
+        int sourceHeight,
+        double currentTime,
+        double duration,
+        double speed,
+        bool paused
     );
+
+    // Read and process keyboard input.
+    void pollInput();
 
     bool shouldQuit() const;
 
-    // Input state
     bool consumePauseToggle();
-
     bool consumeSeekBackward();
-
     bool consumeSeekForward();
+    bool consumeLongSeekBackward();
+    bool consumeLongSeekForward();
 
     bool consumeSpeedIncrease();
-
     bool consumeSpeedDecrease();
-
     bool consumeSpeedReset();
 
 private:
@@ -42,8 +46,13 @@ private:
     bool colorMode_;
 
     bool pauseToggle_;
+
     bool seekBackward_;
     bool seekForward_;
+
+    bool longSeekBackward_;
+    bool longSeekForward_;
+
     bool speedIncrease_;
     bool speedDecrease_;
     bool speedReset_;
@@ -52,8 +61,9 @@ private:
     int terminalHeight_;
 
     void updateTerminalSize();
-
     void initializeColors();
+
+    void handleInput();
 
     char pixelToAscii(
         unsigned char r,
@@ -67,5 +77,12 @@ private:
         unsigned char b
     );
 
-    void handleInput();
+    void renderProgressBar(
+        double currentTime,
+        double duration,
+        double speed,
+        bool paused
+    );
+
+    std::string formatTime(double seconds);
 };

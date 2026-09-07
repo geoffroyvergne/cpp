@@ -4,14 +4,20 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 
 AsciiRenderer::AsciiRenderer()
     : quit_(false),
       colorMode_(false),
 
       pauseToggle_(false),
+
       seekBackward_(false),
       seekForward_(false),
+
+      longSeekBackward_(false),
+      longSeekForward_(false),
+
       speedIncrease_(false),
       speedDecrease_(false),
       speedReset_(false),
@@ -100,11 +106,21 @@ void AsciiRenderer::updateTerminalSize()
     );
 }
 
+void AsciiRenderer::pollInput()
+{
+    handleInput();
+}
+
 void AsciiRenderer::handleInput()
 {
     pauseToggle_ = false;
+
     seekBackward_ = false;
     seekForward_ = false;
+
+    longSeekBackward_ = false;
+    longSeekForward_ = false;
+
     speedIncrease_ = false;
     speedDecrease_ = false;
     speedReset_ = false;
@@ -129,8 +145,7 @@ void AsciiRenderer::handleInput()
             case 'C':
                 if (has_colors())
                 {
-                    colorMode_ =
-                        !colorMode_;
+                    colorMode_ = !colorMode_;
                 }
                 break;
 
@@ -140,6 +155,23 @@ void AsciiRenderer::handleInput()
 
             case KEY_RIGHT:
                 seekForward_ = true;
+                break;
+
+            /*
+             * Shift + LEFT / RIGHT cannot reliably be
+             * distinguished from the normal arrow keys
+             * in every terminal.
+             *
+             * We therefore use:
+             *
+             *   < / >  = 30 seconds
+             */
+            case '<':
+                longSeekBackward_ = true;
+                break;
+
+            case '>':
+                longSeekForward_ = true;
                 break;
 
             case '+':
@@ -247,14 +279,9 @@ int AsciiRenderer::pixelToColor(
             )
         );
 
-    red =
-        std::clamp(red, 0, 5);
-
-    green =
-        std::clamp(green, 0, 5);
-
-    blue =
-        std::clamp(blue, 0, 5);
+    red = std::clamp(red, 0, 5);
+    green = std::clamp(green, 0, 5);
+    blue = std::clamp(blue, 0, 5);
 
     return
         16 +
@@ -263,28 +290,217 @@ int AsciiRenderer::pixelToColor(
         blue;
 }
 
+std::string AsciiRenderer::formatTime(double seconds)
+{
+    if (seconds < 0.0)
+        seconds = 0.0;
+
+    int totalSeconds =
+        static_cast<int>(
+            seconds
+        );
+
+    int hours =
+        totalSeconds / 3600;
+
+    int minutes =
+        (totalSeconds % 3600) / 60;
+
+    int secs =
+        totalSeconds % 60;
+
+    char buffer[32];
+
+    if (hours > 0)
+    {
+        std::snprintf(
+            buffer,
+            sizeof(buffer),
+            "%02d:%02d:%02d",
+            hours,
+            minutes,
+            secs
+        );
+    }
+    else
+    {
+        std::snprintf(
+            buffer,
+            sizeof(buffer),
+            "%02d:%02d",
+            minutes,
+            secs
+        );
+    }
+
+    return std::string(buffer);
+}
+
+void AsciiRenderer::renderProgressBar(
+    double currentTime,
+    double duration,
+    double speed,
+    bool paused)
+{
+    if (terminalHeight_ < 2)
+        return;
+
+    int barY =
+        terminalHeight_ - 2;
+
+    int infoY =
+        terminalHeight_ - 1;
+
+    /*
+     * Clear the two bottom lines.
+     */
+    move(barY, 0);
+    clrtoeol();
+
+    move(infoY, 0);
+    clrtoeol();
+
+    /*
+     * Progress bar.
+     */
+    int barWidth =
+        std::max(
+            10,
+            terminalWidth_ - 2
+        );
+
+    double progress = 0.0;
+
+    if (duration > 0.0)
+    {
+        progress =
+            currentTime /
+            duration;
+    }
+
+    progress =
+        std::clamp(
+            progress,
+            0.0,
+            1.0
+        );
+
+    int filled =
+        static_cast<int>(
+            progress *
+            barWidth
+        );
+
+    mvaddch(
+        barY,
+        0,
+        '['
+    );
+
+    for (int x = 0;
+         x < barWidth;
+         ++x)
+    {
+        if (x < filled)
+        {
+            mvaddch(
+                barY,
+                x + 1,
+                '='
+            );
+        }
+        else if (x == filled)
+        {
+            mvaddch(
+                barY,
+                x + 1,
+                '>'
+            );
+        }
+        else
+        {
+            mvaddch(
+                barY,
+                x + 1,
+                ' '
+            );
+        }
+    }
+
+    if (barWidth + 1 < terminalWidth_)
+    {
+        mvaddch(
+            barY,
+            barWidth + 1,
+            ']'
+        );
+    }
+
+    /*
+     * Information line.
+     */
+    std::string current =
+        formatTime(currentTime);
+
+    std::string total =
+        formatTime(duration);
+
+    const char* state =
+        paused
+            ? "PAUSED"
+            : "PLAY";
+
+    char info[256];
+
+    std::snprintf(
+        info,
+        sizeof(info),
+        "%s / %s   |   %s   |   Speed: %.2gx",
+        current.c_str(),
+        total.c_str(),
+        state,
+        speed
+    );
+
+    mvaddnstr(
+        infoY,
+        0,
+        info,
+        terminalWidth_ - 1
+    );
+}
+
 void AsciiRenderer::render(
     const AVFrame* frame,
     int sourceWidth,
-    int sourceHeight)
+    int sourceHeight,
+    double currentTime,
+    double duration,
+    double speed,
+    bool paused)
 {
-    handleInput();
-
-    if (quit_)
-        return;
-
     updateTerminalSize();
 
-    erase();
-
     if (terminalWidth_ <= 0 ||
-        terminalHeight_ <= 0)
+        terminalHeight_ <= 2)
     {
         return;
     }
 
-    // Terminal characters are normally taller than they are wide.
-    // This correction prevents the image from being stretched.
+    erase();
+
+    /*
+     * Reserve two lines at the bottom for
+     * progress and status information.
+     */
+    int imageHeight =
+        terminalHeight_ - 2;
+
+    /*
+     * Terminal characters are normally taller
+     * than they are wide, so compensate for
+     * character aspect ratio.
+     */
     constexpr double characterAspect = 0.5;
 
     double scaleX =
@@ -295,7 +511,7 @@ void AsciiRenderer::render(
 
     double scaleY =
         static_cast<double>(
-            terminalHeight_
+            imageHeight
         ) /
         sourceHeight /
         characterAspect;
@@ -330,14 +546,29 @@ void AsciiRenderer::render(
             outputHeight
         );
 
+    outputWidth =
+        std::min(
+            outputWidth,
+            terminalWidth_
+        );
+
+    outputHeight =
+        std::min(
+            outputHeight,
+            imageHeight
+        );
+
     int offsetX =
         (terminalWidth_ -
          outputWidth) / 2;
 
     int offsetY =
-        (terminalHeight_ -
+        (imageHeight -
          outputHeight) / 2;
 
+    /*
+     * Render image.
+     */
     for (int y = 0;
          y < outputHeight;
          ++y)
@@ -383,6 +614,13 @@ void AsciiRenderer::render(
 
             int screenY =
                 offsetY + y;
+
+            /*
+             * Never draw the image over the
+             * status/progress area.
+             */
+            if (screenY >= imageHeight)
+                continue;
 
             if (!colorMode_)
             {
@@ -437,24 +675,50 @@ void AsciiRenderer::render(
         }
     }
 
-    // ------------------------------------------------------------
-    // Status line
-    // ------------------------------------------------------------
-
-    attron(A_BOLD);
-
-    mvprintw(
-        0,
-        0,
-        "%s | SPACE: pause | "
-        "LEFT/RIGHT: seek | "
-        "+/-: speed | 0: normal | Q: quit",
-        colorMode_
-            ? "[COLOR]"
-            : "[MONO]"
+    /*
+     * Progress / status.
+     */
+    renderProgressBar(
+        currentTime,
+        duration,
+        speed,
+        paused
     );
 
-    attroff(A_BOLD);
+    /*
+     * Controls help.
+     */
+    if (terminalHeight_ >= 4)
+    {
+        attron(A_BOLD);
+
+        const char* mode =
+            colorMode_
+                ? "[COLOR]"
+                : "[MONO]";
+
+        std::string help =
+            std::string(mode) +
+            "  SPACE: pause  "
+            "LEFT/RIGHT: +/-5s  "
+            "</>: +/-30s  "
+            "+/-: speed  "
+            "0: 1x  "
+            "C: color  "
+            "Q: quit";
+
+        /*
+         * Put the help line at the top.
+         */
+        mvaddnstr(
+            0,
+            0,
+            help.c_str(),
+            terminalWidth_ - 1
+        );
+
+        attroff(A_BOLD);
+    }
 
     refresh();
 }
@@ -490,6 +754,26 @@ bool AsciiRenderer::consumeSeekForward()
         seekForward_;
 
     seekForward_ = false;
+
+    return value;
+}
+
+bool AsciiRenderer::consumeLongSeekBackward()
+{
+    bool value =
+        longSeekBackward_;
+
+    longSeekBackward_ = false;
+
+    return value;
+}
+
+bool AsciiRenderer::consumeLongSeekForward()
+{
+    bool value =
+        longSeekForward_;
+
+    longSeekForward_ = false;
 
     return value;
 }

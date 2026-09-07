@@ -5,7 +5,6 @@
 #include <chrono>
 #include <thread>
 #include <algorithm>
-#include <iomanip>
 
 int main(int argc, char* argv[])
 {
@@ -19,10 +18,6 @@ int main(int argc, char* argv[])
 
         return 1;
     }
-
-    // ------------------------------------------------------------
-    // Decoder
-    // ------------------------------------------------------------
 
     VideoDecoder decoder(argv[1]);
 
@@ -49,23 +44,16 @@ int main(int argc, char* argv[])
         << " seconds"
         << std::endl;
 
-    // ------------------------------------------------------------
-    // Renderer
-    // ------------------------------------------------------------
-
     AsciiRenderer renderer;
 
     renderer.initialize();
-
-    // ------------------------------------------------------------
-    // Playback state
-    // ------------------------------------------------------------
 
     bool paused = false;
 
     double speed = 1.0;
 
-    constexpr double seekAmount = 5.0;
+    constexpr double shortSeekAmount = 5.0;
+    constexpr double longSeekAmount = 30.0;
 
     using Clock =
         std::chrono::steady_clock;
@@ -78,23 +66,33 @@ int main(int argc, char* argv[])
 
     bool firstFrame = true;
 
-    // ------------------------------------------------------------
-    // Main loop
-    // ------------------------------------------------------------
-
     while (!renderer.shouldQuit())
     {
-        // --------------------------------------------------------
-        // Keyboard / controls
-        // --------------------------------------------------------
+        /*
+         * Read keyboard input once per loop.
+         *
+         * Input is no longer handled from inside
+         * render(), which makes the control flow
+         * much more predictable.
+         */
+        renderer.pollInput();
 
+        if (renderer.shouldQuit())
+            break;
+
+        /*
+         * Pause / Play
+         */
         if (renderer.consumePauseToggle())
         {
             paused = !paused;
 
             if (!paused)
             {
-                // Restart timing reference when resuming.
+                /*
+                 * Restart the wall-clock reference
+                 * when playback resumes.
+                 */
                 playbackStart =
                     Clock::now();
 
@@ -103,6 +101,11 @@ int main(int argc, char* argv[])
             }
         }
 
+        /*
+         * Speed increase.
+         *
+         * 1x -> 2x -> 4x
+         */
         if (renderer.consumeSpeedIncrease())
         {
             speed =
@@ -118,6 +121,11 @@ int main(int argc, char* argv[])
                 decoder.getCurrentPTS();
         }
 
+        /*
+         * Speed decrease.
+         *
+         * 1x -> 0.5x -> 0.25x
+         */
         if (renderer.consumeSpeedDecrease())
         {
             speed =
@@ -133,6 +141,9 @@ int main(int argc, char* argv[])
                 decoder.getCurrentPTS();
         }
 
+        /*
+         * Reset speed.
+         */
         if (renderer.consumeSpeedReset())
         {
             speed = 1.0;
@@ -144,15 +155,14 @@ int main(int argc, char* argv[])
                 decoder.getCurrentPTS();
         }
 
-        // --------------------------------------------------------
-        // Seek backward
-        // --------------------------------------------------------
-
+        /*
+         * Short backward seek: -5 seconds
+         */
         if (renderer.consumeSeekBackward())
         {
             double target =
                 decoder.getCurrentPTS() -
-                seekAmount;
+                shortSeekAmount;
 
             if (decoder.seekTo(target))
             {
@@ -161,18 +171,19 @@ int main(int argc, char* argv[])
 
                 timelineStartPTS =
                     decoder.getCurrentPTS();
+
+                firstFrame = false;
             }
         }
 
-        // --------------------------------------------------------
-        // Seek forward
-        // --------------------------------------------------------
-
+        /*
+         * Short forward seek: +5 seconds
+         */
         if (renderer.consumeSeekForward())
         {
             double target =
                 decoder.getCurrentPTS() +
-                seekAmount;
+                shortSeekAmount;
 
             if (decoder.seekTo(target))
             {
@@ -181,24 +192,67 @@ int main(int argc, char* argv[])
 
                 timelineStartPTS =
                     decoder.getCurrentPTS();
+
+                firstFrame = false;
             }
         }
 
-        // --------------------------------------------------------
-        // Pause
-        // --------------------------------------------------------
+        /*
+         * Long backward seek: -30 seconds
+         */
+        if (renderer.consumeLongSeekBackward())
+        {
+            double target =
+                decoder.getCurrentPTS() -
+                longSeekAmount;
 
+            if (decoder.seekTo(target))
+            {
+                playbackStart =
+                    Clock::now();
+
+                timelineStartPTS =
+                    decoder.getCurrentPTS();
+
+                firstFrame = false;
+            }
+        }
+
+        /*
+         * Long forward seek: +30 seconds
+         */
+        if (renderer.consumeLongSeekForward())
+        {
+            double target =
+                decoder.getCurrentPTS() +
+                longSeekAmount;
+
+            if (decoder.seekTo(target))
+            {
+                playbackStart =
+                    Clock::now();
+
+                timelineStartPTS =
+                    decoder.getCurrentPTS();
+
+                firstFrame = false;
+            }
+        }
+
+        /*
+         * While paused we keep displaying the current
+         * frame and the status information.
+         */
         if (paused)
         {
-            // We still need to render the current frame and
-            // process keyboard input.
-            //
-            // readFrame() is intentionally not called here.
-
             renderer.render(
                 decoder.getFrame(),
                 decoder.getWidth(),
-                decoder.getHeight()
+                decoder.getHeight(),
+                decoder.getCurrentPTS(),
+                decoder.getDuration(),
+                speed,
+                true
             );
 
             std::this_thread::sleep_for(
@@ -208,10 +262,9 @@ int main(int argc, char* argv[])
             continue;
         }
 
-        // --------------------------------------------------------
-        // Decode next frame
-        // --------------------------------------------------------
-
+        /*
+         * Decode next frame.
+         */
         if (!decoder.readFrame())
         {
             break;
@@ -220,10 +273,9 @@ int main(int argc, char* argv[])
         double pts =
             decoder.getCurrentPTS();
 
-        // --------------------------------------------------------
-        // First frame
-        // --------------------------------------------------------
-
+        /*
+         * First frame establishes the timing reference.
+         */
         if (firstFrame)
         {
             firstFrame = false;
@@ -235,23 +287,19 @@ int main(int argc, char* argv[])
                 Clock::now();
         }
 
-        // --------------------------------------------------------
-        // Calculate target presentation time.
-        //
-        // speed = 1.0
-        //     normal playback
-        //
-        // speed = 2.0
-        //     twice as fast
-        //
-        // speed = 0.5
-        //     half speed
-        // --------------------------------------------------------
-
+        /*
+         * Time elapsed inside the video.
+         */
         double videoTime =
             pts -
             timelineStartPTS;
 
+        /*
+         * Convert video time according to playback speed.
+         *
+         * At 2x, 10 seconds of video take 5 seconds
+         * of real time.
+         */
         double realTime =
             videoTime /
             speed;
@@ -266,10 +314,9 @@ int main(int argc, char* argv[])
                 )
             );
 
-        // --------------------------------------------------------
-        // Wait until presentation time
-        // --------------------------------------------------------
-
+        /*
+         * Wait until this frame should be displayed.
+         */
         auto now =
             Clock::now();
 
@@ -280,24 +327,18 @@ int main(int argc, char* argv[])
             );
         }
 
-        // --------------------------------------------------------
-        // Render
-        // --------------------------------------------------------
-
+        /*
+         * Render frame + UI.
+         */
         renderer.render(
             decoder.getFrame(),
             decoder.getWidth(),
-            decoder.getHeight()
+            decoder.getHeight(),
+            pts,
+            decoder.getDuration(),
+            speed,
+            false
         );
-
-        // --------------------------------------------------------
-        // If the renderer is slower than the video, we don't
-        // sleep. The next iteration will immediately decode the
-        // next frame.
-        //
-        // This naturally lets us catch up instead of accumulating
-        // an ever-growing delay.
-        // --------------------------------------------------------
     }
 
     renderer.shutdown();
