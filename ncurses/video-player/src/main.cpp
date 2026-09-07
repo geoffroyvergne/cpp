@@ -4,6 +4,8 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <algorithm>
+#include <iomanip>
 
 int main(int argc, char* argv[])
 {
@@ -18,21 +20,16 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    // ------------------------------------------------------------
+    // Decoder
+    // ------------------------------------------------------------
 
-    const char* filename = argv[1];
-
-
-    // ---------------------------------------------
-    // Open video
-    // ---------------------------------------------
-
-    VideoDecoder decoder(filename);
+    VideoDecoder decoder(argv[1]);
 
     if (!decoder.open())
     {
         return 1;
     }
-
 
     std::cout
         << "Video: "
@@ -46,50 +43,246 @@ int main(int argc, char* argv[])
         << decoder.getFPS()
         << std::endl;
 
+    std::cout
+        << "Duration: "
+        << decoder.getDuration()
+        << " seconds"
+        << std::endl;
 
-    // ---------------------------------------------
-    // Initialize renderer
-    // ---------------------------------------------
+    // ------------------------------------------------------------
+    // Renderer
+    // ------------------------------------------------------------
 
     AsciiRenderer renderer;
 
     renderer.initialize();
 
+    // ------------------------------------------------------------
+    // Playback state
+    // ------------------------------------------------------------
 
-    // ---------------------------------------------
-    // Playback timing
-    // ---------------------------------------------
+    bool paused = false;
 
-    const double fps =
-        decoder.getFPS();
+    double speed = 1.0;
 
-    const double frameTime =
-        1.0 / fps;
+    constexpr double seekAmount = 5.0;
 
+    using Clock =
+        std::chrono::steady_clock;
 
-    auto nextFrameTime =
-        std::chrono::steady_clock::now();
+    auto playbackStart =
+        Clock::now();
 
+    double timelineStartPTS =
+        0.0;
 
-    // ---------------------------------------------
-    // Main playback loop
-    // ---------------------------------------------
+    bool firstFrame = true;
+
+    // ------------------------------------------------------------
+    // Main loop
+    // ------------------------------------------------------------
 
     while (!renderer.shouldQuit())
     {
-        /*
-         * Decode frame.
-         */
+        // --------------------------------------------------------
+        // Keyboard / controls
+        // --------------------------------------------------------
+
+        if (renderer.consumePauseToggle())
+        {
+            paused = !paused;
+
+            if (!paused)
+            {
+                // Restart timing reference when resuming.
+                playbackStart =
+                    Clock::now();
+
+                timelineStartPTS =
+                    decoder.getCurrentPTS();
+            }
+        }
+
+        if (renderer.consumeSpeedIncrease())
+        {
+            speed =
+                std::min(
+                    4.0,
+                    speed * 2.0
+                );
+
+            playbackStart =
+                Clock::now();
+
+            timelineStartPTS =
+                decoder.getCurrentPTS();
+        }
+
+        if (renderer.consumeSpeedDecrease())
+        {
+            speed =
+                std::max(
+                    0.25,
+                    speed / 2.0
+                );
+
+            playbackStart =
+                Clock::now();
+
+            timelineStartPTS =
+                decoder.getCurrentPTS();
+        }
+
+        if (renderer.consumeSpeedReset())
+        {
+            speed = 1.0;
+
+            playbackStart =
+                Clock::now();
+
+            timelineStartPTS =
+                decoder.getCurrentPTS();
+        }
+
+        // --------------------------------------------------------
+        // Seek backward
+        // --------------------------------------------------------
+
+        if (renderer.consumeSeekBackward())
+        {
+            double target =
+                decoder.getCurrentPTS() -
+                seekAmount;
+
+            if (decoder.seekTo(target))
+            {
+                playbackStart =
+                    Clock::now();
+
+                timelineStartPTS =
+                    decoder.getCurrentPTS();
+            }
+        }
+
+        // --------------------------------------------------------
+        // Seek forward
+        // --------------------------------------------------------
+
+        if (renderer.consumeSeekForward())
+        {
+            double target =
+                decoder.getCurrentPTS() +
+                seekAmount;
+
+            if (decoder.seekTo(target))
+            {
+                playbackStart =
+                    Clock::now();
+
+                timelineStartPTS =
+                    decoder.getCurrentPTS();
+            }
+        }
+
+        // --------------------------------------------------------
+        // Pause
+        // --------------------------------------------------------
+
+        if (paused)
+        {
+            // We still need to render the current frame and
+            // process keyboard input.
+            //
+            // readFrame() is intentionally not called here.
+
+            renderer.render(
+                decoder.getFrame(),
+                decoder.getWidth(),
+                decoder.getHeight()
+            );
+
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(20)
+            );
+
+            continue;
+        }
+
+        // --------------------------------------------------------
+        // Decode next frame
+        // --------------------------------------------------------
 
         if (!decoder.readFrame())
         {
             break;
         }
 
+        double pts =
+            decoder.getCurrentPTS();
 
-        /*
-         * Render frame.
-         */
+        // --------------------------------------------------------
+        // First frame
+        // --------------------------------------------------------
+
+        if (firstFrame)
+        {
+            firstFrame = false;
+
+            timelineStartPTS =
+                pts;
+
+            playbackStart =
+                Clock::now();
+        }
+
+        // --------------------------------------------------------
+        // Calculate target presentation time.
+        //
+        // speed = 1.0
+        //     normal playback
+        //
+        // speed = 2.0
+        //     twice as fast
+        //
+        // speed = 0.5
+        //     half speed
+        // --------------------------------------------------------
+
+        double videoTime =
+            pts -
+            timelineStartPTS;
+
+        double realTime =
+            videoTime /
+            speed;
+
+        auto targetTime =
+            playbackStart +
+            std::chrono::duration_cast<
+                Clock::duration
+            >(
+                std::chrono::duration<double>(
+                    realTime
+                )
+            );
+
+        // --------------------------------------------------------
+        // Wait until presentation time
+        // --------------------------------------------------------
+
+        auto now =
+            Clock::now();
+
+        if (targetTime > now)
+        {
+            std::this_thread::sleep_until(
+                targetTime
+            );
+        }
+
+        // --------------------------------------------------------
+        // Render
+        // --------------------------------------------------------
 
         renderer.render(
             decoder.getFrame(),
@@ -97,63 +290,17 @@ int main(int argc, char* argv[])
             decoder.getHeight()
         );
 
-
-        if (renderer.shouldQuit())
-            break;
-
-
-        /*
-         * Schedule next frame.
-         *
-         * Instead of:
-         *
-         *   sleep(frameTime)
-         *
-         * we maintain an absolute deadline.
-         *
-         * This prevents small timing errors from
-         * accumulating over the duration of the video.
-         */
-
-        nextFrameTime +=
-            std::chrono::duration_cast<
-                std::chrono::steady_clock::duration
-            >(
-                std::chrono::duration<double>(
-                    frameTime
-                )
-            );
-
-
-        auto now =
-            std::chrono::steady_clock::now();
-
-
-        if (nextFrameTime > now)
-        {
-            std::this_thread::sleep_until(
-                nextFrameTime
-            );
-        }
-        else
-        {
-            /*
-             * Rendering took longer than one frame.
-             *
-             * Don't sleep: immediately continue.
-             */
-
-            nextFrameTime = now;
-        }
+        // --------------------------------------------------------
+        // If the renderer is slower than the video, we don't
+        // sleep. The next iteration will immediately decode the
+        // next frame.
+        //
+        // This naturally lets us catch up instead of accumulating
+        // an ever-growing delay.
+        // --------------------------------------------------------
     }
 
-
-    // ---------------------------------------------
-    // Cleanup
-    // ---------------------------------------------
-
     renderer.shutdown();
-
 
     return 0;
 }

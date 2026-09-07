@@ -23,15 +23,36 @@ public:
 
     bool shouldQuit() const;
 
+    // Input state
+    bool consumePauseToggle();
+
+    bool consumeSeekBackward();
+
+    bool consumeSeekForward();
+
+    bool consumeSpeedIncrease();
+
+    bool consumeSpeedDecrease();
+
+    bool consumeSpeedReset();
+
 private:
 
     bool quit_;
     bool colorMode_;
 
+    bool pauseToggle_;
+    bool seekBackward_;
+    bool seekForward_;
+    bool speedIncrease_;
+    bool speedDecrease_;
+    bool speedReset_;
+
     int terminalWidth_;
     int terminalHeight_;
 
     void updateTerminalSize();
+
     void initializeColors();
 
     char pixelToAscii(
