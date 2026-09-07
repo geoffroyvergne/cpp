@@ -1,5 +1,7 @@
 #pragma once
 
+#include "AsciiRenderer.h"
+
 #include <string>
 #include <vector>
 
@@ -19,6 +21,10 @@ public:
 
     void draw(
         const std::vector<std::string>& lines
+    );
+
+    void drawColored(
+        const RenderedImage& image
     );
 
     void drawStatus(

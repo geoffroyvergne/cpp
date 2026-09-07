@@ -42,15 +42,30 @@ int main(int argc, char* argv[])
             const int imageHeight =
                 std::max(1, rows - 1);
 
-            auto ascii =
-                AsciiRenderer::render(
-                    image,
-                    cols,
-                    imageHeight,
-                    config
-                );
+            if (config.mode == RenderMode::ASCII)
+            {
+                auto ascii =
+                    AsciiRenderer::render(
+                        image,
+                        cols,
+                        imageHeight,
+                        config
+                    );
 
-            terminal.draw(ascii);
+                terminal.draw(ascii);
+            }
+            else
+            {
+                auto rectangles =
+                    AsciiRenderer::renderColored(
+                        image,
+                        cols,
+                        imageHeight,
+                        config
+                    );
+
+                terminal.drawColored(rectangles);
+            }
 
             /*
              * Display controls.
@@ -73,7 +88,7 @@ int main(int argc, char* argv[])
                 case '=':
                     config.size =
                         std::min(
-                            1.0,
+                            2.0,
                             config.size + 0.1
                         );
                     break;
