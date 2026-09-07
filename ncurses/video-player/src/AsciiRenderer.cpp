@@ -3,10 +3,12 @@
 #include <ncurses.h>
 
 #include <algorithm>
+#include <cmath>
 
 
 AsciiRenderer::AsciiRenderer()
     : quit_(false),
+      colorMode_(false),
       terminalWidth_(0),
       terminalHeight_(0)
 {
@@ -17,28 +19,77 @@ void AsciiRenderer::initialize()
 {
     initscr();
 
-    // Do not echo keyboard input
     noecho();
-
-    // Do not wait for keyboard input
     nodelay(stdscr, TRUE);
-
-    // Enable special keys
     keypad(stdscr, TRUE);
 
-    // Hide cursor
     curs_set(0);
 
-    // Allow terminal resize
-    start_color();
+    // We don't want ncurses to translate Ctrl+C etc.
+    raw();
 
     updateTerminalSize();
+
+    initializeColors();
 }
 
 
 void AsciiRenderer::shutdown()
 {
     endwin();
+}
+
+
+void AsciiRenderer::initializeColors()
+{
+    if (!has_colors())
+        return;
+
+    start_color();
+
+    use_default_colors();
+
+    if (COLORS >= 256)
+    {
+        /*
+         * Color pairs 1..256 correspond to
+         * terminal colors 0..255.
+         */
+
+        int maxColors =
+            std::min(256, COLOR_PAIRS - 1);
+
+        for (int color = 0;
+             color < maxColors;
+             ++color)
+        {
+            init_pair(
+                color + 1,
+                color,
+                -1
+            );
+        }
+    }
+    else
+    {
+        /*
+         * Standard terminal colors.
+         */
+
+        for (int color = 0;
+             color < COLORS && color < 16;
+             ++color)
+        {
+            if (color + 1 < COLOR_PAIRS)
+            {
+                init_pair(
+                    color + 1,
+                    color,
+                    -1
+                );
+            }
+        }
+    }
 }
 
 
@@ -52,12 +103,45 @@ void AsciiRenderer::updateTerminalSize()
 }
 
 
+void AsciiRenderer::handleInput()
+{
+    int key;
+
+    while ((key = getch()) != ERR)
+    {
+        switch (key)
+        {
+            case 'q':
+            case 'Q':
+            case 27:
+                quit_ = true;
+                break;
+
+            case 'c':
+            case 'C':
+                if (has_colors())
+                {
+                    colorMode_ = !colorMode_;
+                }
+                break;
+
+            case KEY_RESIZE:
+                updateTerminalSize();
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
+
 char AsciiRenderer::pixelToAscii(
     unsigned char r,
     unsigned char g,
     unsigned char b)
 {
-    // Standard luminance calculation
+    // Human-perceived luminance.
 
     double luminance =
         0.2126 * r +
@@ -65,12 +149,19 @@ char AsciiRenderer::pixelToAscii(
         0.0722 * b;
 
 
-    // ASCII gradient from dark -> bright
+    /*
+     * Dark -> bright
+     *
+     * We deliberately keep the space at the beginning.
+     *
+     * This produces a smoother gradient than using only
+     * a few characters.
+     */
 
     static const char* gradient =
-        " .:-=+*#%@";
+        " .,:;irsXA253hMHGS#9B&@";
 
-    constexpr int gradientSize = 10;
+    constexpr int gradientSize = 23;
 
 
     int index =
@@ -92,11 +183,95 @@ char AsciiRenderer::pixelToAscii(
 }
 
 
+int AsciiRenderer::pixelToColor(
+    unsigned char r,
+    unsigned char g,
+    unsigned char b)
+{
+    /*
+     * ncurses uses a palette.
+     *
+     * If we have 256 colors:
+     *
+     *   0-15   = standard colors
+     *   16-231  = 6x6x6 RGB cube
+     *   232-255 = grayscale
+     *
+     * We convert RGB -> 6x6x6 color cube.
+     */
+
+    if (COLORS < 256)
+    {
+        // Fallback to 8/16 colors.
+
+        int color;
+
+        if (r > 200 && g > 200 && b > 200)
+            color = COLOR_WHITE;
+        else if (r > 150 && g < 100 && b < 100)
+            color = COLOR_RED;
+        else if (r < 100 && g > 150 && b < 100)
+            color = COLOR_GREEN;
+        else if (r < 100 && g < 100 && b > 150)
+            color = COLOR_BLUE;
+        else if (r > 150 && g > 150 && b < 100)
+            color = COLOR_YELLOW;
+        else if (r > 150 && g < 100 && b > 150)
+            color = COLOR_MAGENTA;
+        else if (r < 100 && g > 150 && b > 150)
+            color = COLOR_CYAN;
+        else
+            color = COLOR_WHITE;
+
+        return color;
+    }
+
+
+    int red =
+        static_cast<int>(
+            std::round(
+                r / 255.0 * 5.0
+            )
+        );
+
+    int green =
+        static_cast<int>(
+            std::round(
+                g / 255.0 * 5.0
+            )
+        );
+
+    int blue =
+        static_cast<int>(
+            std::round(
+                b / 255.0 * 5.0
+            )
+        );
+
+
+    red = std::clamp(red, 0, 5);
+    green = std::clamp(green, 0, 5);
+    blue = std::clamp(blue, 0, 5);
+
+
+    return 16 +
+           36 * red +
+           6 * green +
+           blue;
+}
+
+
 void AsciiRenderer::render(
     const AVFrame* frame,
     int sourceWidth,
     int sourceHeight)
 {
+    handleInput();
+
+    if (quit_)
+        return;
+
+
     updateTerminalSize();
 
     erase();
@@ -109,12 +284,12 @@ void AsciiRenderer::render(
     }
 
 
-    // ---------------------------------------------
-    // Character aspect ratio compensation
-    //
-    // Terminal characters are roughly twice as
-    // tall as they are wide.
-    // ---------------------------------------------
+    /*
+     * Terminal characters are generally around
+     * twice as high as they are wide.
+     *
+     * We compensate for that here.
+     */
 
     constexpr double characterAspect = 0.5;
 
@@ -153,8 +328,6 @@ void AsciiRenderer::render(
         std::max(1, outputHeight);
 
 
-    // Center the image
-
     int offsetX =
         (terminalWidth_ - outputWidth) / 2;
 
@@ -162,9 +335,9 @@ void AsciiRenderer::render(
         (terminalHeight_ - outputHeight) / 2;
 
 
-    // ---------------------------------------------
-    // Render
-    // ---------------------------------------------
+    /*
+     * Render the frame.
+     */
 
     for (int y = 0;
          y < outputHeight;
@@ -196,16 +369,112 @@ void AsciiRenderer::render(
 
 
             char ascii =
-                pixelToAscii(r, g, b);
+                pixelToAscii(
+                    r,
+                    g,
+                    b
+                );
 
 
-            mvaddch(
-                offsetY + y,
-                offsetX + x,
-                ascii
-            );
+            /*
+             * Monochrome mode
+             */
+
+            if (!colorMode_)
+            {
+                mvaddch(
+                    offsetY + y,
+                    offsetX + x,
+                    ascii
+                );
+
+                continue;
+            }
+
+
+            /*
+             * Color mode
+             */
+
+            int color =
+                pixelToColor(
+                    r,
+                    g,
+                    b
+                );
+
+
+            /*
+             * ncurses color pairs have to be
+             * initialized before use.
+             *
+             * We use pair number:
+             *
+             *     color + 1
+             *
+             * because pair 0 is reserved.
+             */
+
+            int pairNumber =
+                color + 1;
+
+            if (pairNumber < COLOR_PAIRS)
+            {
+                init_pair(
+                    pairNumber,
+                    color,
+                    -1
+                );
+
+
+                attron(
+                    COLOR_PAIR(pairNumber)
+                );
+
+
+                mvaddch(
+                    offsetY + y,
+                    offsetX + x,
+                    ascii
+                );
+
+
+                attroff(
+                    COLOR_PAIR(pairNumber)
+                );
+            }
+            else
+            {
+                mvaddch(
+                    offsetY + y,
+                    offsetX + x,
+                    ascii
+                );
+            }
         }
     }
+
+
+    /*
+     * Small status indicator.
+     */
+
+    const char* mode =
+        colorMode_
+        ? "[COLOR]"
+        : "[MONO]";
+
+
+    attron(A_BOLD);
+
+    mvprintw(
+        0,
+        0,
+        "%s  |  C: color  Q: quit",
+        mode
+    );
+
+    attroff(A_BOLD);
 
 
     refresh();

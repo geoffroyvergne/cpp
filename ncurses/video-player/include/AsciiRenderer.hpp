@@ -6,7 +6,6 @@ extern "C" {
 #include <libavutil/frame.h>
 }
 
-
 class AsciiRenderer
 {
 public:
@@ -27,15 +26,25 @@ public:
 private:
 
     bool quit_;
+    bool colorMode_;
 
     int terminalWidth_;
     int terminalHeight_;
 
     void updateTerminalSize();
+    void initializeColors();
 
     char pixelToAscii(
         unsigned char r,
         unsigned char g,
         unsigned char b
     );
+
+    int pixelToColor(
+        unsigned char r,
+        unsigned char g,
+        unsigned char b
+    );
+
+    void handleInput();
 };

@@ -1,20 +1,12 @@
 #include "VideoDecoder.hpp"
 #include "AsciiRenderer.hpp"
 
-#include <ncurses.h>
-
 #include <iostream>
-
 #include <chrono>
 #include <thread>
 
-
 int main(int argc, char* argv[])
 {
-    // ---------------------------------------------
-    // Check arguments
-    // ---------------------------------------------
-
     if (argc < 2)
     {
         std::cerr
@@ -56,7 +48,7 @@ int main(int argc, char* argv[])
 
 
     // ---------------------------------------------
-    // Initialize ncurses
+    // Initialize renderer
     // ---------------------------------------------
 
     AsciiRenderer renderer;
@@ -65,40 +57,29 @@ int main(int argc, char* argv[])
 
 
     // ---------------------------------------------
-    // Frame timing
+    // Playback timing
     // ---------------------------------------------
 
-    double fps = decoder.getFPS();
+    const double fps =
+        decoder.getFPS();
 
-    auto frameDuration =
-        std::chrono::duration<double>(
-            1.0 / fps
-        );
+    const double frameTime =
+        1.0 / fps;
+
+
+    auto nextFrameTime =
+        std::chrono::steady_clock::now();
 
 
     // ---------------------------------------------
-    // Playback loop
+    // Main playback loop
     // ---------------------------------------------
 
-    while (true)
+    while (!renderer.shouldQuit())
     {
-        auto frameStart =
-            std::chrono::steady_clock::now();
-
-
-        // Check keyboard
-
-        int key = getch();
-
-        if (key == 'q' ||
-            key == 'Q' ||
-            key == 27)
-        {
-            break;
-        }
-
-
-        // Decode next frame
+        /*
+         * Decode frame.
+         */
 
         if (!decoder.readFrame())
         {
@@ -106,7 +87,9 @@ int main(int argc, char* argv[])
         }
 
 
-        // Render
+        /*
+         * Render frame.
+         */
 
         renderer.render(
             decoder.getFrame(),
@@ -115,25 +98,52 @@ int main(int argc, char* argv[])
         );
 
 
-        // -----------------------------------------
-        // Maintain FPS
-        // -----------------------------------------
-
-        auto elapsed =
-            std::chrono::steady_clock::now()
-            - frameStart;
+        if (renderer.shouldQuit())
+            break;
 
 
-        auto remaining =
-            frameDuration -
-            elapsed;
+        /*
+         * Schedule next frame.
+         *
+         * Instead of:
+         *
+         *   sleep(frameTime)
+         *
+         * we maintain an absolute deadline.
+         *
+         * This prevents small timing errors from
+         * accumulating over the duration of the video.
+         */
 
-
-        if (remaining.count() > 0)
-        {
-            std::this_thread::sleep_for(
-                remaining
+        nextFrameTime +=
+            std::chrono::duration_cast<
+                std::chrono::steady_clock::duration
+            >(
+                std::chrono::duration<double>(
+                    frameTime
+                )
             );
+
+
+        auto now =
+            std::chrono::steady_clock::now();
+
+
+        if (nextFrameTime > now)
+        {
+            std::this_thread::sleep_until(
+                nextFrameTime
+            );
+        }
+        else
+        {
+            /*
+             * Rendering took longer than one frame.
+             *
+             * Don't sleep: immediately continue.
+             */
+
+            nextFrameTime = now;
         }
     }
 
