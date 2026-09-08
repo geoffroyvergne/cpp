@@ -1,7 +1,10 @@
 #pragma once
 
+#include "camera/Camera.h"
 #include "graphics/Renderer.h"
 #include "input/InputManager.h"
+#include "player/Player.h"
+#include "world/TileMap.h"
 
 class Game
 {
@@ -26,4 +29,8 @@ private:
 
     Renderer m_renderer;
     InputManager m_input;
+
+    TileMap m_tileMap;
+    Player m_player;
+    Camera m_camera;
 };
