@@ -7,35 +7,22 @@
 #include <iomanip>
 #include <sstream>
 
-// -----------------------------------------------------------------------------
-// Constructor
-// -----------------------------------------------------------------------------
-
 AsciiRenderer::AsciiRenderer()
     : quit_(false),
       colorMode_(false),
       rectangleMode_(false),
-
       pauseToggle_(false),
-
       seekBackward_(false),
       seekForward_(false),
-
       longSeekBackward_(false),
       longSeekForward_(false),
-
       speedIncrease_(false),
       speedDecrease_(false),
       speedReset_(false),
-
       terminalWidth_(0),
       terminalHeight_(0)
 {
 }
-
-// -----------------------------------------------------------------------------
-// Initialization
-// -----------------------------------------------------------------------------
 
 void AsciiRenderer::initialize()
 {
@@ -43,42 +30,35 @@ void AsciiRenderer::initialize()
 
     cbreak();
     noecho();
+
     keypad(stdscr, TRUE);
     nodelay(stdscr, TRUE);
+
     curs_set(0);
 
     start_color();
     use_default_colors();
 
     initializeColors();
-
     updateTerminalSize();
 
-    clear();
+    erase();
     refresh();
 }
-
-// -----------------------------------------------------------------------------
-// Shutdown
-// -----------------------------------------------------------------------------
 
 void AsciiRenderer::shutdown()
 {
     endwin();
 }
 
-// -----------------------------------------------------------------------------
-// Terminal size
-// -----------------------------------------------------------------------------
-
 void AsciiRenderer::updateTerminalSize()
 {
-    getmaxyx(stdscr, terminalHeight_, terminalWidth_);
+    getmaxyx(
+        stdscr,
+        terminalHeight_,
+        terminalWidth_
+    );
 }
-
-// -----------------------------------------------------------------------------
-// Colors
-// -----------------------------------------------------------------------------
 
 void AsciiRenderer::initializeColors()
 {
@@ -86,13 +66,8 @@ void AsciiRenderer::initializeColors()
         return;
 
     /*
-     * Basic colors for ASCII color mode.
-     *
-     * Pair 1..8:
-     * black, red, green, yellow,
-     * blue, magenta, cyan, white
+     * Basic ANSI colors.
      */
-
     for (int color = 0; color < 8; ++color)
     {
         init_pair(
@@ -103,23 +78,19 @@ void AsciiRenderer::initializeColors()
     }
 
     /*
-     * Grayscale pairs.
+     * Grayscale background colors.
      *
-     * xterm 256 grayscale:
-     *
-     * 232 = almost black
-     * ...
-     * 255 = white
-     *
-     * We use pairs 10..33.
+     * Important:
+     * rectangles are drawn using a space character,
+     * therefore the grayscale color must be the
+     * BACKGROUND color, not the foreground color.
      */
-
     if (COLORS >= 256 && COLOR_PAIRS >= 34)
     {
         for (int i = 0; i < 24; ++i)
         {
-            int pair = 10 + i;
-            int color = 232 + i;
+            const int pair = 10 + i;
+            const int color = 232 + i;
 
             init_pair(
                 pair,
@@ -129,10 +100,6 @@ void AsciiRenderer::initializeColors()
         }
     }
 }
-
-// -----------------------------------------------------------------------------
-// Input
-// -----------------------------------------------------------------------------
 
 void AsciiRenderer::pollInput()
 {
@@ -186,26 +153,10 @@ void AsciiRenderer::handleInput()
                 speedReset_ = true;
                 break;
 
-            /*
-             * C:
-             *
-             * GRAY  <-> COLOR
-             *
-             * This NEVER changes rectangleMode_.
-             */
-
             case 'c':
             case 'C':
                 colorMode_ = !colorMode_;
                 break;
-
-            /*
-             * M:
-             *
-             * ASCII <-> RECTANGLES
-             *
-             * This NEVER changes colorMode_.
-             */
 
             case 'm':
             case 'M':
@@ -218,10 +169,6 @@ void AsciiRenderer::handleInput()
     }
 }
 
-// -----------------------------------------------------------------------------
-// State getters / consumers
-// -----------------------------------------------------------------------------
-
 bool AsciiRenderer::shouldQuit() const
 {
     return quit_;
@@ -231,6 +178,7 @@ bool AsciiRenderer::consumePauseToggle()
 {
     bool value = pauseToggle_;
     pauseToggle_ = false;
+
     return value;
 }
 
@@ -238,6 +186,7 @@ bool AsciiRenderer::consumeSeekBackward()
 {
     bool value = seekBackward_;
     seekBackward_ = false;
+
     return value;
 }
 
@@ -245,6 +194,7 @@ bool AsciiRenderer::consumeSeekForward()
 {
     bool value = seekForward_;
     seekForward_ = false;
+
     return value;
 }
 
@@ -252,6 +202,7 @@ bool AsciiRenderer::consumeLongSeekBackward()
 {
     bool value = longSeekBackward_;
     longSeekBackward_ = false;
+
     return value;
 }
 
@@ -259,6 +210,7 @@ bool AsciiRenderer::consumeLongSeekForward()
 {
     bool value = longSeekForward_;
     longSeekForward_ = false;
+
     return value;
 }
 
@@ -266,6 +218,7 @@ bool AsciiRenderer::consumeSpeedIncrease()
 {
     bool value = speedIncrease_;
     speedIncrease_ = false;
+
     return value;
 }
 
@@ -273,6 +226,7 @@ bool AsciiRenderer::consumeSpeedDecrease()
 {
     bool value = speedDecrease_;
     speedDecrease_ = false;
+
     return value;
 }
 
@@ -280,12 +234,9 @@ bool AsciiRenderer::consumeSpeedReset()
 {
     bool value = speedReset_;
     speedReset_ = false;
+
     return value;
 }
-
-// -----------------------------------------------------------------------------
-// ASCII brightness
-// -----------------------------------------------------------------------------
 
 char AsciiRenderer::pixelToAscii(
     unsigned char r,
@@ -293,27 +244,20 @@ char AsciiRenderer::pixelToAscii(
     unsigned char b
 )
 {
-    /*
-     * Perceived luminance.
-     */
-
     const double gray =
         0.2126 * static_cast<double>(r) +
         0.7152 * static_cast<double>(g) +
         0.0722 * static_cast<double>(b);
 
-    /*
-     * Dark -> bright.
-     */
-
-    static const char* ramp =
-        " .:-=+*#%@";
+    static const char* ramp = " .:-=+*#%@";
 
     constexpr int rampSize = 10;
 
     int index =
         static_cast<int>(
-            gray * (rampSize - 1) / 255.0
+            gray *
+            (rampSize - 1) /
+            255.0
         );
 
     index = std::clamp(
@@ -325,28 +269,16 @@ char AsciiRenderer::pixelToAscii(
     return ramp[index];
 }
 
-// -----------------------------------------------------------------------------
-// Basic ncurses color
-// -----------------------------------------------------------------------------
-
 int AsciiRenderer::pixelToColor(
     unsigned char r,
     unsigned char g,
     unsigned char b
 )
 {
-    /*
-     * Convert RGB to luminance.
-     */
-
     const double gray =
         0.2126 * static_cast<double>(r) +
         0.7152 * static_cast<double>(g) +
         0.0722 * static_cast<double>(b);
-
-    /*
-     * Very simple dominant-color classification.
-     */
 
     if (gray < 35.0)
         return COLOR_BLACK;
@@ -372,16 +304,8 @@ int AsciiRenderer::pixelToColor(
     if (gray > 180)
         return COLOR_WHITE;
 
-    /*
-     * For neutral colors choose white.
-     */
-
     return COLOR_WHITE;
 }
-
-// -----------------------------------------------------------------------------
-// RGB -> xterm 256
-// -----------------------------------------------------------------------------
 
 static int rgbToXterm256(
     unsigned char r,
@@ -389,17 +313,8 @@ static int rgbToXterm256(
     unsigned char b
 )
 {
-    /*
-     * xterm 256:
-     *
-     * 0..15   = standard colors
-     * 16..231 = 6x6x6 RGB cube
-     * 232..255 = grayscale
-     *
-     * We use the RGB cube.
-     */
-
-    auto componentToCube = [](unsigned char value) -> int
+    auto componentToCube =
+        [](unsigned char value) -> int
     {
         if (value < 48)
             return 0;
@@ -409,21 +324,38 @@ static int rgbToXterm256(
 
         return static_cast<int>(
             std::round(
-                (static_cast<double>(value) - 55.0) / 40.0
+                (static_cast<double>(value) - 55.0) /
+                40.0
             )
         );
     };
 
-    int rr = std::clamp(componentToCube(r), 0, 5);
-    int gg = std::clamp(componentToCube(g), 0, 5);
-    int bb = std::clamp(componentToCube(b), 0, 5);
+    const int rr =
+        std::clamp(
+            componentToCube(r),
+            0,
+            5
+        );
 
-    return 16 + (36 * rr) + (6 * gg) + bb;
+    const int gg =
+        std::clamp(
+            componentToCube(g),
+            0,
+            5
+        );
+
+    const int bb =
+        std::clamp(
+            componentToCube(b),
+            0,
+            5
+        );
+
+    return 16 +
+           (36 * rr) +
+           (6 * gg) +
+           bb;
 }
-
-// -----------------------------------------------------------------------------
-// Main render
-// -----------------------------------------------------------------------------
 
 void AsciiRenderer::render(
     const AVFrame* frame,
@@ -440,37 +372,56 @@ void AsciiRenderer::render(
 
     updateTerminalSize();
 
-    /*
-     * Leave:
-     *
-     * line 0 = help
-     * last 2 lines = progress/status
-     *
-     * Video occupies the middle.
-     */
-
-    int availableHeight =
+    const int availableHeight =
         terminalHeight_ - 3;
 
-    if (availableHeight <= 0 || terminalWidth_ <= 0)
+    if (availableHeight <= 0 ||
+        terminalWidth_ <= 0)
+    {
         return;
-
-    clear();
+    }
 
     /*
-     * Display current mode.
+     * IMPORTANT:
+     *
+     * Do NOT call clear() or erase() here.
+     *
+     * Clearing the entire ncurses window before
+     * drawing every frame causes a visible black
+     * flash when the terminal is refreshed.
+     *
+     * Instead, we clear only the video area.
      */
 
+    for (int y = 1;
+         y < terminalHeight_ - 2;
+         ++y)
+    {
+        move(y, 0);
+        clrtoeol();
+    }
+
+    /*
+     * Help line.
+     */
     const char* mode;
 
     if (!rectangleMode_ && !colorMode_)
+    {
         mode = "ASCII GRAY";
+    }
     else if (!rectangleMode_ && colorMode_)
+    {
         mode = "ASCII COLOR";
+    }
     else if (rectangleMode_ && !colorMode_)
+    {
         mode = "RECT GRAY";
+    }
     else
+    {
         mode = "RECT COLOR";
+    }
 
     std::string help =
         std::string(mode) +
@@ -483,21 +434,19 @@ void AsciiRenderer::render(
         "M: mode  "
         "Q: quit";
 
+    move(0, 0);
+    clrtoeol();
+
     mvaddnstr(
         0,
         0,
         help.c_str(),
-        terminalWidth_ - 1
+        std::max(0, terminalWidth_ - 1)
     );
 
     /*
-     * Select renderer.
-     *
-     * IMPORTANT:
-     *
-     * rectangleMode_ and colorMode_ are independent.
+     * Render video.
      */
-
     if (rectangleMode_)
     {
         renderRectangles(
@@ -515,6 +464,9 @@ void AsciiRenderer::render(
         );
     }
 
+    /*
+     * Progress bar and status.
+     */
     renderProgressBar(
         currentTime,
         duration,
@@ -522,12 +474,11 @@ void AsciiRenderer::render(
         paused
     );
 
+    /*
+     * One single refresh for the whole frame.
+     */
     refresh();
 }
-
-// -----------------------------------------------------------------------------
-// ASCII renderer
-// -----------------------------------------------------------------------------
 
 void AsciiRenderer::renderAscii(
     const AVFrame* frame,
@@ -545,11 +496,11 @@ void AsciiRenderer::renderAscii(
         return;
 
     /*
-     * Character cells are physically taller than they are wide.
+     * Approximate aspect ratio of a terminal character cell.
      *
-     * cellAspect = width / height
+     * A terminal character is normally taller than it
+     * is wide, so we compensate horizontally.
      */
-
     constexpr double cellAspect = 0.55;
 
     const double sourceAspect =
@@ -557,7 +508,10 @@ void AsciiRenderer::renderAscii(
         static_cast<double>(sourceHeight);
 
     const double terminalAspect =
-        (static_cast<double>(terminalWidth_) * cellAspect) /
+        (
+            static_cast<double>(terminalWidth_) *
+            cellAspect
+        ) /
         static_cast<double>(availableHeight);
 
     int renderWidth;
@@ -569,7 +523,10 @@ void AsciiRenderer::renderAscii(
 
         renderHeight =
             static_cast<int>(
-                (static_cast<double>(renderWidth) * cellAspect) /
+                (
+                    static_cast<double>(renderWidth) *
+                    cellAspect
+                ) /
                 sourceAspect
             );
     }
@@ -579,7 +536,10 @@ void AsciiRenderer::renderAscii(
 
         renderWidth =
             static_cast<int>(
-                (static_cast<double>(renderHeight) * sourceAspect) /
+                (
+                    static_cast<double>(renderHeight) *
+                    sourceAspect
+                ) /
                 cellAspect
             );
     }
@@ -598,10 +558,6 @@ void AsciiRenderer::renderAscii(
             availableHeight
         );
 
-    /*
-     * Center the image.
-     */
-
     const int offsetX =
         (terminalWidth_ - renderWidth) / 2;
 
@@ -609,12 +565,17 @@ void AsciiRenderer::renderAscii(
         1 +
         (availableHeight - renderHeight) / 2;
 
-    const int bytesPerPixel = 3;
+    constexpr int bytesPerPixel = 3;
 
-    for (int y = 0; y < renderHeight; ++y)
+    for (int y = 0;
+         y < renderHeight;
+         ++y)
     {
         const double sourceY =
-            (static_cast<double>(y) + 0.5) *
+            (
+                static_cast<double>(y) +
+                0.5
+            ) *
             static_cast<double>(sourceHeight) /
             static_cast<double>(renderHeight);
 
@@ -629,10 +590,15 @@ void AsciiRenderer::renderAscii(
             frame->data[0] +
             sy * frame->linesize[0];
 
-        for (int x = 0; x < renderWidth; ++x)
+        for (int x = 0;
+             x < renderWidth;
+             ++x)
         {
             const double sourceX =
-                (static_cast<double>(x) + 0.5) *
+                (
+                    static_cast<double>(x) +
+                    0.5
+                ) *
                 static_cast<double>(sourceWidth) /
                 static_cast<double>(renderWidth);
 
@@ -644,29 +610,22 @@ void AsciiRenderer::renderAscii(
                 );
 
             const uint8_t* pixel =
-                row + sx * bytesPerPixel;
+                row +
+                sx * bytesPerPixel;
 
             const unsigned char r = pixel[0];
             const unsigned char g = pixel[1];
             const unsigned char b = pixel[2];
 
             const char character =
-                pixelToAscii(
-                    r,
-                    g,
-                    b
-                );
+                pixelToAscii(r, g, b);
 
             if (colorMode_ && has_colors())
             {
-                int color =
-                    pixelToColor(
-                        r,
-                        g,
-                        b
-                    );
+                const int color =
+                    pixelToColor(r, g, b);
 
-                int pair =
+                const int pair =
                     color + 1;
 
                 attron(COLOR_PAIR(pair));
@@ -691,10 +650,6 @@ void AsciiRenderer::renderAscii(
     }
 }
 
-// -----------------------------------------------------------------------------
-// Rectangle renderer
-// -----------------------------------------------------------------------------
-
 void AsciiRenderer::renderRectangles(
     const AVFrame* frame,
     int sourceWidth,
@@ -710,14 +665,6 @@ void AsciiRenderer::renderRectangles(
     if (availableHeight <= 0)
         return;
 
-    /*
-     * Physical terminal cell aspect ratio.
-     *
-     * Width / height.
-     *
-     * Increasing this value makes the image physically wider.
-     */
-
     constexpr double cellAspect = 0.55;
 
     const double sourceAspect =
@@ -725,7 +672,10 @@ void AsciiRenderer::renderRectangles(
         static_cast<double>(sourceHeight);
 
     const double terminalAspect =
-        (static_cast<double>(terminalWidth_) * cellAspect) /
+        (
+            static_cast<double>(terminalWidth_) *
+            cellAspect
+        ) /
         static_cast<double>(availableHeight);
 
     int renderWidth;
@@ -737,7 +687,10 @@ void AsciiRenderer::renderRectangles(
 
         renderHeight =
             static_cast<int>(
-                (static_cast<double>(renderWidth) * cellAspect) /
+                (
+                    static_cast<double>(renderWidth) *
+                    cellAspect
+                ) /
                 sourceAspect
             );
     }
@@ -747,7 +700,10 @@ void AsciiRenderer::renderRectangles(
 
         renderWidth =
             static_cast<int>(
-                (static_cast<double>(renderHeight) * sourceAspect) /
+                (
+                    static_cast<double>(renderHeight) *
+                    sourceAspect
+                ) /
                 cellAspect
             );
     }
@@ -766,10 +722,6 @@ void AsciiRenderer::renderRectangles(
             availableHeight
         );
 
-    /*
-     * Center image.
-     */
-
     const int offsetX =
         (terminalWidth_ - renderWidth) / 2;
 
@@ -777,14 +729,9 @@ void AsciiRenderer::renderRectangles(
         1 +
         (availableHeight - renderHeight) / 2;
 
-    /*
-     * Each terminal cell represents a rectangular area
-     * of the source image.
-     *
-     * We calculate the average RGB value of that area.
-     */
-
-    for (int y = 0; y < renderHeight; ++y)
+    for (int y = 0;
+         y < renderHeight;
+         ++y)
     {
         const int sy0 =
             static_cast<int>(
@@ -803,7 +750,9 @@ void AsciiRenderer::renderRectangles(
                 )
             );
 
-        for (int x = 0; x < renderWidth; ++x)
+        for (int x = 0;
+             x < renderWidth;
+             ++x)
         {
             const int sx0 =
                 static_cast<int>(
@@ -825,11 +774,11 @@ void AsciiRenderer::renderRectangles(
             long long totalR = 0;
             long long totalG = 0;
             long long totalB = 0;
-
             long long count = 0;
 
             for (int sy = sy0;
-                 sy < sy1 && sy < sourceHeight;
+                 sy < sy1 &&
+                 sy < sourceHeight;
                  ++sy)
             {
                 const uint8_t* row =
@@ -837,11 +786,13 @@ void AsciiRenderer::renderRectangles(
                     sy * frame->linesize[0];
 
                 for (int sx = sx0;
-                     sx < sx1 && sx < sourceWidth;
+                     sx < sx1 &&
+                     sx < sourceWidth;
                      ++sx)
                 {
                     const uint8_t* pixel =
-                        row + sx * 3;
+                        row +
+                        sx * 3;
 
                     totalR += pixel[0];
                     totalG += pixel[1];
@@ -870,11 +821,11 @@ void AsciiRenderer::renderRectangles(
                 );
 
             /*
-             * -------------------------------------------------------------
              * COLOR RECTANGLES
-             * -------------------------------------------------------------
+             *
+             * A space character is used, so the same
+             * color is used for foreground and background.
              */
-
             if (colorMode_ &&
                 has_colors() &&
                 COLORS >= 256 &&
@@ -886,15 +837,6 @@ void AsciiRenderer::renderRectangles(
                         g,
                         b
                     );
-
-                /*
-                 * Allocate/reuse a manageable range of pairs.
-                 *
-                 * We cannot assume that COLOR_PAIRS provides one pair
-                 * for every xterm color.
-                 *
-                 * Use a deterministic reduced palette.
-                 */
 
                 constexpr int firstPair = 40;
                 constexpr int pairCount = 200;
@@ -911,19 +853,14 @@ void AsciiRenderer::renderRectangles(
                     {
                         pair =
                             1 +
-                            (color %
-                             std::max(
-                                 1,
-                                 COLOR_PAIRS - 1
-                             ));
+                            (
+                                color %
+                                std::max(
+                                    1,
+                                    COLOR_PAIRS - 1
+                                )
+                            );
                     }
-
-                    /*
-                     * Reinitialize the pair with the current color.
-                     *
-                     * This is an approximation because classic ncurses
-                     * does not provide unlimited RGB pairs.
-                     */
 
                     init_pair(
                         pair,
@@ -943,21 +880,19 @@ void AsciiRenderer::renderRectangles(
                 }
                 else
                 {
-                    /*
-                     * Fallback if too few color pairs exist.
-                     */
-
-                    int basicColor =
+                    const int basicColor =
                         pixelToColor(
                             r,
                             g,
                             b
                         );
 
-                    int basicPair =
+                    const int basicPair =
                         basicColor + 1;
 
-                    attron(COLOR_PAIR(basicPair));
+                    attron(
+                        COLOR_PAIR(basicPair)
+                    );
 
                     mvaddch(
                         offsetY + y,
@@ -965,25 +900,31 @@ void AsciiRenderer::renderRectangles(
                         ' '
                     );
 
-                    attroff(COLOR_PAIR(basicPair));
+                    attroff(
+                        COLOR_PAIR(basicPair)
+                    );
                 }
             }
 
             /*
-             * -------------------------------------------------------------
-             * GRAY RECTANGLES
-             * -------------------------------------------------------------
+             * GRAYSCALE RECTANGLES
+             *
+             * Use the xterm grayscale palette as the
+             * BACKGROUND because the rendered character
+             * itself is a space.
              */
-
             else if (!colorMode_ &&
                      has_colors() &&
                      COLORS >= 256 &&
                      COLOR_PAIRS >= 34)
             {
                 const double gray =
-                    0.2126 * static_cast<double>(r) +
-                    0.7152 * static_cast<double>(g) +
-                    0.0722 * static_cast<double>(b);
+                    0.2126 *
+                        static_cast<double>(r) +
+                    0.7152 *
+                        static_cast<double>(g) +
+                    0.0722 *
+                        static_cast<double>(b);
 
                 int grayIndex =
                     static_cast<int>(
@@ -1016,11 +957,8 @@ void AsciiRenderer::renderRectangles(
             }
 
             /*
-             * -------------------------------------------------------------
              * FALLBACK
-             * -------------------------------------------------------------
              */
-
             else
             {
                 const char character =
@@ -1043,7 +981,9 @@ void AsciiRenderer::renderRectangles(
                     const int pair =
                         color + 1;
 
-                    attron(COLOR_PAIR(pair));
+                    attron(
+                        COLOR_PAIR(pair)
+                    );
 
                     mvaddch(
                         offsetY + y,
@@ -1051,7 +991,9 @@ void AsciiRenderer::renderRectangles(
                         character
                     );
 
-                    attroff(COLOR_PAIR(pair));
+                    attroff(
+                        COLOR_PAIR(pair)
+                    );
                 }
                 else
                 {
@@ -1066,10 +1008,6 @@ void AsciiRenderer::renderRectangles(
     }
 }
 
-// -----------------------------------------------------------------------------
-// Progress bar
-// -----------------------------------------------------------------------------
-
 void AsciiRenderer::renderProgressBar(
     double currentTime,
     double duration,
@@ -1080,12 +1018,8 @@ void AsciiRenderer::renderProgressBar(
     if (terminalHeight_ < 3)
         return;
 
-    const int y =
+    const int barY =
         terminalHeight_ - 2;
-
-    /*
-     * Progress bar width.
-     */
 
     const int barWidth =
         std::max(
@@ -1098,8 +1032,7 @@ void AsciiRenderer::renderProgressBar(
     if (duration > 0.0)
     {
         progress =
-            currentTime /
-            duration;
+            currentTime / duration;
 
         progress =
             std::clamp(
@@ -1115,19 +1048,17 @@ void AsciiRenderer::renderProgressBar(
             static_cast<double>(barWidth)
         );
 
-    move(y, 0);
+    move(barY, 0);
 
-    for (int i = 0; i < barWidth; ++i)
+    for (int i = 0;
+         i < barWidth;
+         ++i)
     {
         if (i < filled)
             addch('=');
         else
             addch('-');
     }
-
-    /*
-     * Status line.
-     */
 
     const std::string current =
         formatTime(currentTime);
@@ -1164,31 +1095,27 @@ void AsciiRenderer::renderProgressBar(
         terminalHeight_ - 1,
         0,
         text.c_str(),
-        terminalWidth_ - 1
+        std::max(0, terminalWidth_ - 1)
     );
 }
 
-// -----------------------------------------------------------------------------
-// Time formatting
-// -----------------------------------------------------------------------------
-
-std::string AsciiRenderer::formatTime(double seconds)
+std::string AsciiRenderer::formatTime(
+    double seconds
+)
 {
     if (seconds < 0.0)
         seconds = 0.0;
 
-    int totalSeconds =
-        static_cast<int>(
-            seconds
-        );
+    const int totalSeconds =
+        static_cast<int>(seconds);
 
-    int hours =
+    const int hours =
         totalSeconds / 3600;
 
-    int minutes =
+    const int minutes =
         (totalSeconds % 3600) / 60;
 
-    int secs =
+    const int secs =
         totalSeconds % 60;
 
     std::ostringstream stream;
