@@ -1,0 +1,23 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build binary.
+    cmds:
+      - cmake -S . -B build
+      - cmake --build build -j
+
+  run:
+    desc: Run binary.
+    cmds:
+      - ./build/mario_nes
+
+  debug:
+    desc: Debug application.
+    cmds:
+      - lldb -o run ./build/mario_nes 
+
+  clean:
+    desc: Clean.
+    cmds:
+      - rm -Rf build/
