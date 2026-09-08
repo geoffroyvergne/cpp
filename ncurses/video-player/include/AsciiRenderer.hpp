@@ -25,14 +25,15 @@ public:
         bool paused
     );
 
-    // Read and process keyboard input.
     void pollInput();
 
     bool shouldQuit() const;
 
     bool consumePauseToggle();
+
     bool consumeSeekBackward();
     bool consumeSeekForward();
+
     bool consumeLongSeekBackward();
     bool consumeLongSeekForward();
 
@@ -42,8 +43,23 @@ public:
 
 private:
 
+    // -------------------------------------------------------------------------
+    // Rendering state
+    // -------------------------------------------------------------------------
+
     bool quit_;
+
+    // false = grayscale
+    // true  = color
     bool colorMode_;
+
+    // false = ASCII
+    // true  = rectangles
+    bool rectangleMode_;
+
+    // -------------------------------------------------------------------------
+    // Input state
+    // -------------------------------------------------------------------------
 
     bool pauseToggle_;
 
@@ -57,13 +73,26 @@ private:
     bool speedDecrease_;
     bool speedReset_;
 
+    // -------------------------------------------------------------------------
+    // Terminal
+    // -------------------------------------------------------------------------
+
     int terminalWidth_;
     int terminalHeight_;
 
+    // -------------------------------------------------------------------------
+    // Terminal management
+    // -------------------------------------------------------------------------
+
     void updateTerminalSize();
+
     void initializeColors();
 
     void handleInput();
+
+    // -------------------------------------------------------------------------
+    // Pixel conversion
+    // -------------------------------------------------------------------------
 
     char pixelToAscii(
         unsigned char r,
@@ -76,6 +105,26 @@ private:
         unsigned char g,
         unsigned char b
     );
+
+    // -------------------------------------------------------------------------
+    // Rendering modes
+    // -------------------------------------------------------------------------
+
+    void renderAscii(
+        const AVFrame* frame,
+        int sourceWidth,
+        int sourceHeight
+    );
+
+    void renderRectangles(
+        const AVFrame* frame,
+        int sourceWidth,
+        int sourceHeight
+    );
+
+    // -------------------------------------------------------------------------
+    // UI
+    // -------------------------------------------------------------------------
 
     void renderProgressBar(
         double currentTime,
