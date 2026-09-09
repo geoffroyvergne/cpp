@@ -15,31 +15,30 @@ constexpr char GROUND = '#';
 constexpr char BRICK = 'B';
 constexpr char QUESTION = '?';
 
-} // namespace
+}
 
 bool TileMap::initialize(
-    const std::string& levelPath)
+    const Level& level)
 {
-    Level level;
-
-    if (!level.loadFromFile(levelPath))
-    {
-        return false;
-    }
-
     m_width =
         level.width();
 
     m_height =
         level.height();
 
+    if (m_width <= 0 ||
+        m_height <= 0)
+    {
+        std::cerr
+            << "Invalid level dimensions."
+            << '\n';
+
+        return false;
+    }
+
     m_tiles.assign(
         m_width * m_height,
         TileType::Empty);
-
-    // ---------------------------------------------------------
-    // Convert the ASCII level into TileType values.
-    // ---------------------------------------------------------
 
     for (int y = 0;
          y < m_height;
@@ -49,13 +48,10 @@ bool TileMap::initialize(
              x < m_width;
              ++x)
         {
-            const char character =
-                level.getTile(x, y);
-
             m_tiles[
                 y * m_width + x] =
                 tileFromCharacter(
-                    character);
+                    level.getTile(x, y));
         }
     }
 
@@ -74,7 +70,9 @@ TileMap::TileType TileMap::getTile(
     int tileX,
     int tileY) const
 {
-    if (!isInside(tileX, tileY))
+    if (!isInside(
+            tileX,
+            tileY))
     {
         return TileType::Empty;
     }
@@ -88,7 +86,9 @@ void TileMap::setTile(
     int tileY,
     TileType type)
 {
-    if (!isInside(tileX, tileY))
+    if (!isInside(
+            tileX,
+            tileY))
     {
         return;
     }
@@ -102,10 +102,9 @@ bool TileMap::isSolid(
     int tileX,
     int tileY) const
 {
-    const TileType tile =
-        getTile(tileX, tileY);
-
-    switch (tile)
+    switch (getTile(
+        tileX,
+        tileY))
     {
     case TileType::Ground:
     case TileType::Brick:
@@ -128,7 +127,8 @@ bool TileMap::isInside(
            tileY < m_height;
 }
 
-TileMap::TileType TileMap::tileFromCharacter(
+TileMap::TileType
+TileMap::tileFromCharacter(
     char character) const
 {
     switch (character)
@@ -157,10 +157,6 @@ void TileMap::render(
     {
         return;
     }
-
-    // ---------------------------------------------------------
-    // Determine visible tile range.
-    // ---------------------------------------------------------
 
     const int firstTileX =
         std::max(
@@ -191,10 +187,6 @@ void TileMap::render(
                 (camera.y() +
                  Camera::VIEW_HEIGHT) /
                 TILE_SIZE));
-
-    // ---------------------------------------------------------
-    // Render visible tiles only.
-    // ---------------------------------------------------------
 
     for (int y = firstTileY;
          y <= lastTileY;
@@ -230,10 +222,6 @@ void TileMap::render(
 
             switch (tile)
             {
-            // -------------------------------------------------
-            // Ground
-            // -------------------------------------------------
-
             case TileType::Ground:
             {
                 renderer.drawRect(
@@ -274,10 +262,6 @@ void TileMap::render(
 
                 break;
             }
-
-            // -------------------------------------------------
-            // Brick
-            // -------------------------------------------------
 
             case TileType::Brick:
             {
@@ -329,10 +313,6 @@ void TileMap::render(
                 break;
             }
 
-            // -------------------------------------------------
-            // Question block
-            // -------------------------------------------------
-
             case TileType::QuestionBlock:
             {
                 renderer.drawRect(
@@ -380,7 +360,6 @@ void TileMap::render(
                     90,
                     20);
 
-                // Question mark
                 renderer.drawRect(
                     screenX + 6,
                     screenY + 4,

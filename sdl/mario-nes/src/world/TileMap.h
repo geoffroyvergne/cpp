@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cstdint>
-#include <string>
 #include <vector>
 
 class Camera;
+class Level;
 class Renderer;
 
 class TileMap
@@ -23,7 +23,7 @@ public:
     TileMap() = default;
 
     bool initialize(
-        const std::string& levelPath);
+        const Level& level);
 
     void render(
         Renderer& renderer,

@@ -26,6 +26,8 @@ public:
         Renderer& renderer,
         const Camera& camera) const;
 
+    void bounce();
+
     float x() const
     {
         return m_x;
@@ -78,26 +80,10 @@ private:
     bool m_grounded{false};
     bool m_facingRight{true};
 
-    // ---------------------------------------------------------
-    // Horizontal movement
-    // ---------------------------------------------------------
+    static constexpr float MOVE_ACCELERATION = 600.0f;
+    static constexpr float MOVE_DECELERATION = 800.0f;
+    static constexpr float MAX_HORIZONTAL_SPEED = 90.0f;
 
-    static constexpr float MOVE_ACCELERATION =
-        600.0f;
-
-    static constexpr float MOVE_DECELERATION =
-        800.0f;
-
-    static constexpr float MAX_HORIZONTAL_SPEED =
-        90.0f;
-
-    // ---------------------------------------------------------
-    // Vertical movement
-    // ---------------------------------------------------------
-
-    static constexpr float GRAVITY =
-        700.0f;
-
-    static constexpr float JUMP_VELOCITY =
-        -245.0f;
+    static constexpr float GRAVITY = 700.0f;
+    static constexpr float JUMP_VELOCITY = -245.0f;
 };

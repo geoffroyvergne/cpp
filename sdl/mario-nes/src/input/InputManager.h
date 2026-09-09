@@ -2,24 +2,58 @@
 
 #include <SDL.h>
 
-#include <array>
-#include <cstdint>
-
 class InputManager
 {
 public:
+    InputManager() = default;
+
     void update();
 
-    bool quitRequested() const { return m_quitRequested; }
+    bool quitRequested() const;
 
-    bool isKeyDown(SDL_Scancode key) const;
-    bool isKeyPressed(SDL_Scancode key) const;
-    bool isKeyReleased(SDL_Scancode key) const;
+    // -------------------------------------------------
+    // Generic keyboard state
+    // -------------------------------------------------
+
+    bool down(SDL_Scancode key) const;
+
+    bool pressed(SDL_Scancode key) const;
+
+    bool released(SDL_Scancode key) const;
+
+    // -------------------------------------------------
+    // Game controls
+    // -------------------------------------------------
+
+    bool left() const
+    {
+        return m_left;
+    }
+
+    bool right() const
+    {
+        return m_right;
+    }
+
+    bool jump() const
+    {
+        return m_jump;
+    }
 
 private:
-    static constexpr std::size_t KEY_COUNT = SDL_NUM_SCANCODES;
+    static constexpr int KEY_COUNT =
+        SDL_NUM_SCANCODES;
 
-    std::array<bool, KEY_COUNT> m_previousKeys{};
-    std::array<bool, KEY_COUNT> m_currentKeys{};
     bool m_quitRequested{false};
+
+    // Current keyboard state.
+    Uint8 m_currentKeys[KEY_COUNT]{};
+
+    // Keyboard state from the previous frame.
+    Uint8 m_previousKeys[KEY_COUNT]{};
+
+    // Convenient game-specific states.
+    bool m_left{false};
+    bool m_right{false};
+    bool m_jump{false};
 };

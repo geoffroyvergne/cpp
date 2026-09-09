@@ -1,10 +1,13 @@
 #include "Game.h"
 
+#include "entities/Goomba.h"
+#include "physics/Collision.h"
+
 #include <SDL.h>
 
-#include <chrono>
 #include <iostream>
-#include <stdexcept>
+#include <memory>
+#include <string>
 
 Game::~Game()
 {
@@ -36,34 +39,74 @@ bool Game::initialize()
         return false;
     }
 
-    /*
-     * Initialize the world.
-     */
-    //m_tileMap.initialize();
-    if (!m_tileMap.initialize(
-        "assets/levels/world1-1.txt"))
+    if (!initializeLevel())
     {
+        m_renderer.shutdown();
         SDL_Quit();
         return false;
     }
 
-    /*
-     * Mario starts in WORLD coordinates.
-     */
-    m_player.initialize(
-        40.0f,
-        192.0f);
+    m_initialized = true;
+    m_running = true;
 
-    /*
-     * Camera starts at the beginning
-     * of the world.
-     */
+    return true;
+}
+
+bool Game::initializeLevel()
+{
+    const std::string levelPath =
+        "assets/levels/world1-1.txt";
+
+    if (!m_level.loadFromFile(levelPath))
+    {
+        return false;
+    }
+
+    if (!m_tileMap.initialize(m_level))
+    {
+        return false;
+    }
+
+    if (m_level.hasPlayerSpawn())
+    {
+        m_player.initialize(
+            m_level.playerSpawnX(),
+            m_level.playerSpawnY());
+    }
+    else
+    {
+        std::cerr
+            << "Warning: using fallback player spawn."
+            << '\n';
+
+        m_player.initialize(
+            40.0f,
+            192.0f);
+    }
+
+    m_entities.clear();
+
+    for (const Level::GoombaSpawn& spawn :
+         m_level.goombaSpawns())
+    {
+        auto goomba =
+            std::make_unique<Goomba>(
+                spawn.x,
+                spawn.y);
+
+        m_entities.push_back(
+            std::move(goomba));
+    }
+
     m_camera.initialize(
         0.0f,
         0.0f);
 
-    m_initialized = true;
-    m_running = true;
+    m_camera.update(
+        m_player.x(),
+        m_player.y(),
+        m_tileMap.worldWidth(),
+        m_tileMap.worldHeight());
 
     return true;
 }
@@ -72,40 +115,194 @@ void Game::run()
 {
     if (!m_initialized)
     {
-        throw std::runtime_error(
-            "Game::run() called before initialize()");
+        std::cerr
+            << "Warning: Game::run() called "
+               "before Game::initialize()."
+            << '\n';
+
+        return;
     }
 
-    using Clock =
-        std::chrono::steady_clock;
+    Uint64 previousCounter =
+        SDL_GetPerformanceCounter();
 
-    auto previousTime =
-        Clock::now();
+    const double frequency =
+        static_cast<double>(
+            SDL_GetPerformanceFrequency());
 
     while (m_running)
     {
-        const auto currentTime =
-            Clock::now();
+        const Uint64 currentCounter =
+            SDL_GetPerformanceCounter();
 
-        const std::chrono::duration<float>
-            elapsed =
-                currentTime -
-                previousTime;
+        const double deltaSeconds =
+            static_cast<double>(
+                currentCounter -
+                previousCounter) /
+            frequency;
 
-        previousTime =
-            currentTime;
+        previousCounter =
+            currentCounter;
 
         const float deltaTime =
-            (elapsed.count() < 0.25f)
-                ? elapsed.count()
-                : 0.25f;
+            static_cast<float>(
+                deltaSeconds);
 
-        processInput();
+        m_input.update();
+
+        if (m_input.quitRequested())
+        {
+            m_running = false;
+            break;
+        }
 
         update(deltaTime);
 
         render();
     }
+}
+
+void Game::update(
+    float deltaTime)
+{
+    m_player.update(
+        deltaTime,
+        m_input,
+        m_tileMap);
+
+    for (const std::unique_ptr<Entity>& entity :
+         m_entities)
+    {
+        if (!entity)
+        {
+            continue;
+        }
+
+        entity->update(
+            deltaTime,
+            m_tileMap);
+    }
+
+    updateEntityCollisions();
+
+    m_camera.update(
+        m_player.x(),
+        m_player.y(),
+        m_tileMap.worldWidth(),
+        m_tileMap.worldHeight());
+}
+
+void Game::updateEntityCollisions()
+{
+    const AABB playerBox =
+        Collision::makeAABB(
+            m_player.x(),
+            m_player.y(),
+            Player::WIDTH,
+            Player::HEIGHT);
+
+    for (const std::unique_ptr<Entity>& entity :
+         m_entities)
+    {
+        if (!entity ||
+            !entity->isAlive())
+        {
+            continue;
+        }
+
+        Goomba* goomba =
+            dynamic_cast<Goomba*>(
+                entity.get());
+
+        if (goomba == nullptr ||
+            goomba->isSquashed())
+        {
+            continue;
+        }
+
+        const AABB goombaBox =
+            Collision::makeAABB(
+                goomba->x(),
+                goomba->y(),
+                Goomba::WIDTH,
+                Goomba::HEIGHT);
+
+        if (!Collision::overlaps(
+                playerBox,
+                goombaBox))
+        {
+            continue;
+        }
+
+        const float playerBottom =
+            m_player.y() +
+            Player::HEIGHT;
+
+        const float goombaTop =
+            goomba->y();
+
+        const bool falling =
+            m_player.velocityY() > 0.0f;
+
+        const bool landingOnTop =
+            falling &&
+            playerBottom <=
+                goombaTop + 8.0f;
+
+        if (landingOnTop)
+        {
+            goomba->stomp();
+            m_player.bounce();
+            continue;
+        }
+
+        // Side collision:
+        // reset Mario to the level spawn.
+        m_player.initialize(
+            m_level.playerSpawnX(),
+            m_level.playerSpawnY());
+
+        m_camera.initialize(
+            0.0f,
+            0.0f);
+
+        m_camera.update(
+            m_player.x(),
+            m_player.y(),
+            m_tileMap.worldWidth(),
+            m_tileMap.worldHeight());
+
+        break;
+    }
+}
+
+void Game::render()
+{
+    m_renderer.beginFrame();
+
+    m_tileMap.render(
+        m_renderer,
+        m_camera);
+
+    for (const std::unique_ptr<Entity>& entity :
+         m_entities)
+    {
+        if (!entity ||
+            !entity->isAlive())
+        {
+            continue;
+        }
+
+        entity->render(
+            m_renderer,
+            m_camera);
+    }
+
+    m_player.render(
+        m_renderer,
+        m_camera);
+
+    m_renderer.endFrame();
 }
 
 void Game::shutdown()
@@ -115,81 +312,13 @@ void Game::shutdown()
         return;
     }
 
+    m_running = false;
+
+    m_entities.clear();
+
     m_renderer.shutdown();
 
     SDL_Quit();
 
     m_initialized = false;
-    m_running = false;
-}
-
-void Game::processInput()
-{
-    m_input.update();
-
-    if (m_input.quitRequested() ||
-        m_input.isKeyPressed(
-            SDL_SCANCODE_ESCAPE))
-    {
-        m_running = false;
-    }
-}
-
-void Game::update(
-    float deltaTime)
-{
-    /*
-     * Update Mario in WORLD coordinates.
-     */
-    m_player.update(
-        deltaTime,
-        m_input,
-        m_tileMap);
-
-    /*
-     * Then update the camera based
-     * on Mario's WORLD position.
-     */
-    m_camera.update(
-        m_player.x() +
-            Player::WIDTH * 0.5f,
-
-        m_player.y() +
-            Player::HEIGHT * 0.5f,
-
-        m_tileMap.worldWidth(),
-        m_tileMap.worldHeight());
-}
-
-void Game::render()
-{
-    m_renderer.beginFrame();
-
-    /*
-     * Background.
-     */
-    m_renderer.drawRect(
-        0,
-        0,
-        Renderer::VIRTUAL_WIDTH,
-        Renderer::VIRTUAL_HEIGHT,
-        92,
-        148,
-        252);
-
-    /*
-     * World rendered through camera.
-     */
-    m_tileMap.render(
-        m_renderer,
-        m_camera);
-
-    /*
-     * Mario rendered through camera.
-     */
-    m_player.render(
-        m_renderer,
-        m_camera);
-
-    m_renderer.endFrame();
 }

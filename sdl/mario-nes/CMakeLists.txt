@@ -1,36 +1,11 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16)
 
-project(MarioNES
-    VERSION 0.1.0
-    DESCRIPTION "NES-style Mario game prototype"
-    LANGUAGES CXX
-)
+project(mario_nes)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
-if(MSVC)
-    add_compile_options(
-        /W4
-        /permissive-
-    )
-else()
-    add_compile_options(
-        -Wall
-        -Wextra
-        -Wpedantic
-    )
-endif()
-
-find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(
-    SDL2
-    REQUIRED
-    IMPORTED_TARGET
-    sdl2
-)
+find_package(SDL2 REQUIRED)
 
 add_executable(mario_nes
 
@@ -50,30 +25,27 @@ add_executable(mario_nes
     src/player/Player.cpp
 
     src/physics/Collision.cpp
+
+    src/entities/Goomba.cpp
 )
 
-target_include_directories(
-    mario_nes
+target_include_directories(mario_nes
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        src
 )
 
-target_link_libraries(
-    mario_nes
+target_link_libraries(mario_nes
     PRIVATE
-        PkgConfig::SDL2
+        SDL2::SDL2
 )
 
+# Copy assets next to the executable.
 add_custom_command(
     TARGET mario_nes
     POST_BUILD
-
     COMMAND
         ${CMAKE_COMMAND}
-        -E
-        copy_directory
-
-        ${CMAKE_CURRENT_SOURCE_DIR}/assets
-
+        -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
         $<TARGET_FILE_DIR:mario_nes>/assets
 )

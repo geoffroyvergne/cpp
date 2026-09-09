@@ -6,10 +6,7 @@
 #include "physics/Collision.h"
 #include "world/TileMap.h"
 
-#include <SDL.h>
-
 #include <algorithm>
-#include <cmath>
 
 void Player::initialize(
     float x,
@@ -30,11 +27,6 @@ void Player::update(
     const InputManager& input,
     const TileMap& tileMap)
 {
-    deltaTime =
-        std::min(
-            deltaTime,
-            0.05f);
-
     updateHorizontalMovement(
         deltaTime,
         input);
@@ -56,81 +48,32 @@ void Player::updateHorizontalMovement(
     float deltaTime,
     const InputManager& input)
 {
-    const bool left =
-        input.isKeyDown(SDL_SCANCODE_LEFT) ||
-        input.isKeyDown(SDL_SCANCODE_A);
+    const bool movingLeft =
+        input.left();
 
-    const bool right =
-        input.isKeyDown(SDL_SCANCODE_RIGHT) ||
-        input.isKeyDown(SDL_SCANCODE_D);
+    const bool movingRight =
+        input.right();
 
-    const float acceleration =
-        MOVE_ACCELERATION *
-        deltaTime;
-
-    const float deceleration =
-        MOVE_DECELERATION *
-        deltaTime;
-
-    // ---------------------------------------------------------
-    // Move right
-    // ---------------------------------------------------------
-    if (right && !left)
+    if (movingLeft && !movingRight)
     {
-        m_facingRight = true;
+        m_velocityX -=
+            MOVE_ACCELERATION * deltaTime;
 
-        if (m_velocityX < 0.0f)
-        {
-            // Brake existing leftward velocity first.
-            m_velocityX += deceleration;
-
-            if (m_velocityX > 0.0f)
-            {
-                m_velocityX = 0.0f;
-            }
-        }
-        else
-        {
-            // Accelerate to the right.
-            m_velocityX += acceleration;
-        }
-    }
-
-    // ---------------------------------------------------------
-    // Move left
-    // ---------------------------------------------------------
-    else if (left && !right)
-    {
         m_facingRight = false;
-
-        if (m_velocityX > 0.0f)
-        {
-            // Brake existing rightward velocity first.
-            m_velocityX -= deceleration;
-
-            if (m_velocityX < 0.0f)
-            {
-                m_velocityX = 0.0f;
-            }
-        }
-        else
-        {
-            // Accelerate to the left.
-            m_velocityX -= acceleration;
-        }
     }
+    else if (movingRight && !movingLeft)
+    {
+        m_velocityX +=
+            MOVE_ACCELERATION * deltaTime;
 
-    // ---------------------------------------------------------
-    // No horizontal input.
-    //
-    // Mario keeps a small amount of momentum and gradually
-    // comes to a stop.
-    // ---------------------------------------------------------
+        m_facingRight = true;
+    }
     else
     {
         if (m_velocityX > 0.0f)
         {
-            m_velocityX -= deceleration;
+            m_velocityX -=
+                MOVE_DECELERATION * deltaTime;
 
             if (m_velocityX < 0.0f)
             {
@@ -139,7 +82,8 @@ void Player::updateHorizontalMovement(
         }
         else if (m_velocityX < 0.0f)
         {
-            m_velocityX += deceleration;
+            m_velocityX +=
+                MOVE_DECELERATION * deltaTime;
 
             if (m_velocityX > 0.0f)
             {
@@ -159,17 +103,8 @@ void Player::updateVerticalMovement(
     float deltaTime,
     const InputManager& input)
 {
-    const bool jumpPressed =
-        input.isKeyPressed(SDL_SCANCODE_SPACE) ||
-        input.isKeyPressed(SDL_SCANCODE_Z) ||
-        input.isKeyPressed(SDL_SCANCODE_X);
-
-    const bool jumpHeld =
-        input.isKeyDown(SDL_SCANCODE_SPACE) ||
-        input.isKeyDown(SDL_SCANCODE_Z) ||
-        input.isKeyDown(SDL_SCANCODE_X);
-
-    if (jumpPressed && m_grounded)
+    if (input.jump() &&
+        m_grounded)
     {
         m_velocityY =
             JUMP_VELOCITY;
@@ -178,77 +113,33 @@ void Player::updateVerticalMovement(
     }
 
     m_velocityY +=
-        GRAVITY *
-        deltaTime;
-
-    // Short hop when the jump button is released early.
-    if (!jumpHeld &&
-        m_velocityY < -80.0f)
-    {
-        m_velocityY +=
-            GRAVITY *
-            1.5f *
-            deltaTime;
-    }
-
-    m_velocityY =
-        std::min(
-            m_velocityY,
-            300.0f);
+        GRAVITY * deltaTime;
 }
 
 void Player::moveAndCollideX(
     float deltaTime,
     const TileMap& tileMap)
 {
-    if (m_velocityX == 0.0f)
-    {
-        return;
-    }
-
     m_x +=
-        m_velocityX *
-        deltaTime;
+        m_velocityX * deltaTime;
 
-    const bool collided =
-        Collision::resolveHorizontal(
-            m_x,
-            m_y,
-            WIDTH,
-            HEIGHT,
-            m_velocityX,
-            tileMap);
-
-    // ---------------------------------------------------------
-    // World boundaries
-    // ---------------------------------------------------------
-
-    const float worldWidth =
-        tileMap.worldWidth();
-
-    const float minX =
-        0.0f;
+    Collision::resolveHorizontal(
+        m_x,
+        m_y,
+        WIDTH,
+        HEIGHT,
+        m_velocityX,
+        tileMap);
 
     const float maxX =
-        worldWidth - WIDTH;
+        tileMap.worldWidth() -
+        WIDTH;
 
-    if (m_x < minX)
-    {
-        m_x = minX;
-        m_velocityX = 0.0f;
-    }
-
-    if (m_x > maxX)
-    {
-        m_x = maxX;
-        m_velocityX = 0.0f;
-    }
-
-    // Explicitly stop after a collision.
-    if (collided)
-    {
-        m_velocityX = 0.0f;
-    }
+    m_x =
+        std::clamp(
+            m_x,
+            0.0f,
+            std::max(0.0f, maxX));
 }
 
 void Player::moveAndCollideY(
@@ -256,8 +147,7 @@ void Player::moveAndCollideY(
     const TileMap& tileMap)
 {
     m_y +=
-        m_velocityY *
-        deltaTime;
+        m_velocityY * deltaTime;
 
     Collision::resolveVertical(
         m_x,
@@ -269,93 +159,71 @@ void Player::moveAndCollideY(
         tileMap);
 }
 
+void Player::bounce()
+{
+    m_velocityY =
+        JUMP_VELOCITY * 0.65f;
+
+    m_grounded = false;
+}
+
 void Player::render(
     Renderer& renderer,
     const Camera& camera) const
 {
-    const int x =
-        static_cast<int>(
-            std::round(
-                m_x -
-                camera.x()));
+    const float screenX =
+        m_x - camera.x();
 
-    const int y =
-        static_cast<int>(
-            std::round(
-                m_y -
-                camera.y()));
+    const float screenY =
+        m_y - camera.y();
 
-    // Hat
+    // Hat / hair
     renderer.drawRect(
-        x + 2,
-        y,
-        9,
-        3,
-        220,
+        screenX + 2.0f,
+        screenY,
+        8.0f,
+        4.0f,
+        200,
         30,
         30);
 
     // Face
     renderer.drawRect(
-        x + 3,
-        y + 3,
-        7,
-        5,
-        245,
-        180,
-        130);
+        screenX + 3.0f,
+        screenY + 4.0f,
+        7.0f,
+        5.0f,
+        255,
+        190,
+        140);
 
-    // Shirt
+    // Body
     renderer.drawRect(
-        x + 2,
-        y + 8,
-        9,
-        5,
-        220,
+        screenX + 2.0f,
+        screenY + 9.0f,
+        8.0f,
+        5.0f,
+        200,
         30,
         30);
 
-    // Overalls
+    // Left leg
     renderer.drawRect(
-        x + 3,
-        y + 7,
-        7,
-        7,
-        30,
+        screenX + 1.0f,
+        screenY + 14.0f,
+        5.0f,
+        2.0f,
+        40,
         70,
-        190);
+        180);
 
-    // Feet
+    // Right leg
     renderer.drawRect(
-        x,
-        y + 14,
-        5,
-        2,
-        90,
-        45,
-        25);
-
-    renderer.drawRect(
-        x + 7,
-        y + 14,
-        5,
-        2,
-        90,
-        45,
-        25);
-
-    // Eye follows facing direction.
-    const int eyeX =
-        m_facingRight
-            ? x + 8
-            : x + 3;
-
-    renderer.drawRect(
-        eyeX,
-        y + 4,
-        2,
-        2,
-        20,
-        20,
-        20);
+        screenX + 7.0f,
+        screenY + 14.0f,
+        5.0f,
+        2.0f,
+        40,
+        70,
+        180);
 }

@@ -1,47 +1,118 @@
 #include "InputManager.h"
 
-#include <algorithm>
+#include <SDL.h>
+
+#include <cstring>
 
 void InputManager::update()
 {
-    m_previousKeys = m_currentKeys;
+    m_quitRequested = false;
 
-    SDL_Event event{};
+    // -------------------------------------------------
+    // Process SDL events
+    // -------------------------------------------------
 
-    while (SDL_PollEvent(&event) != 0)
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event))
     {
-        switch (event.type)
+        if (event.type == SDL_QUIT)
         {
-        case SDL_QUIT:
             m_quitRequested = true;
-            break;
+        }
 
-        default:
-            break;
+        if (event.type == SDL_KEYDOWN &&
+            event.key.repeat == 0)
+        {
+            const SDL_Scancode key =
+                event.key.keysym.scancode;
+
+            if (key == SDL_SCANCODE_ESCAPE ||
+                key == SDL_SCANCODE_Q)
+            {
+                m_quitRequested = true;
+            }
         }
     }
 
-    const Uint8* keyboardState = SDL_GetKeyboardState(nullptr);
+    // -------------------------------------------------
+    // Save current state as previous state
+    // -------------------------------------------------
 
-    for (std::size_t i = 0; i < KEY_COUNT; ++i)
+    std::memcpy(
+        m_previousKeys,
+        m_currentKeys,
+        sizeof(m_currentKeys));
+
+    // -------------------------------------------------
+    // Get new keyboard state
+    // -------------------------------------------------
+
+    const Uint8* keyboardState =
+        SDL_GetKeyboardState(nullptr);
+
+    std::memcpy(
+        m_currentKeys,
+        keyboardState,
+        sizeof(m_currentKeys));
+
+    // -------------------------------------------------
+    // Game controls
+    // -------------------------------------------------
+
+    m_left =
+        down(SDL_SCANCODE_LEFT) ||
+        down(SDL_SCANCODE_A);
+
+    m_right =
+        down(SDL_SCANCODE_RIGHT) ||
+        down(SDL_SCANCODE_D);
+
+    m_jump =
+        pressed(SDL_SCANCODE_SPACE) ||
+        pressed(SDL_SCANCODE_Z) ||
+        pressed(SDL_SCANCODE_X);
+}
+
+bool InputManager::quitRequested() const
+{
+    return m_quitRequested;
+}
+
+bool InputManager::down(
+    SDL_Scancode key) const
+{
+    if (key < 0 ||
+        key >= SDL_NUM_SCANCODES)
     {
-        m_currentKeys[i] = keyboardState[i] != 0;
+        return false;
     }
+
+    return m_currentKeys[key] != 0;
 }
 
-bool InputManager::isKeyDown(SDL_Scancode key) const
+bool InputManager::pressed(
+    SDL_Scancode key) const
 {
-    return m_currentKeys[static_cast<std::size_t>(key)];
+    if (key < 0 ||
+        key >= SDL_NUM_SCANCODES)
+    {
+        return false;
+    }
+
+    return m_currentKeys[key] != 0 &&
+           m_previousKeys[key] == 0;
 }
 
-bool InputManager::isKeyPressed(SDL_Scancode key) const
+bool InputManager::released(
+    SDL_Scancode key) const
 {
-    const std::size_t index = static_cast<std::size_t>(key);
-    return m_currentKeys[index] && !m_previousKeys[index];
-}
+    if (key < 0 ||
+        key >= SDL_NUM_SCANCODES)
+    {
+        return false;
+    }
 
-bool InputManager::isKeyReleased(SDL_Scancode key) const
-{
-    const std::size_t index = static_cast<std::size_t>(key);
-    return !m_currentKeys[index] && m_previousKeys[index];
+    return m_currentKeys[key] == 0 &&
+           m_previousKeys[key] != 0;
 }

@@ -2,7 +2,9 @@
 
 #include <iostream>
 
-int main(int argc, char* argv[])
+int main(
+    int argc,
+    char* argv[])
 {
     (void)argc;
     (void)argv;
@@ -13,16 +15,24 @@ int main(int argc, char* argv[])
 
         if (!game.initialize())
         {
-            std::cerr << "Failed to initialize game.\n";
+            std::cerr
+                << "Failed to initialize game."
+                << '\n';
+
             return 1;
         }
 
         game.run();
+
         game.shutdown();
     }
     catch (const std::exception& e)
     {
-        std::cerr << "Fatal error: " << e.what() << '\n';
+        std::cerr
+            << "Fatal error: "
+            << e.what()
+            << '\n';
+
         return 1;
     }
 
